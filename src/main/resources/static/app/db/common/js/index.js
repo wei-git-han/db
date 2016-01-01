@@ -248,10 +248,10 @@ function refrashPage(){
 				clearInterval(timeLoadTime);
 				timeLoadMs = 5;
 				$(".refreshTip").hide();
-				if(gettop2.iframe1){
-					gettop2.iframe1.refreshgrid()
+				if(gettop2().iframe1){
+					gettop2().iframe1.refreshgrid()
 				}else{
-					gettop2.refreshgrid()
+					gettop2().refreshgrid()
 				}
 			}else{
 				timeLoadMs--;
