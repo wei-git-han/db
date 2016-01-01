@@ -238,6 +238,7 @@ public class DocumentWithdrawController {
 				logger.info("给被撤回人发空消息，被撤回人是"+dealUserId);
 				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, dealUserId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+				subDocInfoService.sendMsgByWebSocket(dealUserId,4,false);
 			}
 		}
 		return json;
