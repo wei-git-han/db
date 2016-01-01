@@ -179,7 +179,7 @@ function initWebSocket() {
 				changNumData.unit = true
 			}
 		}
-		setRedPoint(jsonMessage);
+		setRedPoint(jsonMessage.data);
 	}
 }
 var refrashPageName = null

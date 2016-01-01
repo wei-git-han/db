@@ -174,6 +174,7 @@ public class DocumentZbjlController {
 							String msgUrl = msg.getMsgRedirect()+"&fileId="+infoId+"&subId="+subInfo.getId();
 							for (String userId : userIds) {
 								msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId,clientSecret, msg.getGroupName(), msg.getGroupRedirect(), "","true");
+								subDocInfoService.sendMsgByWebSocket(userId,5,false);
 							}
 						}
 					}
@@ -308,6 +309,7 @@ public class DocumentZbjlController {
 				String msgUrl = msg.getMsgRedirect()+"&fileId="+infoId+"&subId="+subId;
 				if(StringUtils.isNotBlank(userId)){
 					msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId,clientSecret, msg.getGroupName(), msg.getGroupRedirect(), "","true");
+					subDocInfoService.sendMsgByWebSocket(userId,4,false);
 				}
 				//针对于局管理员对办理中和待落实的文件进行转办时（文件当前人离职了），给文件的当前人发送消息提醒，用于触发角标更新
 				if(StringUtils.isNotBlank(cbuserId)){

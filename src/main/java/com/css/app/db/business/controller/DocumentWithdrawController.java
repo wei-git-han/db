@@ -402,6 +402,7 @@ public class DocumentWithdrawController {
 				//给被撤回人发空消息，只为触发角标更新
 				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, dealUserId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+				subDocInfoService.sendMsgByWebSocket(userId,4,false);
 			}
 		}
 		json.put("result", "success");
