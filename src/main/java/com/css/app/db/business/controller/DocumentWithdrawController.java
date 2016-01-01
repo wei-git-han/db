@@ -8,6 +8,7 @@ import com.css.addbase.msg.MSGTipDefined;
 import com.css.addbase.msg.MsgTipUtil;
 import com.css.addbase.msg.entity.MsgTip;
 import com.css.addbase.msg.service.MsgTipService;
+import com.css.app.db.config.service.AdminSetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +87,9 @@ public class DocumentWithdrawController {
 	private String appId;
 	@Value("${csse.dccb.appSecret}")
 	private String clientSecret;
+
+	@Autowired
+	private AdminSetService adminSetService;
 
 	/**
 	 * 在局内待办菜单内增加局管理员超级撤回功能
@@ -392,6 +396,7 @@ public class DocumentWithdrawController {
 			}
 		}
 		String userId = CurrentUser.getUserId();
+		String deptId = baseAppUserService.getBareauByUserId(userId);
 		MsgTip msg = msgService.queryObject(MSGTipDefined.DCCB_SHENPIWANCHENG_MSG_TITLE);
 		if (msg != null) {
 			String msgUrl = msg.getMsgRedirect() + "&fileId=" + infoId + "&subId=" + subId;
@@ -404,6 +409,11 @@ public class DocumentWithdrawController {
 				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, dealUserId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 				subDocInfoService.sendMsgByWebSocket(dealUserId,4,false);
+				List<String> userIds = adminSetService.queryUserIdByOrgId(deptId);
+				for (String juJserId : userIds) {
+					subDocInfoService.sendMsgByWebSocket(juJserId,5,false);
+				}
+
 			}
 		}
 		json.put("result", "success");
