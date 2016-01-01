@@ -211,7 +211,7 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 
 		//}
 
-		webSocketHandle.addSendMap(userId,4,false,String.valueOf(numAll));
+		webSocketHandle.addSendMap(userId,menuType,isSerf,String.valueOf(numAll));
 
 		//return jsonObject;
 	}
