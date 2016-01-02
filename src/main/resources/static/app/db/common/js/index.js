@@ -244,7 +244,7 @@ function refrashPage(){
 				$(".refreshTip").hide()
 				return
 			}
-			if(timeLoadMs<=0){
+			if(timeLoadMs < 2){
 				clearInterval(timeLoadTime);
 				timeLoadMs = 5;
 				$(".refreshTip").hide();
