@@ -183,7 +183,16 @@ public class DocumentJcdbController {
 					if (bjAddCtls == 0) {
 						jo.put("wcl", "0%");
 					} else {
-						double wclDouble =(int)(((double) bjAddCtls / total) * 100 + 0.5);
+						//完成率>=99.5,就不再加0.5了，取整为99
+						double wclv = ((double) bjAddCtls/total);
+						//double wclv = (double) bjAddCtls/total;
+						double wclDouble = 0.00;
+						if(wclv >= 0.995 && wclv <1.000){
+							wclDouble =(int)(wclv * 100);
+						}else {
+							wclDouble =(int)(wclv * 100 + 0.5);
+						}
+						//double wclDouble =(int)(((double) bjAddCtls / total) * 100 + 0.5);
 						String wclStr= wclDouble + "";
 						String wcl = wclStr.substring(0, wclStr.lastIndexOf("."));
 						jo.put("wcl", wcl + "%");
