@@ -219,4 +219,9 @@ public class DocumentInfoServiceImpl implements DocumentInfoService {
 	public List<DocumentInfo> queryNewListSort(Map<String, Object> map) {
 		return documentInfoDao.queryNewListSort(map);
 	}
+
+	@Override
+	public int queryChaoShiByYear(Map<String, Object> map) {
+		return documentInfoDao.queryChaoShiByYear(map);
+	}
 }

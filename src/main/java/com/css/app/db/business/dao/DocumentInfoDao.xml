@@ -704,10 +704,13 @@
 	<!--根据年度获取每个状态的数量 CREATED_TIME暂为年度时间 -->
 	<select id="queryListByYear" resultType="map">
 		select sum(blz+bj+ctls) as total,sum(blz) as blz,sum(bj) as
-		bj,sum(ctls) as ctls from (
+		bj,sum(ctls) as ctls , sum(days) as days from (
 		select
 		(case when ddi.STATUS='1' then
 		count(ddi.STATUS) else 0 end ) as blz,
+		(case when ddi.STATUS='2' then 
+		round(avg(TO_DATE(ddi.LATEST_REPLY_TIME,'yyyy-mm-dd hh24:mi:ss')-To_DATE(ddi.CREATED_TIME,'yyyy-mm-dd hh24:mi:ss')),1)
+		else 0 end ) as days ,
 		(case when ddi.STATUS='2' then
 		count(ddi.STATUS) else 0 end ) as bj,
 		(case when ddi.STATUS='3' then
@@ -737,6 +740,38 @@
 		order by ddi.STATUS asc
 		)
 	</select>
+	
+		<!--根据年度获取超时未办结的文的数量 CREATED_TIME暂为年度时间 -->
+	<select id="queryChaoShiByYear" resultType="int">
+			select  count(*) as number
+                     from
+                        DB_DOCUMENT_INFO ddis
+                        
+                          left join
+                        (
+                               select info_id,UPDATE_TIME from DB_SUB_DOC_INFO where FIRST_REPLY = '1' and DOC_STATUS &lt; 12
+                        )
+                        s
+                         on ddis.id = s.info_id
+                        where 
+                        to_char(add_months(s.UPDATE_TIME,3),'yyyy-mm-dd hh24:mi:ss')  &lt; to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')
+                        
+		<if test="year != null">
+			and to_char(ddis.CREATED_TIME) 
+			like '%'||#{year}||'%'
+		</if>
+		<if test="status != null">
+			and ddis.STATUS=#{status}
+		</if>
+
+		
+	</select>
+	
+	
+	
+	
+	
+	
 	<!--根据年度获取每个状态的数量 CREATED_TIME暂为年度时间 -->
 	<select id="queryListByOrgYear" resultType="map">
 		select

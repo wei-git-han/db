@@ -1,5 +1,6 @@
 package com.css.app.db.business.controller;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -815,4 +816,67 @@ public class DocumentJcdbController {
 		}*/
 		return currDate.format(dateTimeFormatter);
 	}
+	
+	
+	/**
+	 * 数据统计报表-(年度,状态数量)
+	 * {
+		年度"year":"2019",
+		总数"total":100,
+		办理中"blz":100,
+		办结"bj":100,
+		常态落实"ctls":100,
+		完成率"wcl":"98%"
+}
+	 */
+	@ResponseBody
+	@RequestMapping("/count")
+	public void count(String year){
+		JSONObject jo=new JSONObject();
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy");
+		Map<String, Object> map = new HashMap<>();
+		if(StringUtil.isEmpty(year)) {
+			year=sdf.format(new Date());
+		}
+		map.put("year", year);
+		List<Map<String, Object>> infoList = documentInfoService.queryListByYear(map);
+		map.put("status", 1);
+		int overTimewbj = documentInfoService.queryChaoShiByYear(map);//超时未结
+		map.put("status", 2);
+		int overTimebj = documentInfoService.queryChaoShiByYear(map);//超时办结
+		jo.put("overTimewbj", overTimewbj);//超时未结
+		jo.put("overTimebj", overTimebj);//超时办结
+		double  blz=0;
+		double  bj=0;
+		double  ctls=0;
+		double  total=0;
+		double days = 0;
+		if (infoList!=null&&infoList.size()>0) {
+			Map<String, Object> map2=infoList.get(0);
+			if(map2!=null) {
+				int wfkCount = this.queryWfkCount(null, year);
+				blz= (long) map2.get("blz") - wfkCount;
+				bj= (long) map2.get("bj");
+				ctls= (long) map2.get("ctls");
+				total= (long) map2.get("total");
+				days=(double) map2.get("days");
+			}
+		}
+		jo.put("onTimeblz", blz < 0 ? 0 : blz);//按时在办
+		jo.put("onTimebj", bj);//按时办结
+		jo.put("aveDays", days);//已办结事项平均天数
+		jo.put("zsl", total);//总数量
+		jo.put("year", year);//今年
+		if(total>0) {
+			DecimalFormat df = new DecimalFormat("#.00");
+			String format = df.format((bj+ctls)*100/total);
+		//	long round = Math.round((bj+ctls)*100/total);
+			jo.put("wcl", format+"%");
+		}else {
+			jo.put("wcl", "0%");
+		}
+		Response.json(jo);
+	}
+	
+	
 }
