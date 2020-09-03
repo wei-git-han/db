@@ -875,7 +875,12 @@ public class DocumentJcdbController {
 			DecimalFormat df = new DecimalFormat("#.00");
 			String format = df.format((bj+ctls)*100/total);
 		//	long round = Math.round((bj+ctls)*100/total);
-			jo.put("wcl", format+"%");
+			if(format.equals(".00")) {
+				jo.put("wcl", 0);
+			}else {
+				jo.put("wcl", format);
+			}
+			
 		}else {
 			jo.put("wcl", "0%");
 		}
