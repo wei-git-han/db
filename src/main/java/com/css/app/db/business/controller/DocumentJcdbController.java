@@ -831,7 +831,7 @@ public class DocumentJcdbController {
 	 */
 	@ResponseBody
 	@RequestMapping("/count")
-	public void count(String year){
+	public void count(String year,String month,String organId){
 		JSONObject jo=new JSONObject();
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy");
 		Map<String, Object> map = new HashMap<>();
@@ -839,6 +839,8 @@ public class DocumentJcdbController {
 			year=sdf.format(new Date());
 		}
 		map.put("year", year);
+		map.put("month", month);
+		map.put("organId", organId);
 		List<Map<String, Object>> infoList = documentInfoService.queryListByYear(map);
 		map.put("status", 1);
 		int overTimewbj = documentInfoService.queryChaoShiByYear(map);//超时未结
@@ -867,6 +869,8 @@ public class DocumentJcdbController {
 		jo.put("aveDays", days);//已办结事项平均天数
 		jo.put("zsl", total);//总数量
 		jo.put("year", year);//今年
+		jo.put("month", month);//月份
+		jo.put("organId", organId);//部门id
 		if(total>0) {
 			DecimalFormat df = new DecimalFormat("#.00");
 			String format = df.format((bj+ctls)*100/total);

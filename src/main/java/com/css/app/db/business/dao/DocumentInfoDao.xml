@@ -718,7 +718,7 @@
 		from DB_DOCUMENT_INFO ddi
 		left
 		join(select s.INFO_ID,s.CREATED_TIME as
-		leader_time,
+		leader_time, b.DEPT_ID as organId ,
 		row_number()
 		over(partition by s.info_id order by b.sort asc) as dNum from
 		DB_DOCUMENT_SZPS s inner join DB_ROLE_SET b
@@ -728,13 +728,21 @@
 		(d.dNum = 1 or d.dNum
 		is null)
 		where 1=1 and FIRST_ZB_TIME is not null
-		<if test="year != null">
+		<if test="year != null and year != ''">
 			and case when d.leader_time is not null and d.leader_time
 			!= '' then to_char(d.leader_time) else
-			to_char(ddi.CREATED_TIME) end
+			to_char(ddi.CREATED_TIME,'yyyy') end
 			like '%'||#{year}||'%'
 		</if>
-
+		<if test="month != null and month !=''">
+			and case when d.leader_time is not null and d.leader_time
+			!= '' then to_char(d.leader_time) else
+			to_char(ddi.CREATED_TIME,'mm') end
+			like '%'||#{month}||'%'
+		</if>
+		<if test="organId != null and organId !=''">
+			and d.organId = #{organId}
+		</if>
 
 		group by ddi.STATUS
 		order by ddi.STATUS asc
@@ -747,6 +755,23 @@
                      from
                         DB_DOCUMENT_INFO ddis
                         
+                                    left join
+                        (
+                                select
+                                        s.INFO_ID                    ,
+                                        s.CREATED_TIME                                                as leader_time,
+                                        row_number() over(partition by s.info_id order by b.sort asc) as dNum,
+                                        b.DEPT_ID as organId
+                                from
+                                        DB_DOCUMENT_SZPS s
+                                inner join DB_ROLE_SET b
+                                on
+                                        s.USER_ID=b.USER_ID
+                                order by
+                                        b.sort asc
+                        )
+                        d on ddis.id = d.info_id
+                        
                           left join
                         (
                                select info_id,UPDATE_TIME from DB_SUB_DOC_INFO where FIRST_REPLY = '1' and DOC_STATUS &lt; 12
@@ -756,12 +781,19 @@
                         where 
                         to_char(add_months(s.UPDATE_TIME,3),'yyyy-mm-dd hh24:mi:ss')  &lt; to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')
                         
-		<if test="year != null">
-			and to_char(ddis.CREATED_TIME) 
+		<if test="year != null and year !=''">
+			and to_char(ddis.CREATED_TIME,'yyyy') 
 			like '%'||#{year}||'%'
 		</if>
-		<if test="status != null">
+		<if test="month != null and month != ''">
+			and to_char(ddis.CREATED_TIME,'mm') 
+			like '%'||#{month}||'%'
+		</if>
+		<if test="status != null and status != ''">
 			and ddis.STATUS=#{status}
+		</if>
+		<if test="organId != null and organId != ''">
+			and d.organId = #{organId}
 		</if>
 
 		
