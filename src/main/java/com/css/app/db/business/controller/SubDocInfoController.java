@@ -100,9 +100,9 @@ public class SubDocInfoController {
 	private MsgTipService msgService;
 	@Autowired
 	private MsgTipUtil msgUtil;
-	@Value("${csse.dccb.appId}")
+	//@Value("${csse.dccb.appId}")
 	private String appId;
-	@Value("${csse.dccb.appSecret}")
+	//@Value("${csse.dccb.appSecret}")
 	private String clientSecret;
 	@Autowired
 	private AdminSetService adminSetService;

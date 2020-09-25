@@ -24,7 +24,7 @@ public class MsgConfig {
 	 * @return
 	 */
 	public String getMsgUrl() {
-		return env.getProperty("csse.mircoservice.zuul")+env.getProperty("csse.mircoservice.msg");
+		return env.getProperty("")+env.getProperty("csse.mircoservice.msg");
 	}	
 	
 	/**

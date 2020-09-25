@@ -21,10 +21,10 @@ public class AdminSetServiceImpl implements AdminSetService {
 	@Autowired
 	private AdminSetDao adminSetDao;
 	
-	@Value("${csse.dccb.appId}")
+	//@Value("${csse.dccb.appId}")
 	private  String appId;
 	
-	@Value("${csse.dccb.appSecret}")
+	//@Value("${csse.dccb.appSecret}")
 	private  String clientSecret;
 	
 	@Override

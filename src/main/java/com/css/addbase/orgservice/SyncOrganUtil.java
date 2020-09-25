@@ -29,9 +29,9 @@ import com.css.base.utils.StringUtils;
 @RequestMapping("/app/timer")
 public class SyncOrganUtil {
 	
-	@Value("${csse.mircoservice.zuul}")
+	//@Value("${csse.mircoservice.zuul}")
 	private String zuul;
-	
+
 	@Value("${csse.mircoservice.syncdepartments}")
 	private  String syncdepartments;
 	

@@ -80,37 +80,7 @@ public class TokenConfig {
 	 * @return token
 	 */
 	public static String getToken(String appId, String appSecret) {
-		String token = tokenInfos.get(appId);
-		// token存在直接集合中的返回token且token未过期
-		if (StringUtils.isNotBlank(token) && ckeckToken(token)) {
-			logger.info(LogFormat.LOG_TOKEN,appId,appSecret,"返回","成功",token);
-			return token;
-		}
-		;
-		// token不存在获取token
-		String accessTokenUrl = accessTokenUri + "?client_id=" + appId + "&client_secret=" + appSecret + "&grant_type="
-				+ GRANT_TYPE;
-		logger.info("token请求路径:{}",accessTokenUrl);
-		try {
-			RestTemplate restTemplate = new RestTemplate();
-			JSONObject access_token = restTemplate.postForObject(accessTokenUrl, null, JSONObject.class);
-			// 存在token
-			token = access_token.getString("access_token");
-			tokenInfos.put(appId, token);
-			logger.info(LogFormat.LOG_TOKEN,appId,appSecret,"获取","成功",token);
-			// 存储token过期时间
-			String expires_in = access_token.getString("expires_in") + "000";
-			long tokenExpireTime = System.currentTimeMillis() + Long.valueOf(expires_in);
-			tokenExpireTimes.put(token, tokenExpireTime);
-			logger.info("{}token过期时间:{}==={}",token,tokenExpireTime,DateUtil.timestampToDate(tokenExpireTime));
-			restTemplate = null;
-			return token;
-		} catch (HttpClientErrorException e) {
-			// 获取失败，返回null
-			logger.info(LogFormat.LOG_TOKEN,appId,appSecret,"获取","失败","");
-			System.err.println(e);
-			return null;
-		}
+		return null;
 	}
 
 	/**

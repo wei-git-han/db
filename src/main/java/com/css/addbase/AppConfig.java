@@ -24,7 +24,7 @@ public class AppConfig {
 	 * @return
 	 */
 	public String getZuul() {
-		return env.getProperty("csse.mircoservice.zuul");
+		return env.getProperty("");
 	}
 	
 	/**
@@ -86,6 +86,6 @@ public class AppConfig {
 	 * @return
 	 */
 	public String getAppId(){
-		return env.getProperty("csse.dccb.appId");
+		return env.getProperty("");
 	}
 }

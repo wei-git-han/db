@@ -54,9 +54,9 @@ public class DocumentSzInfoController {
 	private AdminSetService adminSetService;
 	@Autowired
 	private MsgTipUtil msgUtil;
-	@Value("${csse.dccb.appId}")
+	//@Value("${csse.dccb.appId}")
 	private  String appId;	
-	@Value("${csse.dccb.appSecret}")
+	//@Value("${csse.dccb.appSecret}")
 	private  String clientSecret;
 	/**
 	 * 首长左侧类型分组

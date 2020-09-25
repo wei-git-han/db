@@ -38,9 +38,9 @@ public class RemindAdministrationTimingTask {
 	private SubDocInfoService subDocInfoService;
 	@Autowired
 	private MsgTipUtil msgUtil;
-	@Value("${csse.dccb.appId}")
+	//@Value("${csse.dccb.appId}")
 	private String appId;
-	@Value("${csse.dccb.appSecret}")
+	//@Value("${csse.dccb.appSecret}")
 	private String clientSecret;
 
 	/**
