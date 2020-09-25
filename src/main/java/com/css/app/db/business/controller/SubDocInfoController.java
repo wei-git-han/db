@@ -1160,6 +1160,7 @@ public class SubDocInfoController {
 	@ResponseBody
 	@RequestMapping("/finishOperation")
 	public void finishOperation(String infoId, String subId, String replyContent, String saveFlag) {
+		String currentUserId = CurrentUser.getUserId();
 		JSONObject json = new JSONObject();
 		String userId = "";
 		//承办人
@@ -1179,6 +1180,10 @@ public class SubDocInfoController {
 			String msgUrl = msg.getMsgRedirect() + "&fileId=" + infoId + "&subId=" + subId;
 			if (StringUtils.isNotBlank(userId)) {
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
+						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+
+				//给自己发空消息，只为触发角标更新
+				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, currentUserId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 			}
 		}
