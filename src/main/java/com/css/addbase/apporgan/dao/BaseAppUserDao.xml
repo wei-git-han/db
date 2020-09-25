@@ -122,7 +122,8 @@
 			"USEREMAIL", 
 			"SECLEVEL", 
 			"SEX",
-			"TELEPHONE"
+			"TELEPHONE",
+			"TOKEN"
 		)
 		values
 		(
@@ -139,7 +140,8 @@
 			#{useremail}, 
 			#{seclevel}, 
 			#{sex},
-			#{telephone}
+			#{telephone},
+			#{token}
 		)
 	</insert>
 	 
@@ -158,7 +160,8 @@
 			<if test="useremail != null">"USEREMAIL" = #{useremail}, </if>
 			<if test="seclevel != null">"SECLEVEL" = #{seclevel}, </if>
 			<if test="sex != null">"SEX" = #{sex}, </if>
-			<if test="telephone != null">"TELEPHONE" = #{telephone}</if>
+			<if test="telephone != null">"TELEPHONE" = #{telephone},</if>
+			<if test="token != null">"TOKEN" = #{token}</if>
 		</set>
 		where ID = #{id}
 	</update>

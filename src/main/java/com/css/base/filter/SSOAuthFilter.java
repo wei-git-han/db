@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -17,7 +18,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.css.addbase.apporgan.entity.BaseAppUser;
+import com.css.addbase.apporgan.service.BaseAppUserService;
+import com.css.app.db.config.controller.SsoAdmin;
+import com.netflix.discovery.converters.Auto;
+import org.apache.catalina.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -31,7 +39,7 @@ import com.css.base.utils.StringUtils;
  * 该组件需要配合Spring MVC 禁止使用统配后缀名
  * 后缀名为css/js/font且为get请求忽略认证
  */
-//@Component
+@Component
 public class SSOAuthFilter extends OncePerRequestFilter{
 	
 //	/*
@@ -69,6 +77,25 @@ public class SSOAuthFilter extends OncePerRequestFilter{
 	private static  String accessTokenUrl;
 	public static final ThreadLocal<String> tokenThreadLocal=new ThreadLocal<String>();
 	private static final ThreadLocal<HttpServletRequest> requestThreadLocal=new ThreadLocal<HttpServletRequest>();
+	@Autowired
+	public BaseAppUserService baseAppUserService;
+//	@Autowired
+//	public void  SSOAuthFilter(BaseAppUserService baseAppUserService){
+//		 this.baseAppUserService  = baseAppUserService;
+//	}
+	private static SSOAuthFilter ssoAuthFilter;
+
+	public void SSOAuthFilter(){
+		ssoAuthFilter = this;
+		ssoAuthFilter.baseAppUserService = this.baseAppUserService;
+	}
+
+	@PostConstruct
+	public void init(){
+		ssoAuthFilter = this;
+		ssoAuthFilter.baseAppUserService = this.baseAppUserService;
+	}
+
 	/*
 	 * 单点获取用户信息接口地址
 	 */
@@ -121,35 +148,41 @@ public class SSOAuthFilter extends OncePerRequestFilter{
 		return false ;
 	}
 	private boolean checkToken(String token){
-		try {
-			HttpURLConnection con = (HttpURLConnection)(new URL(ssoCheckTokenURL+token)).openConnection();
-			con.setDoInput(true);
-			con.setRequestMethod("POST");
-			con.setRequestProperty("content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-			InputStream is = con.getInputStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-			String line  = reader.readLine();
-			reader.close();
-			JSONObject jsonResult = JSONObject.parseObject(line);
-			String  result = jsonResult.getString("result");
-			String reslut = jsonResult.getString("reslut");
-			if("success".equals(result) || "success".equals(reslut)){
-				return true;
-			}
-			throw new Exception("token 校验异常"+token);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
+//		try {
+//			HttpURLConnection con = (HttpURLConnection)(new URL(ssoCheckTokenURL+token)).openConnection();
+//			con.setDoInput(true);
+//			con.setRequestMethod("POST");
+//			con.setRequestProperty("content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+//			InputStream is = con.getInputStream();
+//			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+//			String line  = reader.readLine();
+//			reader.close();
+//			JSONObject jsonResult = JSONObject.parseObject(line);
+//			String  result = jsonResult.getString("result");
+//			String reslut = jsonResult.getString("reslut");
+//			if("success".equals(result) || "success".equals(reslut)){
+//				return true;
+//			}
+//			throw new Exception("token 校验异常"+token);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return false ;
+		BaseAppUser baseAppUser = ssoAuthFilter.baseAppUserService.queryToken(token);
+		if(baseAppUser != null){
+			return  true;
 		}
-		return false ;
+		return false;
 	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		String reqSuffix = request.getRequestURI();
-		if(!noAuth(request)){
+		String name = request.getParameter("username");
+		if(!noAuth(request) && !"/api/sso/authen".equals(reqSuffix)){
 			String access_token=request.getParameter("access_token");//从URL参数中获取token
 			String access_token_c = null;                                  //从cookie中获取token
 			Cookie[] cookies = request.getCookies();
@@ -197,7 +230,9 @@ public class SSOAuthFilter extends OncePerRequestFilter{
 			response.setHeader("Cache-Control", "no-store");
 			response.setDateHeader("Expires", 0);
 		}
-		filterChain.doFilter(request, response);
+
+			filterChain.doFilter(request, response);
+
 	}
 	
 	@Override
@@ -239,29 +274,41 @@ public class SSOAuthFilter extends OncePerRequestFilter{
 		HttpSession session=requestThreadLocal.get().getSession(true);
 		session.setMaxInactiveInterval(5*60*60);//单位为 秒
 		SSOUser user=(SSOUser) session.getAttribute(getToken());
+		SSOUser ssoUser = new SSOUser();
 		if(user != null && user.getUseruuid()!=null){
 			return user;
 		}
 		try {
-			HttpURLConnection con = (HttpURLConnection) new URL(ssoUserInfoURL).openConnection();
-			con.setDoInput(true);
-			con.setDoOutput(true);
-			con.setRequestMethod("POST");
-			con.setRequestProperty("content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-			OutputStream os =  con.getOutputStream();
-			String body ="access_token="+ getToken();
-			os.write(body.getBytes());
-			os.flush();
-			InputStream is = con.getInputStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-			String line  = reader.readLine();
-			reader.close();
-			user=JSONObject.parseObject(line,SSOUser.class);
-			requestThreadLocal.get().getSession(true).setAttribute(getToken(), user);			
+//			HttpURLConnection con = (HttpURLConnection) new URL(ssoUserInfoURL).openConnection();
+//			con.setDoInput(true);
+//			con.setDoOutput(true);
+//			con.setRequestMethod("POST");
+//			con.setRequestProperty("content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+//			OutputStream os =  con.getOutputStream();
+//			String body ="access_token="+ getToken();
+//			os.write(body.getBytes());
+//			os.flush();
+//			InputStream is = con.getInputStream();
+//			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+//			String line  = reader.readLine();
+//			reader.close();
+//			user=JSONObject.parseObject(line,SSOUser.class);
+			//SsoAdmin ssoAdmin = new SsoAdmin();
+			//user = ssoAdmin.getToken(getToken());
+
+			BaseAppUser baseAppUser = ssoAuthFilter.baseAppUserService.queryToken(getToken());
+			ssoUser.setUserId(baseAppUser.getUserId());
+			ssoUser.setTokenId(baseAppUser.getToken());
+			ssoUser.setFullname(baseAppUser.getTruename());
+			ssoUser.setOrganId(baseAppUser.getOrganid());
+			ssoUser.setSex(baseAppUser.getSex());
+			ssoUser.setAccount(baseAppUser.getAccount());
+			ssoUser.setUseruuid(baseAppUser.getUserId());
+			requestThreadLocal.get().getSession(true).setAttribute(getToken(), ssoUser);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return user ;
+		return ssoUser ;
 	}
 	
 	/*
@@ -277,6 +324,9 @@ public class SSOAuthFilter extends OncePerRequestFilter{
 		}
 		return null;
 	}
+
+
+
 	
 	
 }

@@ -1,6 +1,8 @@
 package com.css.addbase.apporgan.service;
 
 import com.css.addbase.apporgan.entity.BaseAppUser;
+import com.css.base.entity.SSOUser;
+
 import java.util.List;
 import java.util.Map;
 /**
@@ -99,4 +101,8 @@ public interface BaseAppUserService {
 	 * @Version v1.0
 	 */
 	List<BaseAppUser> selectUserByNameAndUnitId(String name,String unitId);
+
+	BaseAppUser queryByAccount(String userName);
+	BaseAppUser queryToken(String token);
+
 }

@@ -7,7 +7,7 @@
 function login()
 {
 $.ajax({
-        url: $("#urlPath").val() + "/api/sso/authen/",
+        url: '/api/sso/authen',
         data: {username: $("#usename").val(), password: $("#password").val(), loginMode:"100",service:$("#servicePath").val()},
         type: 'POST',
         dataType: "JSON",
@@ -26,7 +26,7 @@ $.ajax({
 
 function loginApplication(){
 $.ajax({
-        url: $("#urlPath").val() + "/api/sso/authen/",
+        url: '/api/sso/authen',
         data: {username: $("#usename").val(), password: $("#password").val(), loginMode:"100",service:$("#servicePath").val()},
         type: 'POST',
         dataType: "JSON",
@@ -96,7 +96,7 @@ function logout(){
    }
    
 function authen(){
-    	var url1 = $("#urlPath").val() + "/api/sso/authen/"+$('#token').text();
+    	var url1 = "http:127.0.0.1:11008/api/sso/authen/"+$('#token').text();
     $.ajax({
         url: url1,
         type: 'POST',
@@ -217,7 +217,7 @@ $(function () {
 <body>
 用户名:<input type="text" value="admin" id="usename"/>
 密码:<input type="password" value="password02!" id="password"/><br/>
-网关地址:<input type="text" value="http://172.16.201.140:10005" id="urlPath" style="width:325px;"/><span style="border:1px solid blue;cursor:pointer;" onclick="javascript:$('#urlPath').val($(this).text());">http://10.2.104.1:10005</span><br/>
+网关地址:<input type="text" value="/" id="urlPath" style="width:325px;"/><span style="border:1px solid blue;cursor:pointer;" onclick="javascript:$('#urlPath').val($(this).text());">http://10.2.104.1:10005</span><br/>
 应用主页:<input type="text" value="index.html" id="servicePath" style="width:325px;"/>
 <div><label>Token: </label><label id="token"></label></div>
 <div><label>返回结果: </label><label id="valtxt"></label></div>

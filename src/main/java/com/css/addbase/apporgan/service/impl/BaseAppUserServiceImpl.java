@@ -1,5 +1,6 @@
 package com.css.addbase.apporgan.service.impl;
 
+import com.css.base.entity.SSOUser;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -131,5 +132,15 @@ public class BaseAppUserServiceImpl implements BaseAppUserService {
 	public List<BaseAppUser> selectUserByNameAndUnitId(String name, String unitId) {
 		return baseAppUserDao.selectUserByNameAndUnitId(name, unitId);
 	}
-	
+
+	@Override
+	public BaseAppUser queryByAccount(String userName){
+		return baseAppUserDao.queryByAccount(userName);
+	}
+	@Override
+	public BaseAppUser queryToken(String token){
+		return baseAppUserDao.queryToken(token);
+	}
+
+
 }

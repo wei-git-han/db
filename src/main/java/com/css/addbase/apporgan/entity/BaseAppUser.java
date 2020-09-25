@@ -40,7 +40,17 @@ public class BaseAppUser implements Serializable {
 	private String sex;
 	
 	private String telephone;
-	
+
+	private String token;
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
 	/**
 	 * 设置：主键
 	 */

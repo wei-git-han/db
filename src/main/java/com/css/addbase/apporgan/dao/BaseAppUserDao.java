@@ -93,5 +93,12 @@ public interface BaseAppUserDao extends BaseDao<BaseAppUser> {
 	 */
 	List<BaseAppUser> selectUserByNameAndUnitId(String name,String unitId);
 
+	@Select("select * from BASE_APP_USER where ACCOUNT = #{0}")
+	BaseAppUser queryByAccount(String userName);
+
+	@Select("select * from BASE_APP_USER where TOKEN = #{0}")
+	BaseAppUser queryToken(String token);
+
+
 	
 }
