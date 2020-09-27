@@ -110,9 +110,9 @@ public class SSOAuthFilter extends OncePerRequestFilter{
 		/**
 		 * 微服务配置
 		 */
-		String accessTokenUri = env.getProperty("csse.mircoservice.oauth2.client.accessTokenUri");
-		String clientSecret = env.getProperty("csse.mircoservice.oauth2.client.clientSecret");
-		String apiAppinfo = env.getProperty("csse.mircoservice.app");
+		String accessTokenUri = env.getProperty("");
+		String clientSecret = env.getProperty("");
+		String apiAppinfo = env.getProperty("");
 		/**
 		 * 不进行权限验证的后缀名文件
 		 */

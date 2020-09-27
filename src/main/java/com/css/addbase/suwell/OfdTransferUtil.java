@@ -128,7 +128,7 @@ public class OfdTransferUtil{
 				packet.close();
 				System.out.println("**********【单文件转换】结束转换（convertLocalFileToOFD）***********" + System.currentTimeMillis());
 				// 将生成的ofd文件上传到文件服务
-				return FileBaseUtil.uploadFileToService(ofdPath, ofdName); 
+				return ofdPath;
 			}
 		} catch (IOException | ConvertException | PackException e) {
 			e.printStackTrace();

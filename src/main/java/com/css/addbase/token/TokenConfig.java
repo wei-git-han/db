@@ -41,9 +41,9 @@ public class TokenConfig {
 	 * @return
 	 */
 	public TokenConfig(Environment env) {
-		accessTokenUri = env.getProperty("csse.mircoservice.oauth2.client.accessTokenUri");
-		clientId = env.getProperty("csse.mircoservice.oauth2.client.clientId");
-		clientSecret = env.getProperty("csse.mircoservice.oauth2.client.clientSecret");
+		accessTokenUri = env.getProperty("");
+		clientId = env.getProperty("");
+		clientSecret = env.getProperty("");
 	}
 
 	/**

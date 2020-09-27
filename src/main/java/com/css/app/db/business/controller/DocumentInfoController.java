@@ -112,6 +112,7 @@ public class DocumentInfoController {
 	@ResponseBody
 	@RequestMapping("/uploadFile")
 	public void savePDF(String idpdf, @RequestParam(required = false) MultipartFile[] pdf) {
+		String path1 = appConfig.getLocalFilePath();
 		String formatDownPath = "";// 版式文件下载路径
 		String retFormatId = null;// 返回的版式文件id
 		String streamId = null;// 流式文件id
@@ -125,17 +126,18 @@ public class DocumentInfoController {
 					String fileType = fileName.substring(fileName.lastIndexOf(".") + 1);
 					// 如果文件是流式则流式转换为版式
 					if (!StringUtils.equals("ofd", fileType)) {
-						streamId = FileBaseUtil.fileServiceUpload(pdf[i]);
-						HTTPFile hf = new HTTPFile(streamId);
+						//streamId = FileBaseUtil.fileServiceUpload(pdf[i]);
+						//HTTPFile hf = new HTTPFile(streamId);
+						String p = FileBaseUtil.uploadFile(pdf[i],path1);
 						try {
-							String path = appConfig.getLocalFilePath() + UUIDUtils.random() + "." + hf.getSuffix();
-							try {
-								FileUtils.moveFile(new File(hf.getFilePath()), new File(path));
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
+							String path = appConfig.getLocalFilePath() + UUIDUtils.random() + "." + fileName.substring(fileName.indexOf(".")+1,fileName.length());
+//							try {
+//								FileUtils.moveFile(new File(p), new File(p));
+//							} catch (IOException e) {
+//								e.printStackTrace();
+//							}
 							if (StringUtils.isNotBlank(path)) {
-								formatId = OfdTransferUtil.convertLocalFileToOFD(path);
+								formatId = OfdTransferUtil.convertLocalFileToOFD(p);
 							}
 							// 删除本地的临时流式文件
 							if (new File(path).exists()) {
@@ -145,17 +147,10 @@ public class DocumentInfoController {
 							e.printStackTrace();
 						}
 					} else {
-						formatId = FileBaseUtil.fileServiceUpload(pdf[i]);
+						formatId = FileBaseUtil.uploadFile(pdf[i],path1);
 					}
 					if (StringUtils.isNotBlank(formatId)) {
-						if (i == 0) {
-							retFormatId = formatId;
-							// 获取版式文件的下载路径
-							HTTPFile httpFiles = new HTTPFile(formatId);
-							if (httpFiles != null) {
-								formatDownPath = httpFiles.getAssginDownloadURL(true);
-							}
-						}
+
 						// 保存文件相关数据
 						DocumentFile file = new DocumentFile();
 						file.setId(UUIDUtils.random());

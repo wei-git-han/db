@@ -42,8 +42,7 @@ public class FileBaseUtil {
 	 * @author 
 	 * 2017-5-30
 	 */
-	public static String uploadFile(String path, HttpServletRequest request,
-			MultipartFile file) {
+	public static String uploadFile(MultipartFile file,String path) {
 		String fileName = file.getOriginalFilename();
 		if (StringUtils.isNotEmpty(fileName)) {
 			// 读取文件内容
@@ -68,7 +67,7 @@ public class FileBaseUtil {
 				e.printStackTrace();
 			}
 		}
-		return fileName;
+		return path;
 	}
 
 	/**
