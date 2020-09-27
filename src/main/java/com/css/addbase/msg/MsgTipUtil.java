@@ -115,34 +115,34 @@ public class MsgTipUtil {
 	 * @return
 	 */
 	public String sendMsg(String title, String content, String url, String userIds, String appId, String appSecret, String groupName, String groupRedirect, String smsg,String value){
-		if (StringUtils.isBlank(userIds) || StringUtils.equals(userIds, ",")) {// 没有消息接收人，就不用提醒了
-			return "fail";
-		}
-		if (StringUtils.isBlank(url)) {
-			url = "";
-		}
-		// 获取指定应用的token
-		String accessToken = "";
-		if (StringUtils.isNotBlank(appId) && StringUtils.isNotBlank(appSecret)) {
-			accessToken = TokenConfig.token(appId, appSecret);
-		} 
-		if (StringUtils.isBlank(accessToken)) {
-			accessToken = TokenConfig.token();
-		}
-		HttpHeaders headers = new HttpHeaders();
-		MediaType type = MediaType.parseMediaType("multipart/form-data");
-		headers.setContentType(type);
-		LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<String,Object>();
-		map.add("content", msgConfig.getMsgJson(title,content,url,appId,groupName, groupRedirect,value));
-		System.out.println(map.toString() + "*****发给1*****" + userIds);
-        HttpEntity<LinkedMultiValueMap<String, Object>> formEntity = new HttpEntity<LinkedMultiValueMap<String, Object>>(map, headers);
-        String msgUrl = msgConfig.getMsgUrl() + "/message/user/" + userIds + "?access_token=";
-			logger.info("消息请求路径:{}", msgUrl + accessToken);
-			ResponseEntity<String> postForEntity = restTemplate.postForEntity(msgUrl+ accessToken, formEntity, String.class);
-			logger.info("消息请求返回:{}",postForEntity.getBody());
-			//pcSendUtil.sendPC(msgUrl,accessToken,formEntity,String.class,appId,appSecret);
-		String[] ids = StringUtils.split(userIds,",");
-		String phone="";
+//		if (StringUtils.isBlank(userIds) || StringUtils.equals(userIds, ",")) {// 没有消息接收人，就不用提醒了
+//			return "fail";
+//		}
+//		if (StringUtils.isBlank(url)) {
+//			url = "";
+//		}
+//		// 获取指定应用的token
+//		String accessToken = "";
+//		if (StringUtils.isNotBlank(appId) && StringUtils.isNotBlank(appSecret)) {
+//			accessToken = TokenConfig.token(appId, appSecret);
+//		}
+//		if (StringUtils.isBlank(accessToken)) {
+//			accessToken = TokenConfig.token();
+//		}
+//		HttpHeaders headers = new HttpHeaders();
+//		MediaType type = MediaType.parseMediaType("multipart/form-data");
+//		headers.setContentType(type);
+//		LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<String,Object>();
+//		map.add("content", msgConfig.getMsgJson(title,content,url,appId,groupName, groupRedirect,value));
+//		System.out.println(map.toString() + "*****发给1*****" + userIds);
+//        HttpEntity<LinkedMultiValueMap<String, Object>> formEntity = new HttpEntity<LinkedMultiValueMap<String, Object>>(map, headers);
+//        String msgUrl = msgConfig.getMsgUrl() + "/message/user/" + userIds + "?access_token=";
+//			logger.info("消息请求路径:{}", msgUrl + accessToken);
+//			ResponseEntity<String> postForEntity = restTemplate.postForEntity(msgUrl+ accessToken, formEntity, String.class);
+//			logger.info("消息请求返回:{}",postForEntity.getBody());
+//			//pcSendUtil.sendPC(msgUrl,accessToken,formEntity,String.class,appId,appSecret);
+//		String[] ids = StringUtils.split(userIds,",");
+//		String phone="";
 	/*	for(String id : ids){
 			//判断短信开关表中是否有该人信息    判断开关是否打开 判断短信内容是否为空
 			if(getSet(id).equals("1") && smsg!=""){
