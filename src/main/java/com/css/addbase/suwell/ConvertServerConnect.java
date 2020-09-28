@@ -20,16 +20,31 @@ public class ConvertServerConnect {
 	private static HTTPAgent ha = null;
 	// 文件的临时存放目录
 	private static String tmpFilePath = null;
+	
+	// 本地路径
+	private static String tmpFileOFDPath = null;
+	
+	/**
+	 * 初始化存放文件的本地路径
+	 * @return
+	 */
+	public static String initTmpOFDFilePath() {
+		if (StringUtils.isBlank(tmpFileOFDPath)) {
+			tmpFileOFDPath = appConfig.getLocalOFDFilePath();
+		}
+		return tmpFileOFDPath;
+	}
+	
 	/**
 	 * 初始化存放文件的临时目录
 	 * @return
 	 */
-	public static String initTmpFilePath() {
+/*	public static String initTmpFilePath() {
 		if (StringUtils.isBlank(tmpFilePath)) {
 			tmpFilePath = appConfig.getLocalFilePath();
 		}
 		return tmpFilePath;
-	}
+	}*/
 	
 	/**
 	 * 初始化连接转换服务

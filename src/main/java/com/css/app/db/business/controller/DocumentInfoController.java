@@ -14,6 +14,7 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -100,6 +101,9 @@ public class DocumentInfoController {
 	private BaseAppConfigService baseAppConfigService;
 	@Autowired
 	private BaseAppOrganService baseAppOrganService;
+	
+	@Value("${uploadFile.path}")
+	private  String filePath;
 
 	/**
 	 * 文件上传保存
@@ -112,7 +116,7 @@ public class DocumentInfoController {
 	@ResponseBody
 	@RequestMapping("/uploadFile")
 	public void savePDF(String idpdf, @RequestParam(required = false) MultipartFile[] pdf) {
-		String path1 = appConfig.getLocalFilePath();
+		//String path1 = appConfig.getLocalFilePath();
 		String formatDownPath = "";// 版式文件下载路径
 		String retFormatId = null;// 返回的版式文件id
 		String streamId = null;// 流式文件id
@@ -126,17 +130,16 @@ public class DocumentInfoController {
 					String fileType = fileName.substring(fileName.lastIndexOf(".") + 1);
 					// 如果文件是流式则流式转换为版式
 					if (!StringUtils.equals("ofd", fileType)) {
-						String p = FileBaseUtil.uploadFile(pdf[i],path1);
+						streamId = FileBaseUtil.fileServiceUploadByFilePath(pdf[i],filePath);
 						try {
-							String path = appConfig.getLocalFilePath() + UUIDUtils.random() + "." + fileName.substring(fileName.indexOf(".")+1,fileName.length());
-							if (StringUtils.isNotBlank(path)) {
-								formatId = OfdTransferUtil.convertLocalFileToOFD(p);
+							if (StringUtils.isNotBlank(streamId)) {
+								formatId = OfdTransferUtil.convertLocalFileToOFDPath(streamId);
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					} else {
-						formatId = FileBaseUtil.uploadFile(pdf[i],path1);
+						formatId = FileBaseUtil.fileServiceUploadByFilePath(pdf[i],filePath);
 					}
 					if (StringUtils.isNotBlank(formatId)) {
 						// 保存文件相关数据
@@ -1108,41 +1111,43 @@ public class DocumentInfoController {
 			@RequestParam(value = "infoId", required = true) String infoId) throws Exception {
 		DocumentInfo fileInfo = documentInfoService.queryObject(infoId);
 		if (fileInfo != null) {
-			// 将扫描件上传到电子数据中心
-			String fileId = getFilePath(smwj, fileInfo, CurrentUser.getUsername());
 			// 获得批示首页文件的绝对路径
 			String scanFilePath = "";
-			if (StringUtils.isNotBlank(fileId)) {
+			// 将扫描件上传到电子数据中心
+			scanFilePath = getFilePath(smwj, fileInfo, CurrentUser.getUsername());
+			
+			/*if (StringUtils.isNotBlank(fileId)) {
 				HTTPFile httpFile = new HTTPFile(fileId);
 				scanFilePath = httpFile.getAssginDownloadURL(true);
-			}
+			}*/
 			JSONObject result = new JSONObject();
 			result.put("result", "success");
-			result.put("scanId", StringUtils.isNotBlank(fileId) ? fileId : "");
+			//result.put("scanId", StringUtils.isNotBlank(fileId) ? fileId : "");
 			result.put("scanFilePath", scanFilePath);
 			Response.json(result);
 		}
 	}
 
 	private String getFilePath(String smwj, DocumentInfo model, String loginUserName) {
-		String fileId = "";
+		String fileIdPath = "";
 		// 将扫描件上传到电子数据中心
 		if (StringUtils.isNotBlank(smwj)) {
-			fileId = OfdTransferUtil.createdOFDFile(smwj, model.getId());
-			if (StringUtils.isNotBlank(fileId)) {
+			fileIdPath = OfdTransferUtil.createdOFDFile(smwj, model.getId());
+			if (StringUtils.isNotBlank(fileIdPath)) {
+				File file2 = new File(fileIdPath);
 				// 保存文件相关数据
 				DocumentFile file = new DocumentFile();
 				file.setId(UUIDUtils.random());
 				file.setDocInfoId(model.getId());
 				file.setSort(documentFileService.queryMinSort(model.getId()));
-				HTTPFile httpFile = new HTTPFile(fileId);
-				file.setFileName(httpFile.getFileName());
+//				HTTPFile httpFile = new HTTPFile(fileId);
+				file.setFileName(file2.getName());
 				file.setCreatedTime(new Date());
-				file.setFileServerFormatId(fileId);
+				file.setFileServerFormatId(fileIdPath);
 				documentFileService.save(file);
 			}
 		}
-		return fileId;
+		return fileIdPath;
 	}
 
 	@ResponseBody
@@ -1180,37 +1185,18 @@ public class DocumentInfoController {
 				String fileType = fileName.substring(fileName.lastIndexOf(".") + 1);
 				// 如果文件是流式则流式转换为版式
 				if (!StringUtils.equals("ofd", fileType)) {
-					streamId = FileBaseUtil.fileServiceUpload(pdf[i]);
-					HTTPFile hf = new HTTPFile(streamId);
+					streamId = FileBaseUtil.fileServiceUploadByFilePath(pdf[i],filePath);
 					try {
-						String path = appConfig.getLocalFilePath() + UUIDUtils.random() + "." + hf.getSuffix();
-						try {
-							FileUtils.moveFile(new File(hf.getFilePath()), new File(path));
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						if (StringUtils.isNotBlank(path)) {
-							formatId = OfdTransferUtil.convertLocalFileToOFD(path);
-						}
-						// 删除本地的临时流式文件
-						if (new File(path).exists()) {
-							new File(path).delete();
+						if (StringUtils.isNotBlank(streamId)) {
+							formatId = OfdTransferUtil.convertLocalFileToOFDPath(streamId);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				} else {
-					formatId = FileBaseUtil.fileServiceUpload(pdf[i]);
+					formatId = FileBaseUtil.fileServiceUploadByFilePath(pdf[i],filePath);
 				}
 				if (StringUtils.isNotBlank(formatId)) {
-					if (i == 0) {
-						retFormatId = formatId;
-						// 获取版式文件的下载路径
-						HTTPFile httpFiles = new HTTPFile(formatId);
-						if (httpFiles != null) {
-							formatDownPath = httpFiles.getAssginDownloadURL(true);
-						}
-					}
 					// 保存文件相关数据
 					DocumentFile file = new DocumentFile();
 					file.setId(UUIDUtils.random());

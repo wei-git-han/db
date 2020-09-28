@@ -63,8 +63,6 @@ public class ImportController{
     BaseAppUserService baseAppUserService;    
     @Autowired
 	private SubDocTrackingService subDocTrackingService;
-	@Value("${filePath}")
-	private String filePath;
 	@Autowired
 	private DocumentDicService documentDicService;
 

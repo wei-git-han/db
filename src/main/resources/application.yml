@@ -135,9 +135,12 @@ csse.fileservice.domain: 172.16.201.140
 #文件服务端口
 csse.fileservice.port: 7003
 #文件服务生成文件的临时目录
-csse.fileservice.tempPath: c:/temp/storetemp/
+#csse.fileservice.tempPath: c:/temp/storetemp/
 #本地文件路径（应用中下载操作的默认文件保存路径）
-filePath: D:/download/ 
+#filePath: D:/download/ 
+
+uploadFile.path: \src\main\resources\static\app\db\uploadFile\
+css.file.uploadFile.path: \src\main\resources\static\app\db\uploadOFDFile\
 #文件服务----------------------------------end
 
 #本war的所有应用日志输出路径

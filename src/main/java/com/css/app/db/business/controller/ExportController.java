@@ -57,7 +57,7 @@ public class ExportController{
     ExportInvoke exportInvoke;    
     @Autowired
     DocumentDicService documentDicService;    
-	@Value("${filePath}")
+	@Value("${uploadFile.path}")
 	private String filePath;
 
 	

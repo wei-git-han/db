@@ -71,9 +71,9 @@ public class AppConfig {
 	 * 获得文件服务下载到应用服务器本地的路径
 	 * @return
 	 */
-	public String getLocalFilePath(){
+/*	public String getLocalFilePath(){
 		return env.getProperty("css.fileServcie.file.tempPath");
-	}
+	}*/
 	/**
 	 * 语音预定 会议室 路径头（点击此路径里链接到语音预定的会议室）
 	 * @return
@@ -87,5 +87,14 @@ public class AppConfig {
 	 */
 	public String getAppId(){
 		return env.getProperty("");
+	}
+	
+	
+	/**
+	 * 获得下载到本地项目下文件夹文件部分路径
+	 * @return
+	 */
+	public String getLocalOFDFilePath(){
+		return env.getProperty("css.file.uploadFile.path");
 	}
 }

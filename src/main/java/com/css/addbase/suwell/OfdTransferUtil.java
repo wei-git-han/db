@@ -45,8 +45,10 @@ import cpcns.util.WebMocker;
  */
 public class OfdTransferUtil{
 	private static Logger log = Logger.getLogger(OfdTransferUtil.class);
-	private static String tmpFilePath = ConvertServerConnect.initTmpFilePath();
+//	private static String tmpFilePath = ConvertServerConnect.initTmpFilePath();
 	private static HTTPAgent ha = ConvertServerConnect.initConvertServer();
+	
+	private static String tmpOFDFilePath = ConvertServerConnect.initTmpOFDFilePath();
 	/**
 	 * 将从扫描仪获取的文件流转换成OFD文件；（使用HTTPAgent的接口进行集成）
 	 * @param smwj	扫描件流数据
@@ -54,6 +56,7 @@ public class OfdTransferUtil{
 	 * @return	返回上传到文件服务后的ID
 	 */
 	public static String createdOFDFile(String smwj, String dataId) {
+		String path =FileBaseUtil.findPath()+tmpOFDFilePath;
 		try {
 			// 初始化转换类
 			if (ha == null) {
@@ -65,7 +68,7 @@ public class OfdTransferUtil{
 				// 扫描件是以流的形似从前台传递到后台，是以&符合进行分割每个扫描件的，这里需要进行解析
 				String[] s = smwj.split("&");
 				if (s != null && s.length > 0) {
-					List<String> imgPath = PictureToOfd.getImageFilePath(s, dataId, tmpFilePath);
+					List<String> imgPath = PictureToOfd.getImageFilePath(s, dataId, path);
 					if (imgPath != null && imgPath.size() > 0) {
 						List<File> imgFileList = new ArrayList<File>();
 						for(String img : imgPath) {
@@ -73,12 +76,12 @@ public class OfdTransferUtil{
 						}
 						if (imgFileList != null && imgFileList.size() > 0) {
 							// 生成的OFD文件存放路径
-							String ofdPath = tmpFilePath + "/" + dataId + ".ofd";
+							String ofdPath = path +dataId + ".ofd";
 							ha.imagesToOFD(imgFileList, new FileOutputStream(ofdPath), -1);
 							ha.close();
 							System.out.println("**********【扫描件】结束转换（createdOFDFile）***********" + System.currentTimeMillis());
 							// 将生成的ofd文件上传到文件服务
-							return FileBaseUtil.uploadFileToService(ofdPath, dataId + ".ofd");
+							return ofdPath;
 						}
 					}
 				}
@@ -94,13 +97,13 @@ public class OfdTransferUtil{
 		}
 		return null;
 	}
-	
-	/**
+	/*
+	*//**
 	 * 将本地单个文件转换成OFD文件；
 	 * 支持的文件格式：doc、docx、wps、uof、pdf等；
 	 * @param filePath	文件的路径；此路径只能是一个实体文件的路径；
 	 * @return	返回上传到文件服务后的ID
-	 */
+	 *//*
 	public static String convertLocalFileToOFD(String filePath) {
 		// 初始化转换类
 		if (ha == null) {
@@ -137,12 +140,12 @@ public class OfdTransferUtil{
 		} 
 		return null;
 	}
-	/**
+	*//**
 	 * 将本地单个文件转换成OFD文件(不经MD5)；
 	 * 支持的文件格式：doc、docx、wps、uof、pdf等；
 	 * @param filePath	文件的路径；此路径只能是一个实体文件的路径；
 	 * @return	返回上传到文件服务后的ID
-	 */
+	 *//*
 	public static String convertLocalFileNotByMD5ToOFD(String filePath) {
 		// 初始化转换类
 		if (ha == null) {
@@ -157,12 +160,12 @@ public class OfdTransferUtil{
 				String ofdPath = tmpFilePath + "/" + ofdName;
 				ha.officeToOFD(new File(filePath), new FileOutputStream(ofdPath));
 				ha.close();
-			/*	PackEntry filePack = PackEntry.wrap(new FileInputStream(filePath), MessageDigest.getInstance("MD5"));
+				PackEntry filePack = PackEntry.wrap(new FileInputStream(filePath), MessageDigest.getInstance("MD5"));
 				filePack.setHash(Hex.decodeHex(EncryptUtils.fileMD5(filePath).toCharArray()));
 	            packet.file(new Common("流式文件转版式文件", null, 0, filePack));
 	            ha.convert(packet, new FileOutputStream(ofdPath));
 	            ha.close();
-				packet.close();*/
+				packet.close();
 				System.out.println("**********结束转换（convertLocalFileToOFD）***********" + System.currentTimeMillis());
 				// 将生成的ofd文件上传到文件服务
 				return FileBaseUtil.uploadFileToService(ofdPath, ofdName); 
@@ -174,12 +177,12 @@ public class OfdTransferUtil{
 	}
 
 	
-	/**
+	*//**
 	 * 将单个文件对象转换成OFD文件；
 	 * 支持的文件格式：doc、docx、wps、uof、pdf等；
 	 * @param file	文件对象；
 	 * @return
-	 */
+	 *//*
 	public static String convertFileToOFD(File file) {
 		// 初始化转换类
 		if (ha == null) {
@@ -212,7 +215,7 @@ public class OfdTransferUtil{
 		return null;
 	}
 	
-	/**
+	*//**
 	 * 将单个远程文件转换成OFD文件；
 	 * 支持的文件格式：doc、docx、wps、uof、pdf等；
 	 * @param remotePath	远程文件地址；
@@ -220,7 +223,7 @@ public class OfdTransferUtil{
 	 * 						参数2为文件类型；（非必填）
 	 * 						参数3为文件流，远程地址；
 	 * @return
-	 */
+	 *//*
 	public static String convertRemoteFileToOFD(String remotePath) {
 		// 初始化转换类
 		if (ha == null) {
@@ -250,11 +253,11 @@ public class OfdTransferUtil{
 		return null;
 	}
 	
-	/**
+	*//**
 	 * 将单个文件流转换成OFD文件；
 	 * @param ins	文件流
 	 * @return	返回上传文件服务后的ID
-	 */
+	 *//*
 	public static String convertInstreamToOFD(InputStream ins) {
 		// 初始化转换类
 		if (ha == null) {
@@ -289,13 +292,13 @@ public class OfdTransferUtil{
 		return null;
 	}
 	
-	/**
+	*//**
 	 * 将多个文件合并生成一个OFD文件；注此处地址集合和文件名称及合顺序一一对应，如果二者大小不相等取默认文件名称参数title
 	 * @param filePath	本地文件地址集合
 	 * @param fileTitleList	本地文件名称集合
 	 * @param title 主文件标题（或默认标题）
 	 * @return	返回上传文件服务后的ID
-	 */
+	 *//*
 	public static String mergeConvertLocalToOFDWithTitle(List<String> filePath,List<String> fileTitleList,String title) {
 		// 初始化转换类
 		if (ha == null) {
@@ -352,11 +355,11 @@ public class OfdTransferUtil{
 		return null;
 	}
 	
-	/**
+	*//**
 	 * 将多个文件合并生成一个OFD文件；
 	 * @param filePath	文件地址集合；
 	 * @return	返回上传文件服务后的ID
-	 */
+	 *//*
 	public static String mergeConvertLocalToOFD(List<String> filePath) {
 		// 初始化转换类
 		if (ha == null) {
@@ -402,11 +405,11 @@ public class OfdTransferUtil{
 		return null;
 	}
 	
-	/**
+	*//**
 	 * 将多个文件合并生成一个OFD文件；
 	 * @param  fileList	文件对象集合；
 	 * @return	返回上传文件服务后的ID
-	 */
+	 *//*
 	public static String mergeConvertFileToOFD(List<File> fileList) {
 		// 初始化转换类
 		if (ha == null) {
@@ -443,7 +446,7 @@ public class OfdTransferUtil{
 			e.printStackTrace();
 		}
 		return null;
-	}
+	}*/
 	
 	/**
 	 * TODO: 旧版方法，使用ZIP打包的形式进行转换；
@@ -539,5 +542,55 @@ public class OfdTransferUtil{
 	public static String ofdMerge(List<String> filePathList, String dataTitle, String docId, String userName, String convertServiceUrl){
 		String fileFlag = OfdTransferUtil.convert(filePathList, dataTitle, convertServiceUrl, docId, userName);
 		return fileFlag;
+	}
+	
+	/**
+	 * 将本地单个文件转换成OFD文件；
+	 * 支持的文件格式：doc、docx、wps、uof、pdf等；
+	 * @param filePath	文件的路径；此路径只能是一个实体文件的路径；
+	 * @return	返回上传到文件服务后的ID
+	 */
+	public static String convertLocalFileToOFDPath(String filePath) {
+		String path =FileBaseUtil.findPath()+tmpOFDFilePath;
+		// 初始化转换类
+		if (ha == null) {
+			System.out.println("****（文件本地路径）未连接到转换服务地址，无法进行转换操作！****");
+			return null;
+		}
+		Packet packet = new Packet(Const.PackType.COMMON, Const.Target.OFD);
+		try {
+			if (StringUtils.isNotBlank(filePath)) {
+				File file2 = new File(path);
+				if(!file2.exists()) {
+					file2.mkdirs();
+				}
+				System.out.println("**********【单文件转换】开始转换（convertLocalFileToOFD）***********" + System.currentTimeMillis());
+				String ofdName = System.currentTimeMillis() + ".ofd";
+				String ofdPath = path;
+//				ha.officeToOFD(new File(filePath), new FileOutputStream(ofdPath));
+//				ha.close();
+				PackEntry filePack = PackEntry.wrap(new FileInputStream(filePath), MessageDigest.getInstance("MD5"));
+				filePack.setHash(Hex.decodeHex(EncryptUtils.fileMD5(filePath).toCharArray()));
+				// 获取文件的后缀
+				File file = new File(filePath);
+				String filename = file.getName();
+				String suffix = filename.substring(filename.lastIndexOf(".") + 1);
+				String suffix2 = filename.substring(0,filename.lastIndexOf(".") );
+	            // 2018-12-26 数科的转版服务要求知晓待转换文件的格式，将suffix传递过去
+				ofdPath =ofdPath + suffix2+"-"+ofdName;
+				packet.file(new Common("流式文件转版式文件", suffix, 0, filePack));
+	            ha.convert(packet, new FileOutputStream(ofdPath));
+	            ha.close();
+				packet.close();
+				System.out.println("**********【单文件转换】结束转换（convertLocalFileToOFD）***********" + System.currentTimeMillis());
+				// 将生成的ofd文件上传到文件服务
+				return ofdPath; 
+			}
+		} catch (IOException | ConvertException | PackException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} 
+		return null;
 	}
 }
