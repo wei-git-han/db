@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
+import com.css.addbase.FileBaseUtil;
 import com.css.app.db.business.entity.DocumentFile;
 import com.css.app.db.business.entity.DocumentInfo;
 import com.css.app.db.business.service.DocumentFileService;
@@ -107,7 +108,7 @@ public class DocumentFileController {
 	 */
 	@ResponseBody
 	@RequestMapping("/downLoadFile")
-	public void downLoadFile(String ids, String infoId){
+	public void downLoadFile(HttpServletResponse response,String ids, String infoId){
 		List<HTTPFile> httpFiles = new ArrayList<>();
 		HTTPFile httpFile = null;
 		if(StringUtils.isNotBlank(infoId)) {
@@ -118,13 +119,15 @@ public class DocumentFileController {
 				if(documentFile!=null) {
 					String formatId=documentFile.getFileServerFormatId();
 					if(StringUtils.isNotBlank(formatId)){
-						HTTPFile hf = new HTTPFile(formatId);
+						FileBaseUtil.download(formatId,response);
+						/*HTTPFile hf = new HTTPFile(formatId);
 						String fileName = documentFile.getFileName();
 						if(StringUtils.isNotBlank(fileName)) {
 							String substring = StringUtils.substring(fileName, 0,fileName.lastIndexOf("."));
-							hf.updateName(substring+".ofd");							
+							hf.updateName(substring+".ofd");	
+							String assginDownloadURL = hf.getAssginDownloadURL();
 						}
-						Response.json(hf.getAssginDownloadURL());
+						Response.json(hf.getAssginDownloadURL());*/
 					}
 				}
 			}else {
@@ -135,14 +138,15 @@ public class DocumentFileController {
 							if(documentFile!=null) {
 								String formatId=documentFile.getFileServerFormatId();
 								if(StringUtils.isNotBlank(formatId)){
-									//获取版式文件的下载路径
+									FileBaseUtil.download(formatId,response);
+								/*	//获取版式文件的下载路径
 									httpFile = new HTTPFile(formatId);
-									String fileName = documentFile.getFileName();
-									if(StringUtils.isNotBlank(fileName)) {
+									String fileName = documentFile.getFileName();*/
+									/*if(StringUtils.isNotBlank(fileName)) {
 										String substring = StringUtils.substring(fileName, 0,fileName.lastIndexOf("."));
 											httpFile.updateName(substring+".ofd");
 									}
-									httpFiles.add(httpFile);
+									httpFiles.add(httpFile);*/
 								}
 							}
 						} catch (Exception e) {

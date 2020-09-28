@@ -126,22 +126,11 @@ public class DocumentInfoController {
 					String fileType = fileName.substring(fileName.lastIndexOf(".") + 1);
 					// 如果文件是流式则流式转换为版式
 					if (!StringUtils.equals("ofd", fileType)) {
-						//streamId = FileBaseUtil.fileServiceUpload(pdf[i]);
-						//HTTPFile hf = new HTTPFile(streamId);
 						String p = FileBaseUtil.uploadFile(pdf[i],path1);
 						try {
 							String path = appConfig.getLocalFilePath() + UUIDUtils.random() + "." + fileName.substring(fileName.indexOf(".")+1,fileName.length());
-//							try {
-//								FileUtils.moveFile(new File(p), new File(p));
-//							} catch (IOException e) {
-//								e.printStackTrace();
-//							}
 							if (StringUtils.isNotBlank(path)) {
 								formatId = OfdTransferUtil.convertLocalFileToOFD(p);
-							}
-							// 删除本地的临时流式文件
-							if (new File(path).exists()) {
-								new File(path).delete();
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -150,7 +139,6 @@ public class DocumentInfoController {
 						formatId = FileBaseUtil.uploadFile(pdf[i],path1);
 					}
 					if (StringUtils.isNotBlank(formatId)) {
-
 						// 保存文件相关数据
 						DocumentFile file = new DocumentFile();
 						file.setId(UUIDUtils.random());
