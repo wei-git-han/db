@@ -959,13 +959,16 @@ $("#downLoadfj").click(function(){
 			}
 		})
 		if(checkId.length==1){
-			$.ajax({
+	        // 针对没有文件服务器的下载
+            window.location.href="/app/db/documentfile/downLoadFile?ids=" + checkId[0] + "&infoId="+fileId
+
+			/*$.ajax({
 				url:'/app/db/documentfile/downLoadFile',
 				data:{ids:checkId[0],infoId:fileId},
 				success:function(data){
 					window.location.href = data
 				}
-			})
+			})*/
 		}else{
 			window.location.href="/app/db/documentfile/downLoadFile?ids="+checkId.toString()+"&infoId="+fileId
 		}
