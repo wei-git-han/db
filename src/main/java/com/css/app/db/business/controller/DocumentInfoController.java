@@ -156,8 +156,8 @@ public class DocumentInfoController {
 						documentFileService.save(file);
 					}
 				}
-				json.put("smjId", retFormatId);
-				json.put("smjFilePath", formatDownPath);
+				json.put("smjId", formatId);
+				json.put("smjFilePath", formatId);
 				json.put("result", "success");
 			}
 		} else {
