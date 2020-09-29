@@ -1,5 +1,6 @@
 var id = getUrlParam("id");
 var infoId = getUrlParam("infoId");
+var dealUserId = getUrlParam("dealUserId");
 var chehuiUrl = {"url":"/app/db/withdraw/juAdministratorWithdraw","dataType":"text"};//撤回url
 var pageModule = function(){
 	var initother = function(){
@@ -8,7 +9,7 @@ var pageModule = function(){
 			if($("#isSure").val()=='撤回'||$("#isSure").val()=='是'){
 				$ajax({
 		 			url:chehuiUrl,
-		 			data:{subId:id, infoId:infoId},
+		 			data:{subId:id, infoId:infoId, dealUserId:dealUserId},
 		 			success:function(data){
 		 				if(data.result=='success'){
 		 					newbootbox.newdialogClose("ch_confim");

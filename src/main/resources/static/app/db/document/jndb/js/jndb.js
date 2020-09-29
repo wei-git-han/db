@@ -158,7 +158,7 @@ var pageModule = function(){
 		           	 if(rowdata.docStatus == "1"){
 		                	 caozuo +='<a title="转办" class="btn btn-default btn-xs new_button1" href="javascript:;" onclick="zhuanbanDoc(\''+rowdata.id+'\',\''+rowdata.infoId+'\',\''+fromMsg+'\')"><i class="fa fa-external-link"></i></a>';
 						 }else{
-							 caozuo+='<a title="撤回" class="btn btn-default btn-xs new_button1" href="javascript:;" onclick="chehuiDoc(\''+rowdata.id+'\',\''+rowdata.infoId+'\')"><i class="fa fa-mail-reply"></i></a>';
+							 caozuo+='<a title="撤回" class="btn btn-default btn-xs new_button1" href="javascript:;" onclick="chehuiDoc(\''+rowdata.id+'\',\''+rowdata.infoId+'\',\''+rowdata.dealUserId+'\')"><i class="fa fa-mail-reply"></i></a>';
 						 }
 		           	 return caozuo;
 		            }}
@@ -412,8 +412,8 @@ function dblsqkAlert(id){
 	})
 }
 
-//撤回
-function chehuiDoc(id, infoId){
+//撤回,添加dealUserId这个字段，处理角标问题
+function chehuiDoc(id, infoId, dealUserId){
 	newbootbox.newdialog({
 		id:"ch_confim",
 		width:400,
@@ -422,7 +422,7 @@ function chehuiDoc(id, infoId){
 		title:"撤回",
 		classed:"cjDialog",
 		style:{"padding":"1px","oveflow":"hidden"},
-		url:"/app/db/document/jndb/html/ch_confim.html?id="+id+"&infoId="+infoId
+		url:"/app/db/document/jndb/html/ch_confim.html?id="+id+"&infoId="+infoId + '&dealUserId='+ dealUserId
 	})
 }
 $("#goback").click(function(){

@@ -141,7 +141,7 @@ var pageModule = function(){
                 {display:"操作",name:"",width:"4%",align:"center",paixu:false,render:function(rowdata){
 	               	 var btnHtml="";
 	               	 if(rowdata.withdrawFlag == "1"){
-	               		btnHtml+='<a title="撤回" class="btn btn-default btn-xs new_button1" href="javascript:;" onclick="chehuiDoc(\''+rowdata.id+'\',\''+rowdata.infoId+'\')"><i class="fa fa-mail-reply"></i></a>';
+	               		btnHtml+='<a title="撤回" class="btn btn-default btn-xs new_button1" href="javascript:;" onclick="chehuiDoc(\''+rowdata.id+'\',\''+rowdata.infoId+'\',\''+rowdata.dealUserId+'\')"><i class="fa fa-mail-reply"></i></a>';
 	               	 }
 	               	 return btnHtml;
                }}
@@ -405,15 +405,15 @@ function dblsqkAlert(id){
 	})
 }
 
-//撤回
-function chehuiDoc(id, infoId){
+//撤回，添加dealUserId这个字段，处理角标问题
+function chehuiDoc(id, infoId, dealUserId){
 	newbootbox.confirm({
 	    title: "提示",
 	    message: "是否确认要进行撤回操作？",
 	    callback1:function(){
 	    	$ajax({
 	    		url:chehuiUrl,
-	    		data:{subId:id,infoId:infoId},
+	    		data:{subId:id,infoId:infoId,dealUserId:dealUserId},
 	    		success:function(data){
 	    			if(data.result=='success'){
 	    				newbootbox.alertInfo('撤回成功！').done(function(){
