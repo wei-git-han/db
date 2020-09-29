@@ -1,9 +1,12 @@
 package com.css.app.db.business.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,8 +112,6 @@ public class DocumentFileController {
 	@ResponseBody
 	@RequestMapping("/downLoadFile")
 	public void downLoadFile(HttpServletResponse response,String ids, String infoId){
-		List<HTTPFile> httpFiles = new ArrayList<>();
-		HTTPFile httpFile = null;
 		if(StringUtils.isNotBlank(infoId)) {
 			DocumentInfo docInfo = documentInfoService.queryObject(infoId);
 			String[] idArray = ids.split(",");
@@ -120,41 +121,18 @@ public class DocumentFileController {
 					String formatId=documentFile.getFileServerFormatId();
 					if(StringUtils.isNotBlank(formatId)){
 						FileBaseUtil.download(formatId,response);
-						/*HTTPFile hf = new HTTPFile(formatId);
-						String fileName = documentFile.getFileName();
-						if(StringUtils.isNotBlank(fileName)) {
-							String substring = StringUtils.substring(fileName, 0,fileName.lastIndexOf("."));
-							hf.updateName(substring+".ofd");	
-							String assginDownloadURL = hf.getAssginDownloadURL();
-						}
-						Response.json(hf.getAssginDownloadURL());*/
 					}
 				}
 			}else {
+				Long time = new Date().getTime();
+				String dowmloadNameZip =docInfo.getDocTitle()+"-"+time.toString()+"附件";
+				String [] pathFile = new String [idArray.length];
 				try {
-					for (String id : idArray) {
-						try {
-							DocumentFile documentFile = documentFileService.queryObject(id);
-							if(documentFile!=null) {
-								String formatId=documentFile.getFileServerFormatId();
-								if(StringUtils.isNotBlank(formatId)){
-									FileBaseUtil.download(formatId,response);
-								/*	//获取版式文件的下载路径
-									httpFile = new HTTPFile(formatId);
-									String fileName = documentFile.getFileName();*/
-									/*if(StringUtils.isNotBlank(fileName)) {
-										String substring = StringUtils.substring(fileName, 0,fileName.lastIndexOf("."));
-											httpFile.updateName(substring+".ofd");
-									}
-									httpFiles.add(httpFile);*/
-								}
-							}
-						} catch (Exception e) {
-							logger.info("下载公文异常：{}", e);
-							Response.json("result","fail");
-						}
+					for (int i = 0; i < idArray.length; i++) {
+						DocumentFile documentFile = documentFileService.queryObject(idArray[i]);
+						pathFile[i] = documentFile.getFileServerFormatId();
 					}
-					this.createZip(httpFiles, docInfo.getDocTitle()+".zip");
+					this.createZipInput(pathFile, dowmloadNameZip+".zip");
 				} catch (Exception e) {
 					logger.info("创建zip包异常：{}", e);
 				}
@@ -165,7 +143,7 @@ public class DocumentFileController {
 	}
 
 	/**
-	 * 支持公文批量下载打包zip
+	 * 支持公文批量下载打包zip，支持文件服务
 	 * @param zipFileName 
 	 * @param files
 	 * @param httpServletResponse
@@ -209,6 +187,55 @@ public class DocumentFileController {
 				}
 			}
 			logger.info("生成：{}包成功！", zipFileName);
+		}
+	}
+	
+	/**
+	 * 支持公文批量下载打包zip，不支持文件服务
+	 * @param zipFileName 下载的压缩包名称
+	 * @param pathFile 文件所在路径
+	 * @param httpServletResponse
+	 */
+	private void createZipInput(String[] pathFile, String zipFileName) {
+		InputStream inputStream = null;
+		ZipOutputStream zipOutputStream = null;
+		try {
+			//设置zip包名中文乱码问题
+			zipFileName = new String(zipFileName.getBytes(), StandardCharsets.ISO_8859_1);
+			httpServletResponse.setContentType("application/octet-stream");
+			httpServletResponse.setHeader("Content-Disposition", "attachment;filename="+zipFileName);
+			zipOutputStream = new ZipOutputStream(httpServletResponse.getOutputStream());
+			for (String String : pathFile) {
+				File file = new File(String);
+				inputStream =new FileInputStream(file);
+				zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
+				System.err.println(file.getName());
+				int length;
+				if (inputStream != null) {
+					while ((length = inputStream.read()) != -1) {
+						zipOutputStream.write(length);
+						zipOutputStream.flush();
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.info("创建zip包异常：{}",e);
+		}finally {
+			if (zipOutputStream != null) {
+				try {
+					zipOutputStream.close();
+				} catch (IOException e) {
+					logger.info("关闭zipOutputStream流异常：{}",e);
+				}
+			}
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					logger.info("关闭fileInputStream流异常：{}",e);
+				}
+			}
+			logger.info("生成：{}包成功！");
 		}
 	}
 }
