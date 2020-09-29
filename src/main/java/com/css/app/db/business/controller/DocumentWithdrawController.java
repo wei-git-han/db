@@ -113,15 +113,15 @@ public class DocumentWithdrawController {
 	 */
 	@RequestMapping("/juInnnerWithdraw")
 	@ResponseBody
-	public void juInnnerWithdraw(String subId, String infoId) {
+	public void juInnnerWithdraw(String subId, String infoId,String dealUserId) {
 		JSONObject json=new JSONObject();
 		//執行撤回操作
-		this.juInnnerTransactional(subId, infoId,json);
+		this.juInnnerTransactional(subId, infoId,json,dealUserId);
 		Response.json(json);
 	}
 	
 	@Transactional(rollbackFor = Exception.class)
-	private JSONObject juInnnerTransactional(String subId, String infoId, JSONObject json) {
+	private JSONObject juInnnerTransactional(String subId, String infoId, JSONObject json,String dealUserId) {
 		/**
 		 * 局內撤回：A->B(B沒有转办或者承办(承办中没有送审批或者已送审批还未审批，此时可以撤回))
 		 * 1、B没有转办支持撤回 ：取出当前用户ID，然后查询出转办记录表最新一条数据的用户ID对比即可；
@@ -223,6 +223,20 @@ public class DocumentWithdrawController {
 			}
 		}else {
 			json.put("result", "deal");
+		}
+
+		MsgTip msg = msgService.queryObject(MSGTipDefined.DCCB_SHENPIWANCHENG_MSG_TITLE);
+		if (msg != null) {
+			String msgUrl = msg.getMsgRedirect() + "&fileId=" + infoId + "&subId=" + subId;
+			if (StringUtils.isNotBlank(userId)) {
+				//给自己发空消息，只为触发角标更新
+				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
+						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+
+				//给被撤回人发空消息，只为触发角标更新
+				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, dealUserId, appId, clientSecret,
+						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+			}
 		}
 		return json;
 	}

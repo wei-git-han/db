@@ -62,7 +62,7 @@
 		<!-- 主文件要素 -->	
 		left join DB_DOCUMENT_INFO c on a.INFO_ID=c.ID
 		<!-- 当前处理人 -->
-		left join (select SUB_ID,RECEIVER_NAME as deal_user_name from (select SUB_ID,RECEIVER_NAME,row_number() over(partition by SUB_ID order by CREATED_TIME desc) as num from DB_SUB_DOC_TRACKING) where num=1) f on a.id=f.sub_id
+		left join (select SUB_ID,RECEIVER_NAME as deal_user_name,RECEIVER_ID as deal_user_id from (select SUB_ID,RECEIVER_NAME,RECEIVER_ID,row_number() over(partition by SUB_ID order by CREATED_TIME desc) as num from DB_SUB_DOC_TRACKING) where num=1) f on a.id=f.sub_id
 		<!-- 最新一条首长批示 -->
 		left join (
 		<!-- select INFO_ID,USER_NAME as leader_name ,LEADER_COMMENT as leader_content,CREATED_TIME as leader_time,row_number() over(partition by info_id order by created_time asc) as dNum from DB_DOCUMENT_SZPS -->
@@ -133,8 +133,8 @@
 		<!-- 主文件要素 -->	
 		left join DB_DOCUMENT_INFO c on a.INFO_ID=c.ID
 		<!-- 当前处理人 -->
-		left join (select SUB_ID,RECEIVER_NAME as deal_user_name from 
-		(select SUB_ID,RECEIVER_NAME,row_number() over(partition by SUB_ID order by CREATED_TIME desc) as num from DB_SUB_DOC_TRACKING) where num=1) f on a.id=f.sub_id
+		left join (select SUB_ID,RECEIVER_NAME as deal_user_name,RECEIVER_ID as deal_user_id from
+		(select SUB_ID,RECEIVER_NAME,RECEIVER_ID,row_number() over(partition by SUB_ID order by CREATED_TIME desc) as num from DB_SUB_DOC_TRACKING) where num=1) f on a.id=f.sub_id
 		<!-- 最新一条首长批示 -->
 		left join (
 		<!-- select INFO_ID,USER_NAME as leader_name ,LEADER_COMMENT as leader_content,CREATED_TIME as leader_time,row_number() over(partition by info_id order by created_time asc) as dNum from DB_DOCUMENT_SZPS -->
