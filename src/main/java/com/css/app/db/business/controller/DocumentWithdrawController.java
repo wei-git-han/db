@@ -4,9 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.css.addbase.msg.MSGTipDefined;
+import com.css.addbase.msg.MsgTipUtil;
+import com.css.addbase.msg.entity.MsgTip;
+import com.css.addbase.msg.service.MsgTipService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,6 +78,14 @@ public class DocumentWithdrawController {
 	private DocXbInfoService docXbInfoService;
 	@Autowired
 	private DocXbIdeaService docXbIdeaService;
+	@Autowired
+	private MsgTipService msgService;
+	@Autowired
+	private MsgTipUtil msgUtil;
+	@Value("${csse.dccb.appId}")
+	private String appId;
+	@Value("${csse.dccb.appSecret}")
+	private String clientSecret;
 
 	/**
 	 * 在局内待办菜单内增加局管理员超级撤回功能
@@ -83,11 +96,11 @@ public class DocumentWithdrawController {
 	 */
 	@RequestMapping("/juAdministratorWithdraw")
 	@ResponseBody
-	public void juAdministratorWithdraw(String subId, String infoId) {
+	public void juAdministratorWithdraw(String subId, String infoId,String dealUserId) {
 		JSONObject json=new JSONObject();
 		logger.info("subId:{}, infoId:{}",subId,infoId);
 		//執行撤回操作
-		juAdministratorTransactional(subId, infoId, json);
+		juAdministratorTransactional(subId, infoId, json,dealUserId);
 		Response.json(json);
 	}
 	
@@ -241,7 +254,7 @@ public class DocumentWithdrawController {
 		}
 	}
 	@Transactional(rollbackFor = Exception.class)
-	private JSONObject juAdministratorTransactional(String subId, String infoId, JSONObject json) {
+	private JSONObject juAdministratorTransactional(String subId, String infoId, JSONObject json,String dealUserId) {
 		/**
 		 * 管理员超级撤回需要删除后续所有操作记录，恢复局内待办状态
 		 * 1.首先更新主分支主记录表的文本处理状态dou_status = 1
@@ -359,6 +372,20 @@ public class DocumentWithdrawController {
 		if (docXbIdeas != null && docXbIdeas.size() > 0) {
 			for (DocXbIdea docXbIdea : docXbIdeas) {
 				docXbIdeaService.delete(docXbIdea.getId());
+			}
+		}
+		String userId = CurrentUser.getUserId();
+		MsgTip msg = msgService.queryObject(MSGTipDefined.DCCB_SHENPIWANCHENG_MSG_TITLE);
+		if (msg != null) {
+			String msgUrl = msg.getMsgRedirect() + "&fileId=" + infoId + "&subId=" + subId;
+			if (StringUtils.isNotBlank(userId)) {
+				//给自己发空消息，只为触发角标更新
+				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
+						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+
+				//给被撤回人发空消息，只为触发角标更新
+				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, dealUserId, appId, clientSecret,
+						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 			}
 		}
 		json.put("result", "success");

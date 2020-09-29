@@ -43,6 +43,7 @@ public class SubDocInfo implements Serializable {
 
 /*----------------------------以下字段只用来列表接收值用--------------start----------------------*/	
 	private String dealUserName;
+	private String dealUserId;
 	//文件标题
 	private String docTitle;
 	//密级
@@ -356,5 +357,13 @@ public class SubDocInfo implements Serializable {
 
 	public void setFirstReply(Integer firstReply) {
 		this.firstReply = firstReply;
+	}
+
+	public String getDealUserId() {
+		return dealUserId;
+	}
+
+	public void setDealUserId(String dealUserId) {
+		this.dealUserId = dealUserId;
 	}
 }
