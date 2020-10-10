@@ -163,7 +163,7 @@ public class MsgConfig {
 		// 消息接收方的平台；x86,arm64,amd64,win32等终端；
 		msgContent.put("platform", env.getProperty("msg.platform"));
 		// 消息是否在消息盒子可见；
-		msgContent.put("visible", "false");
+		msgContent.put("visible", false);
 		// 消息显示的图标，默认由桌面提供
 		msgContent.put("icon", env.getProperty("msg.icon"));
 		// 设置消息时间戳
