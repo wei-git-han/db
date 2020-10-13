@@ -233,6 +233,13 @@ var pageModule = function(){
 					$.each(data,function(i,item){
 						if(i==0){
 							scanId = item.id;
+                            $ajax({
+                                url:getFormatFileUrl,
+                                data:{id:scanId},
+                                success:function(data){
+                                    psLoad(data.formatId,data.downFormatIdUrl);
+                                }
+                            });
 						}
 						$("#file_all").append(
 							'<li><input type="checkbox" name="fjcheckbox" data="'+item.id+'" /> <a data="'+item.id+'">'+item.fileName+'</a></li>'
@@ -240,13 +247,7 @@ var pageModule = function(){
 					});
 				}
 				
-				$ajax({
-					url:getFormatFileUrl,
-					data:{id:scanId},
-					success:function(data){
-						psLoad(data.formatId,data.downFormatIdUrl);
-					}
-		    	});
+
 				
 				//相关文件点击事件
 				$("#file_all>li>a").click(function(){
