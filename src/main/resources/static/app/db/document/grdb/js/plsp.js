@@ -1,4 +1,5 @@
 var passUrl = {"url":"/app/db/subdocinfo/batchFinishOperation","dataType":"text"};//审批通过   ---静态地址、待修改
+var pushTodo={"url":"/api/db/todo","dataType":"text"}; 
 var ids=getUrlParam("ids")||""; //主文件id
 var curRole=getUrlParam("curRole")||"6"; //主文件id
 var pageModule = function(){
@@ -20,6 +21,12 @@ var pageModule = function(){
 							if(data.result=='success'){
 								newbootbox.alertInfo('公文已审批通过！').done(function(){
 									window.top.iframe1.pageModule.initgrid();
+									$ajax({
+			    						url:pushTodo,
+			    						data:{},
+			    						success:function(data){}
+			    					});	
+									window.top.grdbfn()
 								});
 							}else{
 								newbootbox.alertInfo('审批未通过！');

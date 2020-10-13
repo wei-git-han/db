@@ -6,7 +6,6 @@ var chehuiUrl = {"url":"/app/db/withdraw/juInnnerWithdraw","dataType":"text"};//
 var currUserRoleTypeUrl = {"url":"/app/db/subdocinfo/currUserRoleType","dataType":"text"};//获取当前用户的角色类型
 var buttonColorUrl={"url":"/app/db/addXbDeal/buttonColor","dataType":"text"}; //发送意见url
 var pushTodo={"url":"/api/db/todo","dataType":"text"}; 
-var grdbMenuNums={"url":"/app/db/subdocinfo/grdbMenuNums","dataType":"text"}; 
 
 var grid = null;
 var total=0;//列表中，数据的总条数
@@ -425,11 +424,7 @@ function chehuiDoc(id, infoId, dealUserId){
 	    						data:{},
 	    						success:function(data){}
 	    					});	
-	    					$ajax({
-	    						url:grdbMenuNums,
-	    						data:{},
-	    						success:function(data){}
-	    					});	
+	    					window.top.grdbfn()
 	    				});
 	    			}else if(data.result=='deal'){
 	    				newbootbox.alertInfo('当前文件已被处理，不能撤回！').done(function(){
