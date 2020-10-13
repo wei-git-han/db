@@ -382,7 +382,7 @@ public class FileBaseUtil {
 			String lastFilePath = filePath + fileName + substring;
 			out = new FileOutputStream(lastFilePath);
 			out.write(fileStream.getBytes());
-			String fileUrl =localAddress+ "app/db/documentinfo/download?path=" + targetFile.getAbsolutePath();
+			String fileUrl =localAddress+ "app/db/documentinfo/download?path=" + lastFilePath;
 			return fileUrl;
 		} catch (Exception e) {
 			e.printStackTrace();
