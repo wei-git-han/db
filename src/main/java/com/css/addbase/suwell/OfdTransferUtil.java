@@ -550,7 +550,7 @@ public class OfdTransferUtil{
 	 * @param filePath	文件的路径；此路径只能是一个实体文件的路径；
 	 * @return	返回上传到文件服务后的ID
 	 */
-	public static String convertLocalFileToOFDPath(String filePath) {
+	public static String convertLocalFileToOFDPath(String filePath,String localAddress) {
 		String path =FileBaseUtil.findPath()+tmpOFDFilePath;
 		// 初始化转换类
 		if (ha == null) {
@@ -584,7 +584,8 @@ public class OfdTransferUtil{
 				packet.close();
 				System.out.println("**********【单文件转换】结束转换（convertLocalFileToOFD）***********" + System.currentTimeMillis());
 				// 将生成的ofd文件上传到文件服务
-				return ofdPath; 
+				String fileUrl =localAddress+ "app/db/documentinfo/download?path=" + ofdPath;
+				return fileUrl; 
 			}
 		} catch (IOException | ConvertException | PackException e) {
 			e.printStackTrace();

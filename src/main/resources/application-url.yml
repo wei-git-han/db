@@ -7,3 +7,4 @@ csse.mircoservice.org: /api/org
 
 csse.mircoservice.msg: /api/msg
 
+#csse.mircoservice.org: /platform/api2/sync/v1

@@ -24,6 +24,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import cn.com.css.filestore.impl.HTTPFile;
@@ -35,6 +36,9 @@ import cn.com.css.filestore.impl.HTTPFile;
  *         2017-5-30
  */
 public class FileBaseUtil {
+	
+	
+	
 	public FileBaseUtil() {
 
 	}
@@ -358,7 +362,7 @@ public class FileBaseUtil {
 	 * @author fileId 文件在文件服务中的唯一标识
 	 * @author gengds
 	 */
-	public static String fileServiceUploadByFilePath(MultipartFile fileStream, String filePath) {
+	public static String fileServiceUploadByFilePath(MultipartFile fileStream, String filePath,String localAddress) {
 		if (fileStream == null || StringUtils.isEmpty(fileStream.getOriginalFilename())) {
 			return "";
 		}
@@ -378,8 +382,8 @@ public class FileBaseUtil {
 			String lastFilePath = filePath + fileName + substring;
 			out = new FileOutputStream(lastFilePath);
 			out.write(fileStream.getBytes());
-			//String fileUrl = "http://127.0.0.1:11008/app/db/uploadFile/" + fileName + substring;
-			return lastFilePath;
+			String fileUrl =localAddress+ "app/db/documentinfo/download?path=" + targetFile.getAbsolutePath();
+			return fileUrl;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -402,6 +406,56 @@ public class FileBaseUtil {
 	public static String findPath() {
 		String url = System.getProperty("user.dir");
 		return url;
+	}
+	
+	
+	/**
+	 * 不使用文件服务上传，上传文件保存本地
+	 * 
+	 * @param fileStream
+	 *            文件流
+	 * @author fileId 文件在文件服务中的唯一标识
+	 * @author gengds
+	 */
+	public static String fileServiceUploadByFilePathLiuShi(MultipartFile fileStream, String filePath,String localAddress) {
+		if (fileStream == null || StringUtils.isEmpty(fileStream.getOriginalFilename())) {
+			return "";
+		}
+		filePath = findPath() + filePath;
+		String fileName = fileStream.getOriginalFilename();
+		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+		String date = format.format(new Date());
+		String substring = fileName.substring(fileName.indexOf(".")); // 文件后缀.ofd
+		String substring2 = fileName.substring(0, fileName.indexOf("."));// 文件名称无后缀
+		fileName = substring2 + date;
+		File targetFile = new File(filePath);
+		if (!targetFile.exists()) {
+			targetFile.mkdirs();
+		}
+		FileOutputStream out = null;
+		try {
+			String lastFilePath = filePath + fileName + substring;
+			out = new FileOutputStream(lastFilePath);
+			out.write(fileStream.getBytes());
+			//String fileUrl =localAddress+ "app/db/documentinfo/download?path=" + targetFile.getAbsolutePath();
+			return lastFilePath;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (out != null) {
+				try {
+					out.flush();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				try {
+					out.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return "";
 	}
 
 }

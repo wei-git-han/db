@@ -1,7 +1,10 @@
 package com.css.app.db.business.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -10,6 +13,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -104,6 +110,9 @@ public class DocumentInfoController {
 	
 	@Value("${uploadFile.path}")
 	private  String filePath;
+	
+	@Value("${localAddress}")
+	private  String localAddress;
 
 	/**
 	 * 文件上传保存
@@ -122,6 +131,8 @@ public class DocumentInfoController {
 		String streamId = null;// 流式文件id
 		String formatId = null;// 版式文件id
 		JSONObject json = new JSONObject();
+		String type ="1";
+		String showStreamDownload = "1";
 		if (StringUtils.isNotBlank(idpdf)) {
 			if (pdf != null && pdf.length > 0) {
 				for (int i = 0; i < pdf.length; i++) {
@@ -130,16 +141,18 @@ public class DocumentInfoController {
 					String fileType = fileName.substring(fileName.lastIndexOf(".") + 1);
 					// 如果文件是流式则流式转换为版式
 					if (!StringUtils.equals("ofd", fileType)) {
-						streamId = FileBaseUtil.fileServiceUploadByFilePath(pdf[i],filePath);
+						streamId = FileBaseUtil.fileServiceUploadByFilePathLiuShi(pdf[i],filePath,localAddress);
 						try {
 							if (StringUtils.isNotBlank(streamId)) {
-								formatId = OfdTransferUtil.convertLocalFileToOFDPath(streamId);
+								formatId = OfdTransferUtil.convertLocalFileToOFDPath(streamId,localAddress);
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					} else {
-						formatId = FileBaseUtil.fileServiceUploadByFilePath(pdf[i],filePath);
+						formatId = FileBaseUtil.fileServiceUploadByFilePath(pdf[i],filePath,localAddress);
+						showStreamDownload ="2";
+						type = "2";
 					}
 					if (StringUtils.isNotBlank(formatId)) {
 						// 保存文件相关数据
@@ -159,6 +172,9 @@ public class DocumentInfoController {
 				json.put("smjId", formatId);
 				json.put("smjFilePath", formatId);
 				json.put("result", "success");
+	/*			json.put("url", formatId);
+				json.put("type", type);
+				json.put("showStreamDownload", showStreamDownload);*/
 			}
 		} else {
 			json.put("result", "fail");
@@ -1185,16 +1201,16 @@ public class DocumentInfoController {
 				String fileType = fileName.substring(fileName.lastIndexOf(".") + 1);
 				// 如果文件是流式则流式转换为版式
 				if (!StringUtils.equals("ofd", fileType)) {
-					streamId = FileBaseUtil.fileServiceUploadByFilePath(pdf[i],filePath);
+					streamId = FileBaseUtil.fileServiceUploadByFilePathLiuShi(pdf[i],filePath,localAddress);
 					try {
 						if (StringUtils.isNotBlank(streamId)) {
-							formatId = OfdTransferUtil.convertLocalFileToOFDPath(streamId);
+							formatId = OfdTransferUtil.convertLocalFileToOFDPath(streamId,localAddress);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				} else {
-					formatId = FileBaseUtil.fileServiceUploadByFilePath(pdf[i],filePath);
+					formatId = FileBaseUtil.fileServiceUploadByFilePath(pdf[i],filePath,localAddress);
 				}
 				if (StringUtils.isNotBlank(formatId)) {
 					// 保存文件相关数据
@@ -1211,11 +1227,40 @@ public class DocumentInfoController {
 					documentFileService.save(file);
 				}
 			}
-			json.put("smjId", retFormatId);
-			json.put("smjFilePath", formatDownPath);
+			json.put("smjId", formatId);
+			json.put("smjFilePath", formatId);
 			json.put("result", "success");
 		}
 		Response.json(json);
 	}
 
+	@ResponseBody
+	@RequestMapping("/download")
+	public HttpServletResponse download(HttpServletResponse response,String path) {
+		File file = new File(path);
+		try {
+			FileInputStream fis = new FileInputStream(file);
+            response.setContentType("application/force-download");
+            response.setCharacterEncoding("UTF-8");
+            response.addHeader("Content-Disposition", "attachment;filename="+new String(file.getName().getBytes(),"ISO-8859-1"));
+            ServletOutputStream os = response.getOutputStream();
+            byte[] buf = new byte[1024];
+            int len = 0;
+            while((len = fis.read(buf)) !=-1) {
+            	os.write(buf,0,len);
+            }
+            fis.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return response;
+	}
+	
 }

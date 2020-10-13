@@ -28,6 +28,8 @@ import com.css.app.db.business.entity.DocumentFile;
 import com.css.app.db.business.entity.DocumentInfo;
 import com.css.app.db.business.service.DocumentFileService;
 import com.css.app.db.business.service.DocumentInfoService;
+import com.css.base.entity.SSOUser;
+import com.css.base.filter.SSOAuthFilter;
 import com.css.base.utils.Response;
 import com.css.base.utils.StringUtils;
 
@@ -84,6 +86,7 @@ public class DocumentFileController {
 				//HTTPFile httpFiles = new HTTPFile(formatId);
 				//if(httpFiles!=null) {
 					//json.put("formatId", formatId);
+				formatId = formatId +"&access_token="+SSOAuthFilter.getToken();
 					json.put("downFormatIdUrl", formatId);
 				//}
 			}
@@ -120,7 +123,8 @@ public class DocumentFileController {
 				if(documentFile!=null) {
 					String formatId=documentFile.getFileServerFormatId();
 					if(StringUtils.isNotBlank(formatId)){
-						FileBaseUtil.download(formatId,response);
+						String s = formatId.substring(formatId.indexOf("=")+1, formatId.length());
+						FileBaseUtil.download(s,response);
 					}
 				}
 			}else {
@@ -206,7 +210,8 @@ public class DocumentFileController {
 			httpServletResponse.setHeader("Content-Disposition", "attachment;filename="+zipFileName);
 			zipOutputStream = new ZipOutputStream(httpServletResponse.getOutputStream());
 			for (String String : pathFile) {
-				File file = new File(String);
+				String s = String.substring(String.indexOf("=")+1, String.length());
+				File file = new File(s);
 				inputStream =new FileInputStream(file);
 				zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
 				System.err.println(file.getName());
