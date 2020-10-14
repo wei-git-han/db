@@ -1,5 +1,6 @@
 var deptTreeUrl = {"url":"/app/base/user/tree","dataType":"text"}; //部门树
 var sureUrl = {"url":"/app/db/subdocinfo/batchSendOperation","dataType":"text"}; //保存
+var pushTodo={"url":"/api/db/todo","dataType":"text"}; 
 var fileId=getUrlParam("ids"); //主文件id
 var content=getUrlParam2("content"); //意见内容
 var userId="";
@@ -52,6 +53,12 @@ var pageModule = function(){
 					if(data.result=="success"){
 						newbootbox.alert("公文均已送审批！").done(function(){
 							window.top.iframe1.pageModule.initgrid();
+							$ajax({
+	    						url:pushTodo,
+	    						data:{},
+	    						success:function(data){}
+	    					});	
+							window.top.grdbfn()
 						});
 					}else{
 						newbootbox.alert("送审批失败！");
