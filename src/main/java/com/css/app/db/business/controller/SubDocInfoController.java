@@ -885,6 +885,19 @@ public class SubDocInfoController {
 			logger.info("批量审批传入subIds：{}", subIds);
 			jsonObject.put("result", "fail");
 		}
+		MsgTip msg = msgService.queryObject(MSGTipDefined.DCCB_SONGSHEN_MSG_TITLE);
+		String currentUsreId = CurrentUser.getUserId();
+		if (msg != null) {
+			String msgUrl = "";
+			if (StringUtils.isNotBlank(userId)) {
+				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
+						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+			}
+			if(StringUtils.isNotBlank(currentUsreId)){
+				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, currentUsreId, appId, clientSecret,
+						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+			}
+		}
 		jsonObject.put("result", "success");
 		// jsonObject.put("count", count);
 		Response.json(jsonObject);
