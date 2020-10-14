@@ -1046,6 +1046,13 @@ public class SubDocInfoController {
 				continue;
 			}
 		}
+		String currentUserId = CurrentUser.getUserId();
+		MsgTip msg = msgService.queryObject(MSGTipDefined.DCCB_TUIHUI_MSG_TITLE);
+		if (msg != null) {
+			String msgUrl = "";
+			msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, currentUserId, appId, clientSecret,
+					msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+		}
 		Response.json(json);
 	}
 
