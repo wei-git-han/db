@@ -133,6 +133,7 @@ public class DocumentInfoController {
 		JSONObject json = new JSONObject();
 		String type ="1";
 		String showStreamDownload = "1";
+		String uuId = null;
 		if (StringUtils.isNotBlank(idpdf)) {
 			if (pdf != null && pdf.length > 0) {
 				for (int i = 0; i < pdf.length; i++) {
@@ -157,7 +158,8 @@ public class DocumentInfoController {
 					if (StringUtils.isNotBlank(formatId)) {
 						// 保存文件相关数据
 						DocumentFile file = new DocumentFile();
-						file.setId(UUIDUtils.random());
+						uuId = UUIDUtils.random();
+						file.setId(uuId);
 						file.setDocInfoId(idpdf);
 						file.setSort(documentFileService.queryMinSort(idpdf));
 						file.setFileName(fileName);
@@ -169,7 +171,7 @@ public class DocumentInfoController {
 						documentFileService.save(file);
 					}
 				}
-				json.put("smjId", formatId);
+				json.put("smjId", uuId);
 				json.put("smjFilePath", formatId);
 				json.put("result", "success");
 	/*			json.put("url", formatId);
@@ -1173,6 +1175,7 @@ public class DocumentInfoController {
 		String retFormatId = null;// 返回的版式文件id
 		String streamId = null;// 流式文件id
 		String formatId = null;// 版式文件id
+		String uuId = null;
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		JSONObject json = new JSONObject();
 		if (pdf != null && pdf.length > 0) {
@@ -1215,7 +1218,8 @@ public class DocumentInfoController {
 				if (StringUtils.isNotBlank(formatId)) {
 					// 保存文件相关数据
 					DocumentFile file = new DocumentFile();
-					file.setId(UUIDUtils.random());
+					uuId = UUIDUtils.random();
+					file.setId(uuId);
 					file.setDocInfoId(uuid);
 					file.setSort(documentFileService.queryMinSort(uuid));
 					file.setFileName(fileName);
@@ -1227,7 +1231,7 @@ public class DocumentInfoController {
 					documentFileService.save(file);
 				}
 			}
-			json.put("smjId", formatId);
+			json.put("smjId", uuId);
 			json.put("smjFilePath", formatId);
 			json.put("result", "success");
 		}
