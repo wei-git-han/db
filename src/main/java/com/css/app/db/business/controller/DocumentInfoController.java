@@ -147,7 +147,8 @@ public class DocumentInfoController {
 						streamId = FileBaseUtil.fileServiceUploadByFilePathLiuShi(pdf[i],filePath,localAddress);
 						try {
 							if (StringUtils.isNotBlank(streamId)) {
-								formatId = OfdTransferUtil.convertLocalFileToOFDPath(streamId,localAddress);
+								map = OfdTransferUtil.convertLocalFileToOFDPath(streamId,localAddress);
+								formatId = (String)map.get("fileUrl");
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -155,24 +156,25 @@ public class DocumentInfoController {
 					} else {
 						map = FileBaseUtil.fileServiceUploadByFilePath1(pdf[i],filePath,localAddress);
 						formatId = (String)map.get("fileUrl");
-						if (StringUtils.isNotBlank(formatId)) {
-							// 保存文件相关数据
-							DocumentFile file = new DocumentFile();
-							uuId = UUIDUtils.random();
-							file.setId(uuId);
-							file.setDocInfoId(idpdf);
-							file.setSort(documentFileService.queryMinSort(idpdf));
-							file.setFileName(fileName);
-							file.setCreatedTime(new Date());
-							if (StringUtils.isNotBlank(streamId)) {
-								file.setFileServerStreamId(streamId);
-							}
-							file.setFileServerFormatId((String)map.get("fileName1"));
-							file.setFileSavePath((String)map.get("filePath1"));
-							documentFileService.save(file);
-						}
+
 						showStreamDownload ="2";
 						type = "2";
+					}
+					if (StringUtils.isNotBlank(formatId)) {
+						// 保存文件相关数据
+						DocumentFile file = new DocumentFile();
+						uuId = UUIDUtils.random();
+						file.setId(uuId);
+						file.setDocInfoId(idpdf);
+						file.setSort(documentFileService.queryMinSort(idpdf));
+						file.setFileName(fileName);
+						file.setCreatedTime(new Date());
+						if (StringUtils.isNotBlank(streamId)) {
+							file.setFileServerStreamId(streamId);
+						}
+						file.setFileServerFormatId((String)map.get("fileName1"));
+						file.setFileSavePath((String)map.get("filePath1"));
+						documentFileService.save(file);
 					}
 
 				}
@@ -1181,6 +1183,7 @@ public class DocumentInfoController {
 		String streamId = null;// 流式文件id
 		String formatId = null;// 版式文件id
 		String uuId = null;
+		Map<String,Object> map = null;
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		JSONObject json = new JSONObject();
 		if (pdf != null && pdf.length > 0) {
@@ -1212,7 +1215,7 @@ public class DocumentInfoController {
 					streamId = FileBaseUtil.fileServiceUploadByFilePathLiuShi(pdf[i],filePath,localAddress);
 					try {
 						if (StringUtils.isNotBlank(streamId)) {
-							formatId = OfdTransferUtil.convertLocalFileToOFDPath(streamId,localAddress);
+							map = OfdTransferUtil.convertLocalFileToOFDPath(streamId,localAddress);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -1260,15 +1263,10 @@ public class DocumentInfoController {
             int len = 0;
             while((len = fis.read(buf)) !=-1) {
             	os.write(buf,0,len);
+            	os.flush();
             }
             fis.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		

@@ -85,13 +85,8 @@ public class DocumentFileController {
 		if(documentFile!=null) {
 			String formatId=documentFile.getFileServerFormatId();
 			if(StringUtils.isNotBlank(formatId)){
-				//获取版式文件的下载路径
-				//HTTPFile httpFiles = new HTTPFile(formatId);
-				//if(httpFiles!=null) {
-					//json.put("formatId", formatId);
 				formatId =localAddress + "app/db/documentinfo/download?id=" + id+"&access_token="+SSOAuthFilter.getToken() ;
-					json.put("downFormatIdUrl", formatId);
-				//}
+				json.put("downFormatIdUrl", formatId);
 			}
 		}
 		Response.json(json);

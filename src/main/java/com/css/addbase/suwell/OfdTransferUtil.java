@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.css.base.utils.UUIDUtils;
 import org.apache.log4j.Logger;
 
 import com.css.addbase.FileBaseUtil;
@@ -550,7 +551,8 @@ public class OfdTransferUtil{
 	 * @param filePath	文件的路径；此路径只能是一个实体文件的路径；
 	 * @return	返回上传到文件服务后的ID
 	 */
-	public static String convertLocalFileToOFDPath(String filePath,String localAddress) {
+	public static Map<String,Object> convertLocalFileToOFDPath(String filePath,String localAddress) {
+		Map<String,Object> map = new HashMap<>();
 		String path =FileBaseUtil.findPath()+tmpOFDFilePath;
 		// 初始化转换类
 		if (ha == null) {
@@ -577,15 +579,22 @@ public class OfdTransferUtil{
 				String suffix = filename.substring(filename.lastIndexOf(".") + 1);
 				String suffix2 = filename.substring(0,filename.lastIndexOf(".") );
 	            // 2018-12-26 数科的转版服务要求知晓待转换文件的格式，将suffix传递过去
-				ofdPath =ofdPath + suffix2+"-"+ofdName;
+				String fileName1 = UUIDUtils.random();
+				ofdPath =ofdPath + fileName1+".ofd";
 				packet.file(new Common("流式文件转版式文件", suffix, 0, filePack));
 	            ha.convert(packet, new FileOutputStream(ofdPath));
 	            ha.close();
 				packet.close();
 				System.out.println("**********【单文件转换】结束转换（convertLocalFileToOFD）***********" + System.currentTimeMillis());
 				// 将生成的ofd文件上传到文件服务
-				String fileUrl =localAddress+ "app/db/documentinfo/download?path=" + ofdPath;
-				return fileUrl; 
+				String s = path + fileName1 + ".ofd";
+				String fileUrl =localAddress+ "app/db/documentinfo/download?path=" + s;
+				map.put("filePath",path);
+				map.put("fileName1",fileName1);
+				map.put("substring",".ofd");
+				map.put("fileUrl",fileUrl);
+				map.put("filePath1",s);
+				return map;
 			}
 		} catch (IOException | ConvertException | PackException e) {
 			e.printStackTrace();

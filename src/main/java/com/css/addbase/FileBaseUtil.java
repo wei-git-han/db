@@ -483,7 +483,6 @@ public class FileBaseUtil {
 			out = new FileOutputStream(lastFilePath);
 			out.write(fileStream.getBytes());
 			String fileUrl =localAddress+ "app/db/documentinfo/download?id=" + lastFilePath;
-			String filePath1 = localAddress+ "app/db/documentinfo/download?id=";
 			map.put("filePath",filePath);
 			map.put("fileName1",fileName1);
 			map.put("substring",substring);
