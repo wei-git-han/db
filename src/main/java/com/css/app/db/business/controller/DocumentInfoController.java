@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import com.css.base.filter.SSOAuthFilter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,6 +131,7 @@ public class DocumentInfoController {
 		String retFormatId = null;// 返回的版式文件id
 		String streamId = null;// 流式文件id
 		String formatId = null;// 版式文件id
+		Map<String,Object> map = new HashMap<>();
 		JSONObject json = new JSONObject();
 		String type ="1";
 		String showStreamDownload = "1";
@@ -151,28 +153,31 @@ public class DocumentInfoController {
 							e.printStackTrace();
 						}
 					} else {
-						formatId = FileBaseUtil.fileServiceUploadByFilePath(pdf[i],filePath,localAddress);
+						map = FileBaseUtil.fileServiceUploadByFilePath1(pdf[i],filePath,localAddress);
+						formatId = (String)map.get("fileUrl");
+						if (StringUtils.isNotBlank(formatId)) {
+							// 保存文件相关数据
+							DocumentFile file = new DocumentFile();
+							uuId = UUIDUtils.random();
+							file.setId(uuId);
+							file.setDocInfoId(idpdf);
+							file.setSort(documentFileService.queryMinSort(idpdf));
+							file.setFileName(fileName);
+							file.setCreatedTime(new Date());
+							if (StringUtils.isNotBlank(streamId)) {
+								file.setFileServerStreamId(streamId);
+							}
+							file.setFileServerFormatId((String)map.get("fileName1"));
+							file.setFileSavePath((String)map.get("filePath1"));
+							documentFileService.save(file);
+						}
 						showStreamDownload ="2";
 						type = "2";
 					}
-					if (StringUtils.isNotBlank(formatId)) {
-						// 保存文件相关数据
-						DocumentFile file = new DocumentFile();
-						uuId = UUIDUtils.random();
-						file.setId(uuId);
-						file.setDocInfoId(idpdf);
-						file.setSort(documentFileService.queryMinSort(idpdf));
-						file.setFileName(fileName);
-						file.setCreatedTime(new Date());
-						if (StringUtils.isNotBlank(streamId)) {
-							file.setFileServerStreamId(streamId);
-						}
-						file.setFileServerFormatId(formatId);
-						documentFileService.save(file);
-					}
+
 				}
 				json.put("smjId", uuId);
-				json.put("smjFilePath", formatId);
+				json.put("smjFilePath", map.get("fileName1"));
 				json.put("result", "success");
 	/*			json.put("url", formatId);
 				json.put("type", type);
@@ -1240,7 +1245,10 @@ public class DocumentInfoController {
 
 	@ResponseBody
 	@RequestMapping("/download")
-	public HttpServletResponse download(HttpServletResponse response,String path) {
+	public HttpServletResponse download(HttpServletResponse response,String id) {
+		DocumentFile documentFile = documentFileService.queryObject(id);
+		String path =documentFile.getFileSavePath();
+		//+"&access_token="+SSOAuthFilter.getToken()
 		File file = new File(path);
 		try {
 			FileInputStream fis = new FileInputStream(file);

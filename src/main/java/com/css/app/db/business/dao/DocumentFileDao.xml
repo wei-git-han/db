@@ -35,7 +35,8 @@
 			"SORT", 
 			"CREATED_TIME", 
 			"FILE_SERVER_STREAM_ID", 
-			"FILE_SERVER_FORMAT_ID"
+			"FILE_SERVER_FORMAT_ID",
+			"FILE_SAVE_PATH"
 		)
 		values
 		(
@@ -45,7 +46,8 @@
 			#{sort}, 
 			#{createdTime}, 
 			#{fileServerStreamId}, 
-			#{fileServerFormatId}
+			#{fileServerFormatId},
+			#{fileSavePath}
 		)
 	</insert>
 	 
@@ -57,7 +59,8 @@
 			<if test="sort != null">"SORT" = #{sort}, </if>
 			<if test="createdTime != null">"CREATED_TIME" = #{createdTime}, </if>
 			<if test="fileServerStreamId != null">"FILE_SERVER_STREAM_ID" = #{fileServerStreamId}, </if>
-			<if test="fileServerFormatId != null">"FILE_SERVER_FORMAT_ID" = #{fileServerFormatId}</if>
+			<if test="fileServerFormatId != null">"FILE_SERVER_FORMAT_ID" = #{fileServerFormatId},</if>
+			<if test="fileSavePath != null">"FILE_SAVE_PATH" = #{fileSavePath}</if>
 		</set>
 		where ID = #{id}
 	</update>

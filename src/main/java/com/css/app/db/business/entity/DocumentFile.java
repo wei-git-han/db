@@ -29,6 +29,16 @@ public class DocumentFile implements Serializable {
 	private String fileServerStreamId;
 	//文件服务版式ID
 	private String fileServerFormatId;
+	//文件保存路径
+	private String fileSavePath;
+
+	public String getFileSavePath() {
+		return fileSavePath;
+	}
+
+	public void setFileSavePath(String fileSavePath) {
+		this.fileSavePath = fileSavePath;
+	}
 
 	/**
 	 * 设置：唯一标识
