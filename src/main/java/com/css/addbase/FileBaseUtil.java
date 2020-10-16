@@ -365,9 +365,10 @@ public class FileBaseUtil {
 	 * @author fileId 文件在文件服务中的唯一标识
 	 * @author gengds
 	 */
-	public static String fileServiceUploadByFilePath(MultipartFile fileStream, String filePath,String localAddress) {
+	public static Map<String,Object> fileServiceUploadByFilePath(MultipartFile fileStream, String filePath,String localAddress) {
+		Map<String,Object> map = new HashMap<>();
 		if (fileStream == null || StringUtils.isEmpty(fileStream.getOriginalFilename())) {
-			return "";
+			return map;
 		}
 		filePath = findPath() + filePath;
 		String fileName = fileStream.getOriginalFilename();
@@ -375,6 +376,7 @@ public class FileBaseUtil {
 		String date = format.format(new Date());
 		String substring = fileName.substring(fileName.indexOf(".")); // 文件后缀.ofd
 		String substring2 = fileName.substring(0, fileName.indexOf("."));// 文件名称无后缀
+		String fileName1 = UUIDUtils.random();
 		fileName = substring2 + date;
 		File targetFile = new File(filePath);
 		if (!targetFile.exists()) {
@@ -382,11 +384,16 @@ public class FileBaseUtil {
 		}
 		FileOutputStream out = null;
 		try {
-			String lastFilePath = filePath + fileName + substring;
+			String lastFilePath = filePath + fileName1 + substring;
 			out = new FileOutputStream(lastFilePath);
 			out.write(fileStream.getBytes());
 			String fileUrl =localAddress+ "app/db/documentinfo/download?path=" + lastFilePath;
-			return fileUrl;
+			map.put("filePath",filePath);
+			map.put("fileName1",fileName1);
+			map.put("substring",substring);
+			map.put("fileUrl",fileUrl);
+			map.put("filePath1",lastFilePath);
+			return map;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -403,7 +410,7 @@ public class FileBaseUtil {
 				}
 			}
 		}
-		return "";
+		return map;
 	}
 
 	public static String findPath() {

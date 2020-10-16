@@ -1216,12 +1216,14 @@ public class DocumentInfoController {
 					try {
 						if (StringUtils.isNotBlank(streamId)) {
 							map = OfdTransferUtil.convertLocalFileToOFDPath(streamId,localAddress);
+							formatId = (String)map.get("fileUrl");
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				} else {
-					formatId = FileBaseUtil.fileServiceUploadByFilePath(pdf[i],filePath,localAddress);
+					map = FileBaseUtil.fileServiceUploadByFilePath(pdf[i],filePath,localAddress);
+					formatId = (String)map.get("fileUrl");
 				}
 				if (StringUtils.isNotBlank(formatId)) {
 					// 保存文件相关数据
@@ -1235,12 +1237,13 @@ public class DocumentInfoController {
 					if (StringUtils.isNotBlank(streamId)) {
 						file.setFileServerStreamId(streamId);
 					}
-					file.setFileServerFormatId(formatId);
+					file.setFileServerFormatId((String)map.get("fileName1"));
+					file.setFileSavePath((String)map.get("filePath1"));
 					documentFileService.save(file);
 				}
 			}
 			json.put("smjId", uuId);
-			json.put("smjFilePath", formatId);
+			json.put("smjFilePath", map.get("fileName1"));
 			json.put("result", "success");
 		}
 		Response.json(json);
