@@ -60,7 +60,7 @@
 	</select>
 	<!-- 查询所有分支局的最新一条已发布反馈 -->
 	<select id="queryAllLatestOneReply" resultType="com.css.app.db.business.entity.ReplyExplain">
-		select * from (select *, row_number() over(partition by SUB_ID order by CREATED_TIME desc) as num from DB_REPLY_EXPLAIN where INFO_ID=#{infoId} and SHOW_FLAG='1') where num=1 order by CREATED_TIME desc
+		select * from (select *, row_number() over(partition by SUB_ID order by CREATED_TIME desc) as num from DB_REPLY_EXPLAIN where INFO_ID=#{infoId}) where num=1 order by CREATED_TIME desc
 	</select>
 	<select id="queryLastNewData" resultType="com.css.app.db.business.entity.ReplyExplain">
 		select * from DB_REPLY_EXPLAIN where INFO_ID=#{0} and SUB_ID = #{1} order by CREATED_TIME desc limit 1
