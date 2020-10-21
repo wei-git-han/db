@@ -68,7 +68,7 @@
 	<!-- 查询所有分支局的各轮最新已发布反馈 -->
 	<select id="queryAllLatestReply" resultType="com.css.app.db.business.entity.ReplyExplain">
 	select * from(
-	select *,row_number() over(partition by sub_id,team_id order by created_time desc) as num from DB_REPLY_EXPLAIN where info_id = #{infoId} and show_flag='1'
+	select *,row_number() over(partition by sub_id,team_id order by created_time desc) as num from DB_REPLY_EXPLAIN where info_id = #{infoId}
 	)where num = '1' order by CREATED_TIME desc;
 	</select>
 	<!-- 查询某分支局的各轮最新反馈 -->
