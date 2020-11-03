@@ -1,6 +1,6 @@
 server:
-
   port: 11008
+
 app:
   ConnectTimeout: 100
   ReadTimeout: 5000
@@ -10,9 +10,9 @@ spring.profiles.include: url
  
 druid:
     dbType: dm
-    url: jdbc:dm://${csse.dmdba.url}/ZF_MINISTRY_APP_DB
-    username: ZF_MINISTRY_APP_DB
-    password: QNKN1ReWghEU95X/pZmu4rWzAlA3t9ayTeqNTdUILuj3eyQsU1V4S543u0dPyoOFbxbMMWrtn7S+dAAo5Ed9LQ==
+    url: jdbc:dm://${csse.dmdba.url}/MINISTRY_APP_DB_ZBFZB
+    username: MINISTRY_APP_DB_ZBFZB 
+    password: beJbqIjNUwc0ykB4JfuigDvCePHHK0MHWFrUN37Z0+4CZcxnAUmVIWU/4tcUTvuIfsw4V3BV0Sc5cEXR2kVLCw==
     initial-size: 1
     min-idle: 1
     max-active: 10 
@@ -21,7 +21,8 @@ druid:
     testWhileIdle: true
     validationQuery: select 1 from DUAL 
     filters: config
-    connectionProperties: config.decrypt=true;config.decrypt.key=MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIfduBXAcGaEuALCIFq8PUfhUdVfu+fJSb05UY8+de5qbHxK/hs0BEpzlinf9VXEZV6tifsclqVqD7ljrO0BBO8CAwEAAQ==
+    connectionProperties: config.decrypt=true;config.decrypt.key=MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAPdIhnfqfJm/mX5SQFzwpSEUIerse0GAwKb4nrgpxFkdAyPt2DxvPHkI2s0QM5k9tfWA0UDqmTI+KytwyvUTuQMCAwEAAQ==
+
 
 mybatis.configuration.mapUnderscoreToCamelCase: true
 
@@ -29,22 +30,21 @@ logging:
   file: ${csse.log.path}
   level:
 #    root: info
-    com: 
+   com: 
       css: debug
 
 spring:
   application:
-    name: legacycpk.csse.zbfzbbgt_zyyy
+    name: ${csse.dccb.appId}
 eureka:
   instance:
     prefer-ip-address: true
   client:
-#此处为url网关开关
-    enabled: false
+    enabled: true
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://localhost:18761/eureka/
+      defaultZone: http://appdiscovery.appservice.marathon.mesos:8761/eureka/
   http:
     multipart:
       max-file-size: 256MB
@@ -67,8 +67,8 @@ csse:
         clientId: ${csse.dccb.appId}
         clientSecret: ${csse.dccb.appSecret}
     fileservice:
-      servers: http://172.16.201.140:7003
-      tempDirPath: c:/temp/storetemp/
+      servers: http://10.1.150.3:7003
+      tempDirPath: /tmp/storetemp/
   sso: 
     server: 
       url: ${csse.mircoservice.zuul}
@@ -89,6 +89,17 @@ msg:
   group: 
     name: 
     redirect: 
+#消息格式
+#msg:
+#  type: application
+#  appid: 
+#  display: 
+#    system: true
+#    notification: true
+#    msgbox: true
+#  action: 
+#    anstore: 
+#    deployment: 
     
 #文件服务配置
 css.oauth2.accessTokenUri: ${csse.mircoservice.zuul}/api/uaa/oauth/token
@@ -124,24 +135,26 @@ csse.mircoservice.app: /api/app/application/manager
 csse.mircoservice.syncdepartments: /api/org/syncdepartments
 
 #数据库配置地址
-csse.dmdba.url: 172.16.201.140:5236
+csse.dmdba.url: 10.1.150.1
 
 #文件服务----------------------------------start
 #文件服务的clientId,与公文处理应用进行共用；
-csse.dccb.appId: legacycpk.csse.zbfzbbgt_zyyy_app1a_gwcl
-csse.dccb.appSecret: 2C0DB8B2-C752-4f63-AA9E-919BE5B8233A
+csse.dccb.appId: cpk.csse.dccb
+csse.dccb.appSecret: A7928817-BDD5-43c2-A1AC-7F4D09FDDF4E
+#csse.gwcl.appId: cpk.csse.zbfzb_zyyy_app1a_dzbms
+#csse.gwcl.appSecret: 54F93E1D-C338-4399-9FB7-1BF6B751F832
 #文件服务所在的服务器ip或域名
-csse.fileservice.domain: 172.16.201.140
+csse.fileservice.domain: 10.1.150.3
 #文件服务端口
 csse.fileservice.port: 7003
 #文件服务生成文件的临时目录
-csse.fileservice.tempPath: c:/temp/storetemp/
+csse.fileservice.tempPath: /tmp/storetemp/
 #本地文件路径（应用中下载操作的默认文件保存路径）
-filePath: D:/download/ 
+filePath: /home/ 
 #文件服务----------------------------------end
 
 #本war的所有应用日志输出路径
-csse.log.path: c:/temp/storetemp/zf_one_number_app.log
+csse.log.path: /opt/ofatrjar/_logs/zf_db_app.log
 #短信接口地址
 csse.mircoservice.smsUrl: http://192.168.0.55:50005/v1.0/plan
 #语音预定会议室 

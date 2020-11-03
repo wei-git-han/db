@@ -1,9 +1,7 @@
 #此配置是分中心对于sso配置的存储文件，会做相应的反写操作，此配置文件应用开发方不维护不修改
-csse.mircoservice.zuul: http://172.16.201.140:10005
-
+csse.mircoservice.zuul: http://10.1.150.10:10005
 csse.mircoservice.sso: /api/sso
-
 csse.mircoservice.org: /api/org
-
 csse.mircoservice.msg: /api/msg
-
+csse.mircoservice.uaa: /api/uaa
+remote.host: http://10.1.150.10:10004
