@@ -138,4 +138,9 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 	public List<SubDocInfo> queryForList(String infoId){
 		return subDocInfoDao.queryForList(infoId);
 	}
+
+	@Override
+	public List<SubDocInfo> queryAllTime(String year,String orgId){
+		return subDocInfoDao.queryAllTime(year,orgId);
+	}
 }

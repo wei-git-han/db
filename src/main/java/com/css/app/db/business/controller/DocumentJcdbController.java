@@ -1,9 +1,11 @@
 package com.css.app.db.business.controller;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.css.app.db.business.dto.LeaderStatisticsDto;
+import com.css.app.db.business.entity.SubDocInfo;
+import com.css.app.db.business.service.SubDocInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +75,8 @@ public class DocumentJcdbController {
 	private BaseAppUserService baseAppUserService;
 	@Autowired
 	private DocumentDicService documentDicService;
+	@Autowired
+	private SubDocInfoService subDocInfoService;
 
 	
 	/**
@@ -838,34 +844,107 @@ public class DocumentJcdbController {
 		if(StringUtil.isEmpty(year)) {
 			year=sdf.format(new Date());
 		}
+		if(StringUtils.isBlank(organId)){
+			organId = baseAppUserService.getBareauByUserId(CurrentUser.getUserId());
+		}
+		long  blz=0;
+		double wcl=0;
+		long bj = 0;
 		map.put("year", year);
 		map.put("month", month);
 		map.put("organId", organId);
-		List<Map<String, Object>> infoList = documentInfoService.queryListByYear(map);
+		List<Map<String, Object>> infoList = documentInfoService.queryListByOrgIdAndYear(map);
+		//List<Map<String, Object>> infoListAll = documentInfoService.queryListByYear(map);
+		List<Map<String, Object>> infoListAll = documentInfoService.queryListByOrgYear(map);
+		if(infoListAll != null && infoListAll.size() > 0){
+			for(int j = 0;j<infoListAll.size();j++){
+				String deptId = (String)infoListAll.get(j).get("ID");
+				if(organId.equals(deptId)){
+					blz = (long)infoListAll.get(j).get("blz");
+					bj = (long) infoListAll.get(j).get("bj");
+					long ctls = (long) infoListAll.get(j).get("ctls");
+					long sum = blz + bj + ctls;
+					wcl = ((new BigDecimal((float) bj / sum).doubleValue()) * 100);
+				}
+			}
+		}
+		//List<Map<String, Object>> infoListAll = documentInfoService.queryListByOrgAndYear(map);
+		//List<Map<String, Object>> infoList = documentInfoService.queryListByOrgYear(map);
 		map.put("status", 1);
-		int overTimewbj = documentInfoService.queryChaoShiByYear(map);//超时未结
+		int overTimewbj = 0;//超时未结
+//		int overTimewbj = documentInfoService.queryChaoShiByYear(map);//超时未结
 		map.put("status", 2);
-		int overTimebj = documentInfoService.queryChaoShiByYear(map);//超时办结
-		jo.put("overTimewbj", overTimewbj);//超时未结
-		jo.put("overTimebj", overTimebj);//超时办结
-		double  blz=0;
-		double  bj=0;
+		int overTimebj = 0;//超时办结
+//		int overTimebj = documentInfoService.queryChaoShiByYear(map);//超时办结
+
+
+		//double  bj=0;
 		double  ctls=0;
 		double  total=0;
 		double days = 0;
-		if (infoList!=null&&infoList.size()>0) {
-			Map<String, Object> map2=infoList.get(0);
-			if(map2!=null) {
-				int wfkCount = this.queryWfkCount(null, year);
-				blz= (long) map2.get("blz") - wfkCount;
-				bj= (long) map2.get("bj");
-				ctls= (long) map2.get("ctls");
-				total= (long) map2.get("total");
-				days=(double) map2.get("days");
-			}
+		int onTimebj = 0;
+
+		List<SubDocInfo> docInfoList = subDocInfoService.queryAllTime(year,organId);
+		if(docInfoList != null && docInfoList.size() > 0){
+			int t = docInfoList.size();
+			Date lastTime = docInfoList.get(0).getUpdateTime();
+			Date firstTime = docInfoList.get(t-1).getUpdateTime();
 		}
+
+		if (infoList!=null && infoList.size()>0) {
+//			Map<String, Object> map2=infoList.get(0);
+//			if(map2!=null) {
+//				int wfkCount = this.queryWfkCount(null, year);
+//				blz= (long) map2.get("blz") - wfkCount;
+//				bj= (long) map2.get("bj");
+//				ctls= (long) map2.get("ctls");
+//				total= (long) map2.get("total");
+//				days=(double) map2.get("days");
+//			}
+			total = infoList.size();
+			String leaderTime = "";
+			for(int i = 0;i<infoList.size();i++){
+				Map<String,Object> map1 = infoList.get(i);
+				int docStatus = (Integer) map1.get("DOC_STATUS");
+				String infoId = (String)map1.get("INFO_ID");
+				List<DocumentSzps> documentSzps = documentSzpsService.queryByInfo(infoId);
+				if(documentSzps != null && documentSzps.size() > 0){
+					for(DocumentSzps documentSzps1 : documentSzps){
+						if(StringUtils.isNotBlank(documentSzps1.getCreatedTime())){
+							leaderTime = documentSzps1.getCreatedTime();
+						}
+					}
+				}
+
+				boolean t = true;
+				if(documentSzps != null){
+					t = isOverTreeMonth(leaderTime,docStatus);//是否超3个月
+				}else {
+					System.out.println("dddddddddddddd");
+				}
+				if("12".equals(docStatus)){//办结
+					if(documentSzps != null){
+						if(t){
+							overTimebj += 1;//超时办结
+						}else{
+							onTimebj += 1;//按时办结
+						}
+					}
+				}else{//没有办结
+					if(t){
+						overTimewbj += 1;//超时未结
+					}
+
+
+
+				}
+			}
+
+		}
+		jo.put("overTimewbj", overTimewbj);//超时未结
+		jo.put("overTimebj", overTimebj);//超时办结
 		jo.put("onTimeblz", blz < 0 ? 0 : blz);//按时在办
-		jo.put("onTimebj", bj);//按时办结
+		jo.put("onTimebj", onTimebj);//按时办结
 		jo.put("aveDays", days);//已办结事项平均天数
 		jo.put("zsl", total);//总数量
 		jo.put("year", year);//今年
@@ -878,13 +957,52 @@ public class DocumentJcdbController {
 			if(format.equals(".00")) {
 				jo.put("wcl", 0);
 			}else {
-				jo.put("wcl", format);
+				jo.put("wcl", wcl);
 			}
 			
 		}else {
 			jo.put("wcl", "0%");
 		}
 		Response.json(jo);
+	}
+
+	private boolean isOverTreeMonth(String leaderTime,int status) {
+		boolean t = true;
+		// 2019年05月08日
+		if (StringUtils.isNotBlank(leaderTime)) {
+			LocalDate currdate = LocalDate.now();
+			LocalDate leaderDate = LocalDate.parse(leaderTime, DateTimeFormatter.ofPattern("yyyy年MM月dd日"));
+			int docStatus = status;
+			// 如果该文没有办结且超过批示时间三个月的，显示超期提示；
+			if (docStatus < 12) {
+				if ((int) ChronoUnit.YEARS.between(leaderDate, currdate) == 0) {
+					if ((int) ChronoUnit.MONTHS.between(leaderDate, currdate) == 3) {
+						// 提取天数
+						if (currdate.getDayOfMonth() > leaderDate.getDayOfMonth()) {
+							t = true;
+						}
+					} else if ((int) ChronoUnit.MONTHS.between(leaderDate, currdate) > 3) {
+						t = true;
+					}
+				} else if ((int) ChronoUnit.YEARS.between(leaderDate, currdate) > 0) {
+					t = true;
+				}
+			}else if(docStatus == 12){
+				if ((int) ChronoUnit.YEARS.between(leaderDate, currdate) == 0) {
+					if ((int) ChronoUnit.MONTHS.between(leaderDate, currdate) == 3) {
+						// 提取天数
+						if (currdate.getDayOfMonth() > leaderDate.getDayOfMonth()) {
+							t = true;
+						}
+					} else if ((int) ChronoUnit.MONTHS.between(leaderDate, currdate) > 3) {
+						t = true;
+					}
+				} else if ((int) ChronoUnit.YEARS.between(leaderDate, currdate) > 0) {
+					t = true;
+				}
+			}
+		}
+		return t;
 	}
 	
 	

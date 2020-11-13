@@ -1439,4 +1439,56 @@
 		</if>
 	</select>
 
+	<select id="queryListByOrgIdAndYear" resultType="map">
+		select
+        *
+from
+        (
+                select
+
+                        info.*
+                from
+                        DB_SUB_DOC_INFO info
+                left join
+                        (
+                                select * from DB_DOCUMENT_INFO
+                        )
+                        db
+                on
+                        db.id = info.INFO_ID
+                left join
+                        (
+                                select
+                                        s.INFO_ID                         ,
+                                        s.USER_NAME                                                   as leader_name   ,
+                                        s.LEADER_COMMENT                                              as leader_content,
+                                        s.CREATED_TIME                                                as leader_time   ,
+                                        row_number() over(partition by s.info_id order by b.sort asc) as dNum
+                                from
+                                        DB_DOCUMENT_SZPS s
+                                inner join DB_ROLE_SET b
+                                on
+                                        s.USER_ID=b.USER_ID
+                                order by
+                                        b.sort asc
+                        )
+                        d on db.id = d.info_id
+                    and
+                        (
+                                d.dNum = 1
+                             or d.dNum is null
+                        )
+                where
+                        1=1
+                    and db.FIRST_ZB_TIME is not null
+		<if test="year != null">
+			and case when d.leader_time is not null and d.leader_time
+			!= '' then to_char(d.leader_time) else to_char(db.CREATED_TIME) end
+			like '%'||#{year}||'%'
+		</if>
+        ) s
+where
+        s.sub_dept_id = #{organId}
+	</select>
+
 </mapper>

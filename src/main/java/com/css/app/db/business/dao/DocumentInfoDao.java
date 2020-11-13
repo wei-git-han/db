@@ -24,7 +24,8 @@ import org.springframework.security.access.method.P;
 public interface DocumentInfoDao extends BaseDao<DocumentInfo> {
 
 	List<Map<String, Object>> queryListByYear(Map<String, Object> map);
-	
+	List<Map<String, Object>> queryListByOrgAndYear(Map<String, Object> map);
+
 	int queryChaoShiByYear(Map<String, Object> map);
 	
 	List<Map<String, Object>> queryListByOrgYear(Map<String, Object> map);
@@ -65,5 +66,7 @@ public interface DocumentInfoDao extends BaseDao<DocumentInfo> {
 	List<DocumentInfo> queryNewList(Map<String, Object> map);
 	
 	List<DocumentInfo> queryNewListSort(Map<String, Object> map);
+
+	List<Map<String, Object>> queryListByOrgIdAndYear(Map<String,Object> map);
 
 }

@@ -58,4 +58,6 @@ public interface SubDocInfoService {
 	int queryNoBanJie(String infoId);
 	int queryNoBjNum(String infoId);
 	int queryTotalNum(String infoId);
+
+	List<SubDocInfo> queryAllTime(String year,String orgId);
 }

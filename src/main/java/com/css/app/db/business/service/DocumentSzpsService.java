@@ -29,4 +29,6 @@ public interface DocumentSzpsService {
 	void deleteByInfoId(String infoId);
 	
 	void updateUserNameByUserId(String userName,String userId);
+
+	List<DocumentSzps> queryByInfo(String infoId);
 }

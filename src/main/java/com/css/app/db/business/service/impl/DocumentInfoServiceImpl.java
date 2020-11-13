@@ -85,6 +85,12 @@ public class DocumentInfoServiceImpl implements DocumentInfoService {
 	}
 
 	@Override
+	public List<Map<String,Object>> queryListByOrgAndYear(Map<String,Object> map){
+		return documentInfoDao.queryListByOrgAndYear(map);
+	}
+
+
+	@Override
 	public List<Map<String, Object>> queryListByOrgYear(Map<String, Object> map) {
 		return documentInfoDao.queryListByOrgYear(map);
 	}
@@ -223,5 +229,10 @@ public class DocumentInfoServiceImpl implements DocumentInfoService {
 	@Override
 	public int queryChaoShiByYear(Map<String, Object> map) {
 		return documentInfoDao.queryChaoShiByYear(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> queryListByOrgIdAndYear(Map<String,Object> map){
+		return documentInfoDao.queryListByOrgIdAndYear(map);
 	}
 }

@@ -57,5 +57,10 @@ public class DocumentSzpsServiceImpl implements DocumentSzpsService {
 	public void updateUserNameByUserId(String userName, String userId) {
 		documentSzpsDao.updateUserNameByUserId(userName, userId);
 	}
+
+	@Override
+	public List<DocumentSzps> queryByInfo(String infoId){
+		return  documentSzpsDao.queryByInfo(infoId);
+	}
 	
 }

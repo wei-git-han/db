@@ -29,6 +29,8 @@ public interface DocumentInfoService {
 	void deleteBatch(String[] ids);
 
 	List<Map<String, Object>> queryListByYear(Map<String, Object> map);
+
+	List<Map<String,Object>> queryListByOrgAndYear(Map<String,Object> map);
 	
 	int queryChaoShiByYear(Map<String, Object> map);
 
@@ -73,4 +75,6 @@ public interface DocumentInfoService {
 	List<DocumentInfo> queryNewList(Map<String, Object> map);
 	
 	List<DocumentInfo> queryNewListSort(Map<String, Object> map);
+
+	List<Map<String, Object>> queryListByOrgIdAndYear(Map<String,Object> map);
 }
