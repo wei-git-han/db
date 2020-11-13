@@ -883,12 +883,16 @@ public class DocumentJcdbController {
 		double  total=0;
 		double days = 0;
 		int onTimebj = 0;
-
+		float day = 0;
 		List<SubDocInfo> docInfoList = subDocInfoService.queryAllTime(year,organId);
 		if(docInfoList != null && docInfoList.size() > 0){
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 			int t = docInfoList.size();
 			Date lastTime = docInfoList.get(0).getUpdateTime();
 			Date firstTime = docInfoList.get(t-1).getUpdateTime();
+			long millisecond = lastTime.getTime() - firstTime.getTime();
+			day = millisecond/(24*60*60*1000*60);
 		}
 
 		if (infoList!=null && infoList.size()>0) {
@@ -945,7 +949,7 @@ public class DocumentJcdbController {
 		jo.put("overTimebj", overTimebj);//超时办结
 		jo.put("onTimeblz", blz < 0 ? 0 : blz);//按时在办
 		jo.put("onTimebj", onTimebj);//按时办结
-		jo.put("aveDays", days);//已办结事项平均天数
+		jo.put("aveDays", day);//已办结事项平均天数
 		jo.put("zsl", total);//总数量
 		jo.put("year", year);//今年
 		jo.put("month", month);//月份
