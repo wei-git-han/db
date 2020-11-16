@@ -85,6 +85,11 @@ public class DocumentInfoServiceImpl implements DocumentInfoService {
 	}
 
 	@Override
+	public List<DocumentInfo> queryAllBjList(String year){
+		return documentInfoDao.queryAllBjList(year);
+	}
+
+	@Override
 	public List<Map<String,Object>> queryListByOrgAndYear(Map<String,Object> map){
 		return documentInfoDao.queryListByOrgAndYear(map);
 	}

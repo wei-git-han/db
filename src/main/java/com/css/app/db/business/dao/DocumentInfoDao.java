@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.css.base.dao.BaseDao;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.security.access.method.P;
 
 /**
@@ -24,6 +25,10 @@ import org.springframework.security.access.method.P;
 public interface DocumentInfoDao extends BaseDao<DocumentInfo> {
 
 	List<Map<String, Object>> queryListByYear(Map<String, Object> map);
+
+	@Select("select * from DB_DOCUMENT_INFO where status = '2' and CREATED_TIME like '%'||#{0}||'%'")
+	List<DocumentInfo> queryAllBjList(String year);
+
 	List<Map<String, Object>> queryListByOrgAndYear(Map<String, Object> map);
 
 	int queryChaoShiByYear(Map<String, Object> map);

@@ -30,6 +30,9 @@ public interface DocumentInfoService {
 
 	List<Map<String, Object>> queryListByYear(Map<String, Object> map);
 
+
+	List<DocumentInfo> queryAllBjList(String year);
+
 	List<Map<String,Object>> queryListByOrgAndYear(Map<String,Object> map);
 	
 	int queryChaoShiByYear(Map<String, Object> map);

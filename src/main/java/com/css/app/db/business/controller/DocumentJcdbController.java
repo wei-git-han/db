@@ -131,6 +131,148 @@ public class DocumentJcdbController {
 		}
 		Response.json(jo);
 	}
+
+
+	@ResponseBody
+	@RequestMapping("/szCount")
+	public void szCount(String year,String month,String organId){
+		JSONObject jo=new JSONObject();
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy");
+		Map<String, Object> map = new HashMap<>();
+		Map<String,Object> objectMap = new HashMap<>();
+		if(StringUtil.isEmpty(year)) {
+			year=sdf.format(new Date());
+		}
+		if(StringUtils.isBlank(organId)){
+			organId = baseAppUserService.getBareauByUserId(CurrentUser.getUserId());
+		}
+		long  blz=0;
+		double wcl=0;
+		long bj = 0;
+		map.put("year", year);
+		map.put("month", month);
+		map.put("organId", organId);
+		objectMap.put("year",year);
+		//List<Map<String, Object>> infoList = documentInfoService.queryListByOrgIdAndYear(map);
+		List<Map<String, Object>> infoList = documentInfoService.queryListByYear(objectMap);
+		List<DocumentInfo> documentInfoList = documentInfoService.queryAllBjList(year);
+		//List<Map<String, Object>> infoListAll = documentInfoService.queryListByYear(map);
+		//List<Map<String, Object>> infoListAll = documentInfoService.queryListByOrgYear(map);
+		double  ctls=0;
+		double  total=0;
+		double days = 0;
+		int onTimebj = 0;
+		float day = 0;
+		double  wfk =0;
+		if(infoList != null && infoList.size() > 0){
+			Map<String, Object> map2=infoList.get(0);
+			if(map2!=null) {
+				int wfkCount = this.queryWfkCount(null, year);
+				blz= (long) map2.get("blz") - wfkCount;
+				bj= (long) map2.get("bj");
+				ctls= (long) map2.get("ctls");
+				total= (long) map2.get("total");
+				wcl = (bj+ctls)*100/total;
+				wfk= wfkCount;
+			}
+		}
+		//List<Map<String, Object>> infoListAll = documentInfoService.queryListByOrgAndYear(map);
+		//List<Map<String, Object>> infoList = documentInfoService.queryListByOrgYear(map);
+		map.put("status", 1);
+		int overTimewbj = 0;//超时未结
+//		int overTimewbj = documentInfoService.queryChaoShiByYear(map);//超时未结
+		map.put("status", 2);
+		int overTimebj = 0;//超时办结
+//		int overTimebj = documentInfoService.queryChaoShiByYear(map);//超时办结
+
+
+		//double  bj=0;
+
+		List<SubDocInfo> docInfoList = subDocInfoService.queryAllTime(year,organId);
+		if(docInfoList != null && docInfoList.size() > 0){
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+			int t = docInfoList.size();
+			Date lastTime = docInfoList.get(0).getUpdateTime();
+			Date firstTime = docInfoList.get(t-1).getUpdateTime();
+			long millisecond = lastTime.getTime() - firstTime.getTime();
+			day = millisecond/(24*60*60*1000*60);
+		}
+
+		if (documentInfoList!=null && documentInfoList.size()>0) {
+//			Map<String, Object> map2=infoList.get(0);
+//			if(map2!=null) {
+//				int wfkCount = this.queryWfkCount(null, year);
+//				blz= (long) map2.get("blz") - wfkCount;
+//				bj= (long) map2.get("bj");
+//				ctls= (long) map2.get("ctls");
+//				total= (long) map2.get("total");
+//				days=(double) map2.get("days");
+//			}
+			total = documentInfoList.size();
+			String leaderTime = "";
+			for(int i = 0;i<documentInfoList.size();i++){
+				DocumentInfo documentInfo = documentInfoList.get(i);
+				String infoId = documentInfo.getInfoId();
+				Integer docStatus = documentInfo.getStatus();
+				List<DocumentSzps> documentSzps = documentSzpsService.queryByInfo(infoId);
+				if(documentSzps != null && documentSzps.size() > 0){
+					for(DocumentSzps documentSzps1 : documentSzps){
+						if(StringUtils.isNotBlank(documentSzps1.getCreatedTime())){
+							leaderTime = documentSzps1.getCreatedTime();
+						}
+					}
+				}
+
+				boolean t = false;
+				if(documentSzps != null && documentSzps.size() > 0){
+					t = isOverTreeMonth(leaderTime,docStatus);//是否超3个月
+				}else {
+					System.out.println("dddddddddddddd");
+				}
+				if(docStatus == 2){//办结
+					if(t){
+						overTimebj += 1;//超时办结
+					}else{
+						onTimebj += 1;//按时办结
+					}
+				}else{//没有办结
+					if(t){
+						overTimewbj += 1;//超时未结
+					}
+
+
+
+				}
+			}
+
+		}
+		jo.put("overTimewbj", overTimewbj);//超时未结
+		jo.put("overTimebj", overTimebj);//超时办结
+		jo.put("onTimeblz", blz < 0 ? 0 : blz);//按时在办
+		jo.put("onTimebj", onTimebj);//按时办结
+		jo.put("aveDays", day);//已办结事项平均天数
+		jo.put("zsl", total);//总数量
+		jo.put("year", year);//今年
+		jo.put("month", month);//月份
+		jo.put("organId", organId);//部门id
+		if(total>0) {
+			DecimalFormat df = new DecimalFormat("#.00");
+			String format = df.format((bj+ctls)*100/total);
+			//	long round = Math.round((bj+ctls)*100/total);
+			if(format.equals(".00")) {
+				jo.put("wcl", 0);
+			}else {
+				jo.put("wcl", wcl);
+			}
+
+		}else {
+			jo.put("wcl", "0%");
+		}
+		Response.json(jo);
+	}
+
+
 	
 	/**
 	 * 数据统计报表-(年度,状态数量)
