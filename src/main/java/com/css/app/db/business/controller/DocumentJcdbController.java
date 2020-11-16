@@ -47,7 +47,7 @@ import com.css.base.utils.StringUtils;
 import com.github.pagehelper.PageHelper;
 
 import dm.jdbc.util.StringUtil;
-
+import sun.plugin2.message.BestJREAvailableMessage;
 
 
 /**
@@ -860,11 +860,13 @@ public class DocumentJcdbController {
 			for(int j = 0;j<infoListAll.size();j++){
 				String deptId = (String)infoListAll.get(j).get("ID");
 				if(organId.equals(deptId)){
+					int wfkCount = this.queryWfkCount2(deptId, year);
 					blz = (long)infoListAll.get(j).get("blz");
 					bj = (long) infoListAll.get(j).get("bj");
 					long ctls = (long) infoListAll.get(j).get("ctls");
-					long sum = blz + bj + ctls;
-					wcl = ((new BigDecimal((float) bj / sum).doubleValue()) * 100);
+					long sum = blz + bj + ctls + wfkCount;
+					long bjSum = bj + ctls;
+					wcl = ((new BigDecimal((float) bjSum / sum).doubleValue()) * 100);
 				}
 			}
 		}
@@ -920,20 +922,18 @@ public class DocumentJcdbController {
 					}
 				}
 
-				boolean t = true;
-				if(documentSzps != null){
+				boolean t = false;
+				if(documentSzps != null && documentSzps.size() > 0){
 					t = isOverTreeMonth(leaderTime,docStatus);//是否超3个月
 				}else {
 					System.out.println("dddddddddddddd");
 				}
-				if("12".equals(docStatus)){//办结
-					if(documentSzps != null){
+				if(docStatus == 12){//办结
 						if(t){
 							overTimebj += 1;//超时办结
 						}else{
 							onTimebj += 1;//按时办结
 						}
-					}
 				}else{//没有办结
 					if(t){
 						overTimewbj += 1;//超时未结
