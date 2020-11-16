@@ -189,10 +189,33 @@ public class ReplyExplainController {
 			//获取所有分支局已经正式发布的反馈按创建时间倒叙排列
 			List<ReplyExplain> dbReplyExplainList = replyExplainService.queryAllLatestReply(infoId);
 			for (ReplyExplain replyExplain : dbReplyExplainList) {
+				JSONObject json=new JSONObject();
+				///////////////////////////////////
 				String subId=replyExplain.getSubId();
 				SubDocInfo subDocInfo = subDocInfoService.queryObject(subId);
+				//当前审核人
+				SubDocTracking latestRecord = subDocTrackingService.queryLatestRecord(subId);
+				boolean isCheckUser=false;
+				if(latestRecord != null) {
+					String recordId=latestRecord.getReceiverId();
+					if(StringUtils.equals(CurrentUser.getUserId(),recordId )) {
+						isCheckUser=true;
+					}
+				}
+				boolean editFlag=false;
+				if(!StringUtils.equals("1", replyExplain.getShowFlag()) && isCheckUser && subDocInfo.getDocStatus()!=5) {
+					editFlag=true;
+				}
+				json.put("edit",editFlag);
+
+
+				///////////////////////////////////
+
+
+
+
 				if(subDocInfo != null) {
-					JSONObject json=new JSONObject();
+
 					String teamId=replyExplain.getTeamId();
 					Date firstDate = null;
 					String ideaGroupId = null;

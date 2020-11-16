@@ -115,7 +115,7 @@ var pageModule = function(){
 					})
 //					$("#replyContent").attr("placeholder",placeholder)
 				}
-				$("#replyContent").val(placeholder).css({color:"#ccc"})
+				$("#replyContent").val(placeholder)
 				$("#replyContent").focus(function(){
 					if($(this).val() == placeholder){
 						$(this).val('').css({color:"inherit"})
@@ -124,7 +124,7 @@ var pageModule = function(){
 				$("#replyContent").blur(function(){
 					if($(this).val() == ""){
 						replyContentNone = true;
-						$(this).val(placeholder).css({color:"#ccc"})
+						$(this).val(placeholder)
 					}else{
 						replyContentNone = false;
 					}
