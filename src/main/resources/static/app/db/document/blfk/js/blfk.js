@@ -6,6 +6,7 @@ var userUrl = {"url":"/app/db/document/grdb/data/userTree.json","dataType":"text
 var leftMenuUrl = {"url":"/app/db//documentinfo/getDicByTypet","dataType":"text"};//左侧菜单
 var batchReadUrl = {"url":"/app/db/documentinfo/batchRead","dataType":"text"};//批量已读
 var getUserAdminTypeUrl = {"url":"/app/db/adminset/getAuthor","dataType":"text"};//获取管理员类型
+var getRole = {"url":"/app/db/adminset/getRole","dataType":"text"};//获取当前登录人角色
 var fileFrom=getUrlParam("fileFrom")||""; //文件来源
 var orgid=getUrlParam("orgid")||""; //统计图传过来的机构
 var nowYear = getUrlParam("nowYear");//“统计报表”页面上的“年度”
@@ -22,7 +23,6 @@ if(fileFrom && fileFrom == "jcdb"){
 var grid = null;
 var grid2 = null;
 var grid3 = null;
-var grid4 = null;
 var total=0;//列表中，数据的总条数
 
 if(!window.top.memory){
@@ -613,6 +613,15 @@ var pageModule = function(){
 						$("#edit").show(); //补录
 					}
 				}
+			}
+		});
+		$ajax({
+			url: getRole,
+			type: "GET",
+			success: function(data) {
+				if(data=="2"||data=="5"||data=="3"){
+					$("#plcb").show(); //批量催办
+				}		
 			}
 		});
 		$(".newpage8").click(function(){
