@@ -47,7 +47,7 @@ import com.css.base.utils.StringUtils;
 import com.github.pagehelper.PageHelper;
 
 import dm.jdbc.util.StringUtil;
-import sun.plugin2.message.BestJREAvailableMessage;
+//import sun.plugin2.message.BestJREAvailableMessage;
 
 
 /**
