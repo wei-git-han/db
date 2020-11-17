@@ -15,7 +15,7 @@
 		<if test="finishFlag != null">
 			and FINISH_FLAG= #{finishFlag}
 		</if>
-			order by CREATED_TIME
+			order by CREATED_TIME desc
 		<if test="offset != null and limit != null">
 			limit #{offset}, #{limit}
 		</if>
@@ -41,7 +41,8 @@
 			"FINISH_FLAG", 
 			"CBR_ID", 
 			"CBR_NAME", 
-			"CB_TIME"
+			"CB_TIME",
+			"CB_TYPE"
 		)
 		values
 		(
@@ -54,7 +55,8 @@
 			#{finishFlag}, 
 			#{cbrId}, 
 			#{cbrName}, 
-			#{cbTime}
+			#{cbTime},
+			#{cbType}
 		)
 	</insert>
 	 
@@ -69,7 +71,8 @@
 			<if test="finishFlag != null">"FINISH_FLAG" = #{finishFlag}, </if>
 			<if test="cbrId != null">"CBR_ID" = #{cbrId}, </if>
 			<if test="cbrName != null">"CBR_NAME" = #{cbrName}, </if>
-			<if test="cbTime != null">"CB_TIME" = #{cbTime}</if>
+			<if test="cbTime != null">"CB_TIME" = #{cbTime}, </if>
+			<if test="cbType != null">"CB_TYPE" = #{cbType}</if>
 		</set>
 		where ID = #{id}
 	</update>

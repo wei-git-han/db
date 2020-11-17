@@ -65,5 +65,10 @@ public class DocumentCbjlServiceImpl implements DocumentCbjlService {
 		documentCbjlDao.deleteByInfoId(infoId);
 		
 	}
+
+	@Override
+	public DocumentCbjl queryByInfoId(String infoId,String type){
+		return  documentCbjlDao.queryByInfoId(infoId,type);
+	}
 	
 }

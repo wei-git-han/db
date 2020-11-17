@@ -731,6 +731,8 @@ public class DocumentInfoController {
 
 		// 当前登录人的管理员类型(0:超级管理员 ;1：部管理员；2：局管理员；3：即是部管理员又是局管理员)
 		String adminType = adminSetService.getAdminTypeByUserId(loginUserId);
+		//角色标识（1：首长；2：首长秘书；3：局长；4：局秘书；5：处长；6：参谋;）
+		String roleType = roleSetService.getRoleTypeByUserId(loginUserId);
 		// 获取文件信息
 		DocumentInfo documentInfo = documentInfoService.queryObject(id);
 		if (documentInfo != null) {
@@ -746,6 +748,12 @@ public class DocumentInfoController {
 					}
 				} else {
 					quXiaoBtn = true;
+				}
+			}
+			//处领导、局领导、局管理员在详情页内支持催办及填写催办功能
+			if("2".equals(adminType) || "5".equals(roleType) || "3".equals(roleType)) {
+				if (status < 2) {
+					cuiBanBtn = true;
 				}
 			}
 		}

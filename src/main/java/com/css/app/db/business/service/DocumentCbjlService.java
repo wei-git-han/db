@@ -29,4 +29,6 @@ public interface DocumentCbjlService {
 	DocumentCbjl queryLatestCuiBan(String infoId);
 	
 	void deleteByInfoId(String infoId);
+
+	DocumentCbjl queryByInfoId(String infoId,String type);
 }
