@@ -873,11 +873,17 @@ ul{
 
 
 .ifcuibanContent{
-	display:none;width:100%;color:#fff;background: #f00;font-size:14px;
+	display:none;width:100%;color:#fff;background: #ff8989;font-size:14px;
 	padding:10px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+.overText{
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	cursor: pointer;
 }
 
 .newbottom{
