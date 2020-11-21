@@ -52,13 +52,16 @@ var pageModule = function(){
 					newbootbox.newdialogClose("plspDialog");
 					if(data.result=="success"){
 						newbootbox.alert("公文均已送审批！").done(function(){
-							window.top.iframe1.pageModule.initgrid();
-							$ajax({
-	    						url:pushTodo,
-	    						data:{},
-	    						success:function(data){}
-	    					});	
-							window.top.grdbfn()
+
+                            // $ajax({
+	    					// 	url:pushTodo,
+	    					// 	data:{},
+	    					// 	success:function(data){}
+	    					// });
+                            changToNum2(function () {
+                                window.top.iframe1.pageModule.initgrid();
+                                window.top.grdbfn()
+                            });
 						});
 					}else{
 						newbootbox.alert("送审批失败！");

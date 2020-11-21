@@ -419,11 +419,12 @@ function chehuiDoc(id, infoId, dealUserId){
 	    			if(data.result=='success'){
 	    				newbootbox.alertInfo('撤回成功！').done(function(){
 	    					pageModule.initgrid();
-	    					$ajax({
-	    						url:pushTodo,
-	    						data:{},
-	    						success:function(data){}
-	    					});	
+	    					// $ajax({
+	    					// 	url:pushTodo,
+	    					// 	data:{},
+	    					// 	success:function(data){}
+	    					// });
+                            changToNum();
 	    					window.top.grdbfn()
 	    				});
 	    			}else if(data.result=='deal'){

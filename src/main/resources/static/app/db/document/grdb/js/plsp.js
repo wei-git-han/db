@@ -20,13 +20,17 @@ var pageModule = function(){
 							newbootbox.newdialogClose("plspDialog");
 							if(data.result=='success'){
 								newbootbox.alertInfo('公文已审批通过！').done(function(){
-									window.top.iframe1.pageModule.initgrid();
-									$ajax({
-			    						url:pushTodo,
-			    						data:{},
-			    						success:function(data){}
-			    					});	
-									window.top.grdbfn()
+									// window.top.iframe1.pageModule.initgrid();
+                                    // // $ajax({
+                                    // // 	url:pushTodo,
+                                    // // 	data:{},
+                                    // // 	success:function(data){}
+                                    // // });
+									// window.top.grdbfn()
+                                    changToNum2(function () {
+                                        window.top.iframe1.pageModule.initgrid();
+                                        window.top.grdbfn()
+                                    });
 								});
 							}else{
 								newbootbox.alertInfo('审批未通过！');
