@@ -1067,23 +1067,24 @@ public class DocumentJcdbController {
 				boolean t = false;
 				if(documentSzps != null && documentSzps.size() > 0){
 					t = isOverTreeMonth(leaderTime,docStatus);//是否超3个月
-				}else {
-					System.out.println("dddddddddddddd");
-				}
-				if(docStatus == 12){//办结
+					if(docStatus == 12){//办结
 						if(t){
 							overTimebj += 1;//超时办结
 						}else{
 							onTimebj += 1;//按时办结
 						}
-				}else{//没有办结
-					if(t){
-						overTimewbj += 1;//超时未结
+					}else{//没有办结
+						if(t){
+							overTimewbj += 1;//超时未结
+						}
+
+
+
 					}
-
-
-
+				}else {
+					onTimebj += 1;//按时办结
 				}
+
 			}
 
 		}
