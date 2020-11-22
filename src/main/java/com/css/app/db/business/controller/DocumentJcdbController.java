@@ -47,7 +47,7 @@ import com.css.base.utils.StringUtils;
 import com.github.pagehelper.PageHelper;
 
 import dm.jdbc.util.StringUtil;
-import sun.plugin2.message.BestJREAvailableMessage;
+//import sun.plugin2.message.BestJREAvailableMessage;
 
 
 /**
@@ -1060,34 +1060,36 @@ public class DocumentJcdbController {
 					for(DocumentSzps documentSzps1 : documentSzps){
 						if(StringUtils.isNotBlank(documentSzps1.getCreatedTime())){
 							leaderTime = documentSzps1.getCreatedTime();
+							break;
 						}
 					}
 				}
 
 				boolean t = false;
-				if(documentSzps != null && documentSzps.size() > 0){
-					t = isOverTreeMonth(leaderTime,docStatus);//是否超3个月
-					if(docStatus == 12){//办结
-						if(t){
-							overTimebj += 1;//超时办结
-						}else{
-							onTimebj += 1;//按时办结
-						}
-					}else{//没有办结
-						if(t){
-							overTimewbj += 1;//超时未结
-						}
-
-
-
-					}
-				}else {
+				if(documentSzps != null && documentSzps.size() > 0) {
+                    t = isOverTreeMonth(leaderTime, docStatus);//是否超3个月
+                    if (docStatus == 12) {//办结
+                        if (t) {
+                            overTimebj += 1;//超时办结
+                        } else {
+                            onTimebj += 1;//按时办结
+                        }
+                    } else {//没有办结
+                        if (t) {
+                            overTimewbj += 1;//超时未结
+                        }
+                    }
+                }else {
 					onTimebj += 1;//按时办结
 				}
 
 			}
 
 		}
+        long bjSum = overTimebj + onTimebj;
+        wcl = ((new BigDecimal((float) bjSum / total).doubleValue()) * 100);
+
+       int t = (int) Math.round(wcl);
 		jo.put("overTimewbj", overTimewbj);//超时未结
 		jo.put("overTimebj", overTimebj);//超时办结
 		jo.put("onTimeblz", blz < 0 ? 0 : blz);//按时在办
@@ -1104,7 +1106,7 @@ public class DocumentJcdbController {
 			if(format.equals(".00")) {
 				jo.put("wcl", 0);
 			}else {
-				jo.put("wcl", wcl);
+				jo.put("wcl", t);
 			}
 			
 		}else {
@@ -1114,7 +1116,7 @@ public class DocumentJcdbController {
 	}
 
 	private boolean isOverTreeMonth(String leaderTime,int status) {
-		boolean t = true;
+		boolean t = false;
 		// 2019年05月08日
 		if (StringUtils.isNotBlank(leaderTime)) {
 			LocalDate currdate = LocalDate.now();
