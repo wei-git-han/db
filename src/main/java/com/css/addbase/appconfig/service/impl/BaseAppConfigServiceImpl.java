@@ -3,6 +3,7 @@ package com.css.addbase.appconfig.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.css.addbase.apporgan.entity.BaseAppOrgan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +60,11 @@ public class BaseAppConfigServiceImpl implements BaseAppConfigService {
 			ret = config.getValue();
 		}
 		return ret;
+	}
+
+	@Override
+	public List<BaseAppOrgan> queryAllDept(){
+		return baseAppConfigDao.queryAllDept();
 	}
 
 }

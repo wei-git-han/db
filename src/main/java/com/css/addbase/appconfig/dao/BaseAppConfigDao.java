@@ -3,7 +3,9 @@ package com.css.addbase.appconfig.dao;
 import java.util.List;
 import java.util.Map;
 
+import com.css.addbase.apporgan.entity.BaseAppOrgan;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.css.addbase.appconfig.entity.BaseAppConfig;
@@ -25,6 +27,9 @@ public interface BaseAppConfigDao extends BaseDao<BaseAppConfig> {
 	
 	@Update("update BASE_APP_CONFIG set value=#{0} where type=#{1}")	
 	int UpdateValueByType(String value, String type);
+
+	@Select("select * from BASE_APP_ORGAN where PARENT_ID = 'root'")
+	List<BaseAppOrgan> queryAllDept();
 	
 	
 }

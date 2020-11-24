@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.css.addbase.appconfig.entity.BaseAppConfig;
+import com.css.addbase.apporgan.entity.BaseAppOrgan;
+
 /**
  * 部门表
  * 
@@ -26,4 +28,6 @@ public interface BaseAppConfigService {
 	int UpdateValueByType(String value, String type);
 	
 	String objectValue(String type);
+
+	List<BaseAppOrgan> queryAllDept();
 }
