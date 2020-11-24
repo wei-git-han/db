@@ -896,7 +896,7 @@
 		shu on
 		org.id=shu.id
 		where
-		org.PARENT_ID=#{organId} )
+		org.PARENT_ID='root' )
 		t group by t.id,t.dwname
 		<!-- <select id="queryListByOrgYear" resultType="map"> -->
 		<!-- select -->

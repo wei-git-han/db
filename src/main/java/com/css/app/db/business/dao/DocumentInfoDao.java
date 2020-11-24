@@ -26,7 +26,7 @@ public interface DocumentInfoDao extends BaseDao<DocumentInfo> {
 
 	List<Map<String, Object>> queryListByYear(Map<String, Object> map);
 
-	@Select("select * from DB_DOCUMENT_INFO where status = '2' and CREATED_TIME like '%'||#{0}||'%'")
+	@Select("select * from DB_DOCUMENT_INFO where status = '2' and CREATED_TIME like '%'||#{0}||'%' order by CREATED_TIME desc")
 	List<DocumentInfo> queryAllBjList(String year);
 
 	List<Map<String, Object>> queryListByOrgAndYear(Map<String, Object> map);

@@ -992,8 +992,8 @@ public class DocumentJcdbController {
      * }
      */
     @ResponseBody
-    @RequestMapping("/szCount")
-    public void szCount(String year, String month, String organId) {
+    @RequestMapping("/szCount1")
+    public void szCount1(String year, String month, String organId) {
         JSONObject jo = new JSONObject();
         List<BaseAppOrgan> baseAppOrganList = baseAppConfigService.queryAllDept();
         int daySum = baseAppOrganList.size();
@@ -1119,6 +1119,94 @@ public class DocumentJcdbController {
     }
 
     @ResponseBody
+    @RequestMapping("/szCount")
+    public void countSum(String year, String month, String organId){
+        JSONObject jsonObject = new JSONObject();
+        Map<String, Object> map = new HashMap<>();
+        map.put("year",year);
+        double  blz=0;
+        double  bj=0;
+        double  ctls=0;
+        double  total=0;
+        double  wfk =0;
+        int wfkCount = 0;
+        float day = 0;
+        int t = 0;
+        List<DocumentInfo> documentInfoList = documentInfoService.queryAllBjList(year);
+        if(documentInfoList != null && documentInfoList.size() > 0){
+            t = documentInfoList.size();
+            Date lastTime = documentInfoList.get(0).getCreatedTime();
+            Date firstTime = documentInfoList.get(t - 1).getCreatedTime();
+            long millisecond = lastTime.getTime() - firstTime.getTime();
+            day = millisecond / (24 * 60 * 60 * 1000 )/t;
+        }
+        List<Map<String, Object>> infoList = documentInfoService.queryListByOrgYear(map);
+        if (infoList != null && infoList.size() > 0) {
+            for (Map<String, Object> map2 : infoList) {
+                String danweiid = (String) map2.get("ID");
+                JSONObject jo = new JSONObject();
+                jo.put("bj", (long) map2.get("bj"));
+                bj = bj + (long) map2.get("bj");
+                jo.put("ctls", (long) map2.get("ctls"));
+                ctls = ctls + (long) map2.get("ctls");
+                //对结果进行二级过滤：针对办理中拆分：办理中+未反馈
+                //未反馈量
+                long start = System.currentTimeMillis();
+                int wfkCount1 = 0;
+                wfkCount1 = this.queryWfkCount2(danweiid, year);
+                wfkCount = wfkCount + this.queryWfkCount2(danweiid, year);
+                long end = System.currentTimeMillis();
+                System.out.println("----------------未反馈:" + (end - start));
+                //各局完成比率  办结+常态落实/总数
+                total = total + (long) map2.get("blz") + (long) map2.get("bj") + (long) map2.get("ctls") + wfkCount1;
+                if (total == 0) {
+                    jo.put("wcl", "0%");
+                } else {
+                    long bjAddCtls = (long) map2.get("bj") + (long) map2.get("ctls");
+                    if (bjAddCtls == 0) {
+                        jo.put("wcl", "0%");
+                    } else {
+                        double wclv = ((double) bjAddCtls / total);
+                        double wclDouble = 0.00;
+                        if (wclv >= 0.995 && wclv < 1.000) {
+                            wclDouble = (int) (wclv * 100);
+                        } else {
+                            wclDouble = (int) (wclv * 100 + 0.5);
+                        }
+                        String wclStr = wclDouble + "";
+                        String wcl = wclStr.substring(0, wclStr.lastIndexOf("."));
+                        jo.put("wcl", wcl + "%");
+                    }
+                }
+                blz = blz + (long) map2.get("blz");
+            }
+        }
+        double bjAddCtls = bj + ctls;
+        if (bjAddCtls == 0) {
+            jsonObject.put("wcl", "0%");
+        } else {
+            double wclv = bjAddCtls / total;
+            double wclDouble = 0.00;
+            if (wclv >= 0.995 && wclv < 1.000) {
+                wclDouble = (int) (wclv * 100);
+            } else {
+                wclDouble = (int) (wclv * 100 + 0.5);
+            }
+            String wclStr = wclDouble + "";
+            String wcl = wclStr.substring(0, wclStr.lastIndexOf("."));
+            jsonObject.put("wcl", wcl + "%");
+        }
+
+        jsonObject.put("overTimewbj",wfkCount);//未反馈
+        jsonObject.put("onTimeblz",blz);//时限内在办
+        jsonObject.put("onTimebj",bj);//按时办结
+        jsonObject.put("overTimebj",ctls);//常态落实
+        jsonObject.put("zsl",total);//总量
+        jsonObject.put("aveDays",day);//平均办理天数
+        Response.json(jsonObject);
+    }
+
+    @ResponseBody
     @RequestMapping("/count")
     public void count(String year, String month, String organId) {
         JSONObject jo = new JSONObject();
@@ -1133,6 +1221,8 @@ public class DocumentJcdbController {
         long blz = 0;
         double wcl = 0;
         long bj = 0;
+        int wfkCount = 0;
+        long ctls = 0;
         map.put("year", year);
         map.put("month", month);
         map.put("organId", organId);
@@ -1144,13 +1234,14 @@ public class DocumentJcdbController {
             for (int j = 0; j < infoListAll.size(); j++) {
                 String deptId = (String) infoListAll.get(j).get("ID");
                 if (organId.equals(deptId)) {
-                    int wfkCount = this.queryWfkCount2(deptId, year);
+                    wfkCount = this.queryWfkCount2(deptId, year);
                     blz = (long) infoListAll.get(j).get("blz");
                     bj = (long) infoListAll.get(j).get("bj");
-                    long ctls = (long) infoListAll.get(j).get("ctls");
+                    ctls = (long) infoListAll.get(j).get("ctls");
                     sum = blz + bj + ctls + wfkCount;
                     long bjSum = bj + ctls;
                     wcl = ((new BigDecimal((float) bjSum / sum).doubleValue()) * 100);
+                    break;
                 }
             }
         }
@@ -1165,7 +1256,7 @@ public class DocumentJcdbController {
 
 
         //double  bj=0;
-        double ctls = 0;
+        //double ctls = 0;
         double total = 0;
         double days = 0;
         int onTimebj = 0;
@@ -1178,7 +1269,7 @@ public class DocumentJcdbController {
             Date lastTime = docInfoList.get(0).getUpdateTime();
             Date firstTime = docInfoList.get(t - 1).getUpdateTime();
             long millisecond = lastTime.getTime() - firstTime.getTime();
-            day = millisecond / (24 * 60 * 60 * 1000 * 60);
+            day = millisecond / (24 * 60 * 60 * 1000 * 60)/t;
         }
 
         if (infoList != null && infoList.size() > 0) {
@@ -1232,7 +1323,7 @@ public class DocumentJcdbController {
         //wcl = ((new BigDecimal((float) bjSum / total).doubleValue()) * 100);
 
         int t = (int) Math.round(wcl);
-        jo.put("overTimewbj", overTimewbj);//超时未结
+        jo.put("overTimewbj", wfkCount);//超时未结
         jo.put("overTimebj", ctls);//超时办结
         jo.put("onTimeblz", blz < 0 ? 0 : blz);//按时在办
         jo.put("onTimebj", bj);//按时办结
@@ -1248,7 +1339,7 @@ public class DocumentJcdbController {
             if (format.equals(".00")) {
                 jo.put("wcl", 0);
             } else {
-                jo.put("wcl", t);
+                jo.put("wcl", t+ "%");
             }
 
         } else {
