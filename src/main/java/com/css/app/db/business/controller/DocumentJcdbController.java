@@ -1269,7 +1269,7 @@ public class DocumentJcdbController {
             Date lastTime = docInfoList.get(0).getUpdateTime();
             Date firstTime = docInfoList.get(t - 1).getUpdateTime();
             long millisecond = lastTime.getTime() - firstTime.getTime();
-            day = millisecond / (24 * 60 * 60 * 1000 * 60)/t;
+            day = millisecond / (24 * 60 * 60 * 1000 )/t;
         }
 
         if (infoList != null && infoList.size() > 0) {
