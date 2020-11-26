@@ -103,7 +103,7 @@ html, body {
 	padding:10px;border:1px solid #3399FF;background:#fff;margin-bottom:10px;
 }
 .newlayout5_top{
-	height:30px;border-bottom:1px dotted #797979; 
+	height:30px;border-bottom:1px dotted #797979;
 }
 .newlayout5_top_left{
 	float:left;margin-right:10px;
@@ -112,7 +112,7 @@ html, body {
 	float:right;margin-left:10px;
 }
 .newlayout5_cont{
-	
+
 }
 .clicktitle{
 	height:30px;
@@ -163,6 +163,7 @@ html, body {
 	font-size: 18px;
 	float: left;
 	font-weight: bold;
+	width: 100%;
 }
 
 /* �Ҳ�tabҳǩ */
@@ -372,7 +373,7 @@ html, body {
     margin-bottom: 0;
     font-size: 14px;
     font-weight: 400;
-    line-height: 1.42857143;
+    line-height: 1.2;
     text-align: center;
     white-space: nowrap;
     vertical-align: middle;
