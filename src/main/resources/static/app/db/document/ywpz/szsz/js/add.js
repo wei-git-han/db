@@ -22,7 +22,9 @@ var pageModule = function(){
 		$("#quxiao").click(function(){
 			window.location.href="/app/db/document/ywpz/szsz/html/szsz.html";
 		});
-		
+		$("#fanhui").click(function(){
+			window.location.href="/app/db/document/ywpz/szsz/html/szsz.html";
+		})
 		
 		$("#commentForm").validate({
 		    submitHandler: function() {

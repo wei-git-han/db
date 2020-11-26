@@ -36,7 +36,9 @@ var pageModule = function(){
 		$("#quxiao").click(function(){
 			window.location.href="/app/db/document/ywpz/jssz/html/jssz.html";
 		});
-		
+		$("#fanhui").click(function(){
+			window.location.href="/app/db/document/ywpz/jssz/html/jssz.html";
+		})
 		
 		$("#commentForm").validate({
 		    submitHandler: function() {
