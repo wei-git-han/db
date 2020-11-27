@@ -176,6 +176,29 @@ public class ReplyExplainController {
 		}
 		Response.json(jsonArray);
 	}
+
+	/**
+	 * 个人待办中，局长编辑意见，从后台返回，防止有特殊符号，前台从链接中取不到值
+	 * @param infoId
+	 * @param subId
+	 */
+	@ResponseBody
+	@RequestMapping("/getReplyInfo")
+	public void getReplyInfo(String infoId,String subId){
+		JSONArray jsonArray = new JSONArray();
+		List<ReplyExplain> dbReplyExplainList = replyExplainService.querySubLatestReply(infoId, subId);
+		if(dbReplyExplainList != null && dbReplyExplainList.size() > 0){
+			for(int i = 0;i<dbReplyExplainList.size();i++){
+				JSONObject json=new JSONObject();
+				json.put("content",dbReplyExplainList.get(i).getReplyContent());
+				jsonArray.add(json);
+			}
+
+		}
+		Response.json(jsonArray);
+	}
+
+
 	
 	/**
 	 * 获取所有分支局最新已发布反馈
