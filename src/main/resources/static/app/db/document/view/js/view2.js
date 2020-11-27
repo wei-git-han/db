@@ -1497,7 +1497,7 @@ function editfn(id,el,checkStatus){
 	    				header:true,
 	    				title:"编辑",
 	    				classed:"cjDialog",
-	    				url:"/app/db/document/view/html/editDialog.html?fileId="+fileId+"&replyContent="+content+"&subId="+subId+"&teamId="+id+"&fromMsg="+fromMsg+"&checkStatus="+checkStatus
+	    				url:"/app/db/document/view/html/editDialog.html?fileId="+fileId+"&subId="+subId+"&teamId="+id+"&fromMsg="+fromMsg+"&checkStatus="+checkStatus
 	    			})
 	    		}
 	    	}

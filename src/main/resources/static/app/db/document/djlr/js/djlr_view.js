@@ -261,8 +261,9 @@ var pageModule = function(){
 					edit = o.isSameDept;
 					checkStatus = o.checkStatus;
 					if(edit=="true" && fileFrom=="blfk"){
+                        // '${id}','${content}','${subId}','${checkStatus}','${teamId}','${ideaGroupId}',this
 						edit = `<div class="nrt-cont-top-btn">
-							<a class="" onclick="editfn('${id}','${content}','${subId}','${checkStatus}','${teamId}','${ideaGroupId}',this)" >编辑</a>
+							<a class="" onclick="editfn('${id}','${subId}','${checkStatus}','${teamId}','${ideaGroupId}',this)" >编辑</a>
 						</div>`;
 					}else{
 					    edit=``
@@ -871,7 +872,7 @@ function downloadfn(fileServerId){
 	    }
 	});
 }
-function editfn(id,content,subId,checkStatus,teamId,ideaGroupId,el){
+function editfn(id,subId,checkStatus,teamId,ideaGroupId,el){
 	$(el).parents(".nrt-cont").find(".nrt-cont-file .remove").show();
 	newbootbox.oconfirm({
         title:"提示",
@@ -884,7 +885,7 @@ function editfn(id,content,subId,checkStatus,teamId,ideaGroupId,el){
                 header:true,
                 title:"编辑",
                 classed:"cjDialog",
-                url:"/app/db/document/view/html/editDialog.html?fileId="+fileId+"&replyContent="+content+"&subId="+subId+"&teamId="+teamId+"&fromMsg="+fromMsg+"&checkStatus="+checkStatus+"&ideaGroupId="+ideaGroupId+"&fileFrom="+fileFrom
+                url:"/app/db/document/view/html/editDialog.html?fileId="+fileId+"&subId="+subId+"&teamId="+teamId+"&fromMsg="+fromMsg+"&checkStatus="+checkStatus+"&ideaGroupId="+ideaGroupId+"&fileFrom="+fileFrom
               })
         }
     });
