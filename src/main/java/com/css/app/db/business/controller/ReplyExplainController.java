@@ -184,19 +184,17 @@ public class ReplyExplainController {
 	 */
 	@ResponseBody
 	@RequestMapping("/getReplyInfo")
-	public void getReplyInfo(String infoId,String subId){
-		JSONArray jsonArray = new JSONArray();
-		List<ReplyExplain> dbReplyExplainList = replyExplainService.querySubLatestReply(infoId, subId);
-		if(dbReplyExplainList != null && dbReplyExplainList.size() > 0){
-			for(int i = 0;i<dbReplyExplainList.size();i++){
-				JSONObject json=new JSONObject();
-				json.put("content",dbReplyExplainList.get(i).getReplyContent());
-				jsonArray.add(json);
-			}
-
-		}
-		Response.json(jsonArray);
-	}
+	public void getReplyInfo(String infoId,String subId) {
+        JSONArray jsonArray = new JSONArray();
+        JSONObject json = new JSONObject();
+        List<ReplyExplain> dbReplyExplainList = replyExplainService.querySubLatestReply(infoId, subId);
+        if (dbReplyExplainList != null && dbReplyExplainList.size() > 0) {
+            for (int i = 0; i < dbReplyExplainList.size(); i++) {
+                json.put("content", dbReplyExplainList.get(0).getReplyContent());
+            }
+        }
+        Response.json(json);
+    }
 
 
 	
