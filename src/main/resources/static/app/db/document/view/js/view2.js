@@ -38,7 +38,7 @@ var replyContentNone = true;//判断办理反馈的值是否为空
 var showCollectIdeaButtonUrl={"url":"/app/db/addXbDeal/showCollectIdeaButton","dataType":"text"}; //是否显示意见收集
 var commitIdeaUrl={"url":"/app/db/addXbDeal/commitIdea","dataType":"text"}; //发送意见url
 var listDefaultUrl = {"url":"/app/db/dbexpdeedbackset//listDefault","dataType":"text"}; /*相关文件--删除附件*/
-
+var getReplyInfoUrl = {"url":"/app/db/replyexplain/getReplyInfo","dataType":"text"}; // 个人待办返回意见
 
 
 
@@ -1475,26 +1475,34 @@ function downloadfn(fileServerId){
 	});
 }
 function editfn(id,el,checkStatus){
-	var content=$(el).attr("dataContent");
-	$(el).parents(".nrt-cont").find(".nrt-cont-file .remove").show();
-	if(isCbr==1){
-		if(content){
-			replyContentNone = false;
-		}
-		$("#editTeamId").val(id);
-		$("#replyContent").val(content);
-		return;
-	}else{
-		newbootbox.newdialog({
-			id:"editDialog",
-			width:800,
-			height:600,
-			header:true,
-			title:"编辑",
-			classed:"cjDialog",
-			url:"/app/db/document/view/html/editDialog.html?fileId="+fileId+"&replyContent="+content+"&subId="+subId+"&teamId="+id+"&fromMsg="+fromMsg+"&checkStatus="+checkStatus
-		})
-	}
+	$ajax({
+		url:getReplyInfoUrl,
+		data:{infoId:fileId,subId:subId},
+		success:function(data){
+	    	if(data.content != null && data.content != '') {
+	    		var content = data.content;
+	    		$(el).parents(".nrt-cont").find(".nrt-cont-file .remove").show();
+	    		if(isCbr==1){
+	    			if(content){
+	    				replyContentNone = false;
+	    			}
+	    			$("#editTeamId").val(id);
+	    			$("#replyContent").val(content);
+	    			return;
+	    		}else{
+	    			newbootbox.newdialog({
+	    				id:"editDialog",
+	    				width:800,
+	    				height:600,
+	    				header:true,
+	    				title:"编辑",
+	    				classed:"cjDialog",
+	    				url:"/app/db/document/view/html/editDialog.html?fileId="+fileId+"&replyContent="+content+"&subId="+subId+"&teamId="+id+"&fromMsg="+fromMsg+"&checkStatus="+checkStatus
+	    			})
+	    		}
+	    	}
+	    }
+	})
 }
 
 function removefn(id,el){
