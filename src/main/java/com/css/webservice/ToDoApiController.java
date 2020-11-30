@@ -59,8 +59,8 @@ public class ToDoApiController {
        
         value.put("result", "success");
         value.put("count", dbNumSum);
-        value.put("grdbNum",grdbNum);
-        value.put("jndbNum",jndbNum);
+        //value.put("grdbNum",grdbNum);
+        //value.put("jndbNum",jndbNum);
         Response.json(value);
     }
     
