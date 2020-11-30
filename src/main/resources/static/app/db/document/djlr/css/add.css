@@ -461,3 +461,9 @@ html, body {
     height:40px !important;
     padding-left:20px;
 }
+.modal-backdrop, .modal-backdrop.fade.in{
+    background-color: #ffffff !important;
+}
+.modal-backdrop.in {
+    opacity: 0 !important;
+}
