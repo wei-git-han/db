@@ -62,7 +62,7 @@ public class PersonDocumentController {
 		infoMap.add("search", search);
 		infoMap.add("orderField", orderField);
 		infoMap.add("orderSeq", orderSeq);
-		infoMap.add(status, status);
+		infoMap.add("status", status);
 		JSONObject retInfo = CrossDomainUtil.getJsonData(url, infoMap);
 		Response.json(retInfo);
 	}
