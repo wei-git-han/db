@@ -350,6 +350,9 @@ var pageModule = function(){
 			inittree();
 			initUserRole();
 			changToNum();
+			if(gettop2().grdbfn){
+				gettop2().grdbfn()
+			}
 		},
 		initgrid:function(){
 			initgrid();

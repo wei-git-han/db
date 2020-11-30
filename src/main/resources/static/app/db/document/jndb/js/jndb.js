@@ -345,6 +345,9 @@ var pageModule = function(){
 			initother();
 			inittree();
 			changToNum();
+			if(gettop2().jndbfn){
+				gettop2().jndbfn()
+			}
 		},
 		initgrid:function(){
 			initgrid();
