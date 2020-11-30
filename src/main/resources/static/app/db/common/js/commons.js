@@ -1497,13 +1497,23 @@ function GetRootPath(){
 var rootPath = GetRootPath();
 
 //关闭桌面浏览器
-function windowClose(){
-	if(navigator.userAgent.indexOf('OfficeBrowser')>=0){
-		window.location = 'cmd:close';
-	}else{
-		window.close();
-	}
+function windowClose() {
+    if (navigator.userAgent.indexOf('OfficeBrowser') >= 0) {
+        if(window.top.__close__){
+            try{
+                window.top.__close__()
+            }
+            catch(e){
+                console.log(e)
+            }
+        }else{
+            window.location = 'cmd:close';
+        }
+    } else {
+        window.close();
+    }
 }
+
 
 
 //加载进度条
