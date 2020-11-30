@@ -41,7 +41,7 @@ public class PersonDocumentController {
 	 */
 	@ResponseBody
 	@RequestMapping("/personList")
-	public void personList(Integer page, Integer pagesize, String search, String orderField, String orderSeq, String status) {
+	public void personList(Integer page,Integer rows,  String search, String orderField, String orderSeq, String status) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("orderField", orderField);
 		map.put("orderSeq", orderSeq);
@@ -49,7 +49,7 @@ public class PersonDocumentController {
 
 		map.put("search", search);
 
-		PageHelper.startPage(page, pagesize);
+		PageHelper.startPage(page, rows);
 		BaseAppOrgMapped mapped = (BaseAppOrgMapped) baseAppOrgMappedService.orgMappedByOrgId("", "",
 				AppConstant.APP_GWZB);
 		if (mapped == null) {
@@ -58,7 +58,7 @@ public class PersonDocumentController {
 		LinkedMultiValueMap<String, Object> infoMap = new LinkedMultiValueMap<String, Object>();
 		String url = mapped.getUrl() + "/app/zhms/gwzb/dbList";
 		infoMap.add("page", String.valueOf(page));
-		infoMap.add("pagesize", String.valueOf(pagesize));
+		infoMap.add("pagesize", String.valueOf(rows));
 		infoMap.add("search", search);
 		infoMap.add("orderField", orderField);
 		infoMap.add("orderSeq", orderSeq);
