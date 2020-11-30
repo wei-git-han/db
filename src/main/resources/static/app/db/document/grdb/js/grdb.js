@@ -5,7 +5,7 @@ var userUrl = {"url":"/app/db/document/grdb/data/userTree.json","dataType":"text
 var chehuiUrl = {"url":"/app/db/withdraw/juInnnerWithdraw","dataType":"text"};//撤回url
 var currUserRoleTypeUrl = {"url":"/app/db/subdocinfo/currUserRoleType","dataType":"text"};//获取当前用户的角色类型
 var buttonColorUrl={"url":"/app/db/addXbDeal/buttonColor","dataType":"text"}; //发送意见url
-var pushTodo={"url":"/api/db/todo","dataType":"text"}; 
+var pushTodo={"url":"/api/db/todo","dataType":"text"};
 
 var grid = null;
 var total=0;//列表中，数据的总条数
@@ -100,14 +100,14 @@ var pageModule = function(){
 		    		     });
 	                	 contentText = '<div class="zspsnr" onclick="pszsnrAlert(\''+rowdata.infoId+'\')" title="'+html1+'">'+html1+'</div>';
 	            	 }
-	
+
 	            	 return contentText;
                 }},
                 {display:"本期局内反馈",name:"",width:"19%",align:"left",paixu:false,render:function(rowdata){
 		           	var dbCont="";
 		           	if(rowdata.latestReply){
 		           		dbCont=rowdata.latestReply;
-		           	}	 
+		           	}
 		           	return '<div class="dblsqk" onclick="dblsqkAlert(\''+rowdata.infoId+'\')"  title="'+dbCont+'"><span>'+dbCont+'</span></div>';
 		        }},
                 {display:"承办单位/人",name:"",width:"10%",align:"left",paixu:false,title:false,render:function(rowdata){
@@ -188,11 +188,11 @@ var pageModule = function(){
             },
             url: tableList,
             getpagefn:function(page){
-            	return window.top.memory.pagesize = page;   
+            	return window.top.memory.pagesize = page;
             }
        });
 	}
-	
+
 	var numsListfn = function(){
 		$ajax({
 			url:numsList,
@@ -203,9 +203,9 @@ var pageModule = function(){
 					$("#"+id).html(item);
 				});
 			}
-		});	
+		});
 	}
-	
+
 	var initother = function(){
 		$(".date-picker").datepicker({
 		    language:"zh-CN",
@@ -214,7 +214,7 @@ var pageModule = function(){
 		    format : "yyyy-mm-dd",
 		    autoclose: true
 		});
-		
+
 		$(".search").hover(function(){
 			$(this).attr("src","../../../common/images/u132_mouseOver.png");
 		},function(){
@@ -224,38 +224,38 @@ var pageModule = function(){
 		$("input[name='documentStatus']").click(function(){
 			refreshgrid();
 		});
-		
+
 		$(".search").click(function(){
 			refreshgrid();
 		});
-		
+
 		$("#searchAll").click(function(){
 			$("#searchwrap").toggle();
 		});
-		
+
 		/*$("body").click(function(e){
 			if($(e.target).hasClass("searchAll") || $(e.target).hasClass("form-group") || $(e.target).parents("div").hasClass("searchwrap")){
 				return;
 			};
 			$(".searchwrap").slideUp(50);
 		});*/
-		
+
 		//筛选功能
 		$("#sure").click(function(){
 			 $("#searchwrap").slideUp(50);
 			 refreshgrid();
 		});
-		
+
 		//筛选功能
 		$("#close").click(function(){
 			$("#searchwrap").slideUp(50);
 		});
-		
+
 		//重置
 		$("#reset").click(function(){
 			removeInputData(["title","deptid","deptname","username","userid","blstatus","designStart","designEnd","fileType"]);
 		});
-		
+
 		//批量审批
 		$("#plsp").click(function(){
 			var ids=[];
@@ -284,7 +284,7 @@ var pageModule = function(){
 			}
 		});
 	}
-	
+
 	var inittree = function(){
 		$("#deptname").createcheckboxtree({
 			url : deptUrl,
@@ -299,7 +299,7 @@ var pageModule = function(){
 				$("#deptname").val(treessname);
 		   }
 		});
-		
+
 		$("#username").createUserTree({
 			url : userUrl,
 			width : "100%",
@@ -316,7 +316,7 @@ var pageModule = function(){
 		});
 	}
 
-	
+
 	var initfn = function(){
 		$.uniform.update($("input[name='documentStatus']").prop("checked",false));
 		if(o.radio!="undefined" && o.radio!=null && o.radio!=""){
@@ -326,7 +326,7 @@ var pageModule = function(){
 		}
 		$("#searchVal").val(o.search);
 	}
-	
+
 	var initUserRole = function(){
 		$ajax({
 			url:currUserRoleTypeUrl,
@@ -337,9 +337,9 @@ var pageModule = function(){
 					currentUserRole = data.currUserRoleType;
 				}
 			}
-		});	
+		});
 	}
-	
+
 	return{
 		//加载页面处理程序
 		initControl:function(){
@@ -349,6 +349,7 @@ var pageModule = function(){
 			initother();
 			inittree();
 			initUserRole();
+			changToNum();
 		},
 		initgrid:function(){
 			initgrid();
@@ -363,7 +364,7 @@ function refreshgrid(){
 	grid.setparams({search:search,docStatus:documentStatus});
 	grid.loadtable();
 	numsListClickfn();
-	
+
 	window.top.memory.radio = documentStatus;
 	window.top.memory.search = search;
 }
@@ -377,7 +378,7 @@ function numsListClickfn(){
 				$("#"+id).html(item);
 			});
 		}
-	});	
+	});
 }
 
 //批示指示内容弹出框
@@ -435,7 +436,7 @@ function chehuiDoc(id, infoId, dealUserId){
 	    				newbootbox.alertInfo('撤回失败！');
 	    			}
 	    		}
-	    	});	
+	    	});
 	    }
 	})
 }
@@ -454,17 +455,16 @@ function plspFn(ids, curRole){
 	})
 }
 
-
 //意见收集
-function opinionView(infoId, subId, isCBPerson){ 
+function opinionView(infoId, subId, isCBPerson){
 	if(isCBPerson == 1){
 		$ajax({
 			url:buttonColorUrl,
 			data:{subId:subId,infoId:infoId},
 			success:function(data){
-				
+
 			}
-		});	
+		});
 		$("#"+subId).css("color","#333");
 	}
 	newbootbox.newdialog({
