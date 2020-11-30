@@ -638,6 +638,8 @@ var pageModule = function(){
                         // 刷新文件列表
                         psLoad('', data.url);
                         initfilefn();
+                      } else {
+                         newbootbox.alert('保存失败，请联系管理员！')
                       }
                      $("#spgwSave").removeClass("disabledBtn");
                  },error:function(data) {
