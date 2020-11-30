@@ -85,8 +85,8 @@ var pageModule = function(){
 //			}
 //		}
 //	}
-	
-	
+
+
 	//是否显示意见收集按钮
 	var showCollectIdeaButton=function(){
 		$ajax({
@@ -130,7 +130,7 @@ var pageModule = function(){
 					}
 				})
 			}
-		});	
+		});
 	}
 	/* 按钮权限控制 */
 	var showButton = function(){
@@ -207,9 +207,9 @@ var pageModule = function(){
 				    $("#ctlsBj").show();
 				}
 			}
-		});	
+		});
 	}
-	
+
 	//文件menu
 	var takeMenufn = function(){
 		$ajax({
@@ -234,7 +234,7 @@ var pageModule = function(){
 							<div title="<font title='${fileName}'>${fileName}</font>" id="${id}" fileServerFormatId="${fileServerFormatId}">
 							</div>
 						`);
-					}); 
+					});
 					$('#tt').tabs({
 						onSelect:function(title){
 							var tab = $('#tt').tabs('getSelected');
@@ -247,7 +247,7 @@ var pageModule = function(){
 						onClose:function(title){
 						}
 					});
-					
+
 					//文件列表——附件
 					$("#fjList").html("");
 					$.each(data,function(i,item){
@@ -260,12 +260,12 @@ var pageModule = function(){
 						var clickfileId = $($(this).parent('li')).attr("data_id");
 						getFile(clickfileId);
 						$("#tt").tabs("select",parseInt($($(this).parent('li')).attr("num")))
-					}); 
+					});
 				}
 			}
-		});	
+		});
 	}
-	
+
 	var getFile = function(clickfileId){
 		$ajax({
 			url:getFileUrl,
@@ -278,9 +278,9 @@ var pageModule = function(){
 					suwell.ofdReaderInit("suwell",$("#suwell").width(),$("#suwell").height());
 				}
 			}
-		});	
+		});
 	}
-	
+
 	//批示信息
 	var initps = function(){
 		if(docTypeName == "重要决策部署分工"||docTypeName == "其他重要工作"||docTypeName == "部内重要工作分工"){
@@ -313,11 +313,11 @@ var pageModule = function(){
 							$(".line3").html("");
 						}
 					}
-				});	
+				});
 		 }
 
 	}
-	
+
 	/*公文信息*/
 	var initdata = function(){
 		$ajax({
@@ -337,10 +337,10 @@ var pageModule = function(){
 					)
 				}
 			}
-		});	
+		});
 	}
-	
-	
+
+
 	//办理反馈记录
 	var initblfkList = function(){
 		var eachfn = function(array,el,n){
@@ -402,7 +402,7 @@ var pageModule = function(){
 							file+='<div class="">'+remove+'<a id="'+fileid+'" onclick="downloadfn(\''+fileServerId+'\')">'+fileName+'</a></div>';
 						})
 					}
-					
+
 				}else if(n==2){
 					id = o.id;
 					teamId = o.replyTeamId;
@@ -430,15 +430,15 @@ var pageModule = function(){
 								'</button>';
 					}
 				}
-				
+
 				var pl = 20;
 				var li = '';
-				
+
 				if(n==1){
 					var active = o.show;
 					if(active==1){active="active"}
 					var color = "#00CCCC";
-					
+
 					if((i+3)%3==0){
 						color = "#00CCCC";
 					}else if((i+2)%3==0){
@@ -446,7 +446,7 @@ var pageModule = function(){
 					}else if((i+1)%3==0){
 						color = "#CCCCCC";
 					}
-					
+
 					li ='<div class="newpanel-cont '+active+'" color="'+color+'">'+
 					'	<div class="newpanel-inner">'+
 					'		<div class="newpanel-left">'+
@@ -551,8 +551,8 @@ var pageModule = function(){
 				}
 			})
 		}
-		
-		
+
+
 		$ajax({
 			url:subReplyListUrl,
  			data:{infoId:fileId,subId:subId},
@@ -570,7 +570,7 @@ var pageModule = function(){
 			}
 		})
 	}
-	
+
 	//文件转办——转办记录
 	var initzbjlfn = function(){
 		$ajax({
@@ -613,9 +613,9 @@ var pageModule = function(){
 					$("#zbrecord").html('<div class="szqf zwCss">暂无转办记录！</div>');
 				}
 			}
-		});	
+		});
 	}
-	
+
 	//文件转办——催办记录
 	var initcbfn = function(){
 		$ajax({
@@ -641,9 +641,9 @@ var pageModule = function(){
 					$("#cbrecord").html('<div class="szqf zwCss">暂无催办记录！</div>');
 				}
 			}
-		});	
+		});
 	}
-	
+
 	//文件转办—办结记录
 	var initbjfn = function(){
 		$ajax({
@@ -664,14 +664,14 @@ var pageModule = function(){
 					$("#jybjrecord").html('<div class="szqf zwCss">暂无办结记录！</div>');
 				}
 			}
-		});	
+		});
 	}
 
 	var initother = function(){
 		if(fromMsg && (fromMsg == true || fromMsg == "true")){
 			$("#goback").hide();
 		}
-				
+
 		//返回
 		$("#goback").click(function(){
 			if(fromMsg && fromMsg=="true"){
@@ -680,8 +680,8 @@ var pageModule = function(){
 				skip();
 			}
 		});
-		
-		
+
+
 		//办理反馈清屏
 		$("#clear").click(function(){
 			if($("span.css3").attr("data") =="1"){
@@ -691,10 +691,10 @@ var pageModule = function(){
             	replyContentNone = true;
         	}
 		});
-		
+
 		//送审
 		$("#tijiao").click(function(){
-			var cbrFlag="";  
+			var cbrFlag="";
 			if(isCbr && isCbr == 1){ //承办人
 				cbrFlag="1";
 				if((!replyContentNone)&&$("#replyContent").val() !="" && !!$("#replyContent").val()){
@@ -739,7 +739,7 @@ var pageModule = function(){
 				})
 			}
 		});
-		
+
 		//承办
 		$("#chengban").click(function(){
 			$("#yjsj").show();
@@ -755,7 +755,7 @@ var pageModule = function(){
 				}
 			});
 		});
-		
+
 		//返回修改
 		$("#fhxg").click(function(){
 			var replyContent = ((replyContentNone)?"":$("#replyContent").val());
@@ -807,8 +807,8 @@ var pageModule = function(){
 				}
 			});
 		});
-		
-		//局长送审 
+
+		//局长送审
 		$("#send").click(function(){
 			var cbrFlag="";
 			var replyContent = ((replyContentNone)?"":$("#replyContent").val());
@@ -881,8 +881,8 @@ var pageModule = function(){
 				})
 			}
 		});
-		
-		
+
+
 		//审批通过
 		$("#sptg").click(function(){
 			newbootbox.oconfirm({
@@ -915,7 +915,7 @@ var pageModule = function(){
 						}else{
 							newbootbox.alert('保存失败！请填写您的意见！')
 						}
-					}			
+					}
 					$ajax({
 						url:finishUrl,
 						data:{infoId:fileId,subId:subId,replyContent:replyContent,saveFlag:saveFlag},
@@ -940,7 +940,7 @@ var pageModule = function(){
 			 	}
 			});
 		});
-		
+
 		//转办
 		$("#zhuanban").click(function(){
 			//----------------gkt
@@ -967,7 +967,7 @@ var pageModule = function(){
 			})
 			//----------------gkt
 		});
-		
+
 		//范例
 		$("#fanli").click(function(){
 			newbootbox.newdialog({
@@ -992,17 +992,19 @@ var pageModule = function(){
 	 					type: "GET",
 	 					success:function(data){
 	 						if(data.result == "success"){
-	 							if(!fromMsg || fromMsg == false){
-									window.top.grdbfn();
-								}
-	 							window.location.reload();
+	 							changToNum2(function () {
+									if(!fromMsg || fromMsg == false){
+										window.top.grdbfn();
+									}
+									window.location.reload();
+								})
 	 						}
 	 					}
 	 				});
 			 	}
 			});
 		});
-		
+
 		//常态落实
 		$("#luoshi").click(function(){
 			newbootbox.oconfirm({
@@ -1015,17 +1017,19 @@ var pageModule = function(){
 	 					type: "GET",
 	 					success:function(data){
 	 						if(data.result == "success"){
-	 							if(!fromMsg || fromMsg == false){
-									window.top.grdbfn();
-								}
-	 							window.location.reload();
+								changToNum2(function () {
+									if (!fromMsg || fromMsg == false) {
+										window.top.grdbfn();
+									}
+									window.location.reload();
+								})
 	 						}
 	 					}
 	 				});
 			 	}
 			});
 		});
-		
+
 		//办理反馈-添加附件
 		var o1 = $("#file1").createfile({
 			//initdata:filedata1,
@@ -1036,7 +1040,7 @@ var pageModule = function(){
 			maxsize:500*1024*1024,
 			cssStyle:"width:0px;height:0px"
 		});
-		
+
 		//表单
 		$("#commentForm").validate({
 		    submitHandler: function() {
@@ -1066,7 +1070,7 @@ var pageModule = function(){
 									initblfkList();
 									$(".filename").text("");
 									$(".filelist").text("附件列表:");
-								}); 
+								});
 							}else{
 								$("#replyContent").val("");
 								replyContentNone = true;
@@ -1075,19 +1079,19 @@ var pageModule = function(){
 								$(".filelist").text("附件列表:");
 							}
 						} else {
-							newbootbox.alert("提交失败，请稍后重试！"); 
+							newbootbox.alert("提交失败，请稍后重试！");
 						}
 					}
 				}
-				$('#commentForm').ajaxSubmit(ajax_option); 
+				$('#commentForm').ajaxSubmit(ajax_option);
 		    }
 		});
-		
+
 		//办理反馈保存
 		$("#save").click(function(){
 			$("#commentForm").submit();
 		});
-		
+
 		//催办
 		$("#cuiban").click(function(){
 			newbootbox.newdialog({
@@ -1100,24 +1104,24 @@ var pageModule = function(){
 				url:"/app/db/document/view/html/cuibanDialog.html?fileId="+fileId+"&fromMsg="+fromMsg
 			})
 		});
-		
+
 		//查看附件
 		$("#showfj").click(function(){
 			$(".filelist").toggle();
 		});
-		
+
 		$("body").click(function(e){
 			if($(e.target).hasClass("showfj") || $(e.target).parents("div").hasClass("filelist")){
 				return;
 			};
 			$(".filelist").hide();
 		});
-		
+
 		$("#closeviewcont").click(function(){
 			$("#viewcont").modal("hide");
 		});
-		
-		
+
+
 		//切换签批方式
 		$("#changewrite").unbind("click"); //手写
         $("#changewrite").click(function(){ //手写
@@ -1136,8 +1140,8 @@ var pageModule = function(){
     			penNum="softpen_3mm";
     		}else{
     			penNum="signpen_05mm";
-    		}	
-    		
+    		}
+
     		$("#replyContent").hide();
     		$("#write").show();
     		$(".setpen").show();
@@ -1157,7 +1161,7 @@ var pageModule = function(){
     			newbootbox.alert("请安装插件!");
     		}*/
         });
-        
+
         $("#changejianpan").unbind("click");
         $("#changejianpan").click(function(){ //键盘
         	$(this).hide();
@@ -1178,7 +1182,7 @@ var pageModule = function(){
 				}
 			});*/
         });
-        
+
         //设置笔粗
     	$("body").delegate(".setpen","click",function(){
 			$("#setpenchoose").toggle();
@@ -1192,7 +1196,7 @@ var pageModule = function(){
 			$("#setpenchoose").hide();
 		});
 
-        
+
         $("#setpenchoose li").click(function(){
         	$("#penNum").text($(this).find("font").text());
         	var value = $(this).attr("data");
@@ -1206,7 +1210,7 @@ var pageModule = function(){
 				}
 			});
         });
-        
+
         //意见收集
         $("#yjsj").click(function(){
         	newbootbox.newdialog({
@@ -1220,8 +1224,8 @@ var pageModule = function(){
         		url:"/app/db/document/djlr/html/yjjl.html?infoId="+fileId+"&subId="+subId
         	})
         });
-        
-        
+
+
       //下载附件
        $("#downLoadfj").click(function(){
         	if($("#fjList").find("input[name=fjcheckbox]:checked").length>0){
@@ -1243,7 +1247,7 @@ var pageModule = function(){
         			window.location.href="/app/db/documentfile/downLoadFile?ids="+checkId.toString()+"&infoId="+fileId
         		}
         	}else{
-        		newbootbox.alert("请选中要下载的附件！"); 
+        		newbootbox.alert("请选中要下载的附件！");
         	}
         });
 
@@ -1265,7 +1269,7 @@ var pageModule = function(){
         		    			pageModule.takeMenufn()
             				});
         				}else{
-        					newbootbox.alert("上传失败！"); 
+        					newbootbox.alert("上传失败！");
         				}
         			}
         		}
@@ -1279,9 +1283,9 @@ var pageModule = function(){
         //扫描新增
         $("#addFj").click(function(){
         	if($("#id").val() == "" || $("#id").val() == null || typeof($("#id").val()) == undefined){
-        		newbootbox.alert("请先保存要素信息再开始扫描！"); 
+        		newbootbox.alert("请先保存要素信息再开始扫描！");
         		return  false;
-        	} 
+        	}
         	$("#pdf").unbind("click");
         	$("#pdf").unbind("change");
         	$("#pdf").click();
@@ -1313,7 +1317,7 @@ var pageModule = function(){
         						getFile(data.scanId);
         		    			pageModule.takeMenufn()
         					});
-        				} 
+        				}
         			}
         		}
         		$('#smjForm').ajaxSubmit(ajax_option);
@@ -1337,7 +1341,7 @@ var pageModule = function(){
         				suwell.ofdReaderInit("suwell",$("#suwell").width(),$("#suwell").height());
         			}
         		}
-        	});	
+        	});
         }
         //删除附件
         $("#delfj").click(function(){
@@ -1355,12 +1359,12 @@ var pageModule = function(){
         				if(data.result == "success" && data.url != ""){
         					newbootbox.alert("删除成功！").done(function(){
         		    			pageModule.takeMenufn()
-        					}); 
+        					});
         				}
         			}
         		})
         	}else{
-        		newbootbox.alert("请选中要删除的附件！"); 
+        		newbootbox.alert("请选中要删除的附件！");
         	}
         });
 
@@ -1395,7 +1399,7 @@ var pageModule = function(){
         })
 
 	}
-		
+
 	return{
 		//加载页面处理程序
 		initControl:function(){
@@ -1443,7 +1447,7 @@ function skip(){
 			window.location="/app/db/document/jndb/html/jndb.html?fileFrom=jndb";
 		}else if(fileFrom=="jcdb"){  //文件来源于统计报表打开的局内待办
 			window.location="/app/db/document/jndb/html/jndb.html?fileFrom=jcdb";
-		}else{ 
+		}else{
 			window.location.href="/app/db/document/grdb/html/grdb.html?fileFrom=grdb";
 		}
 	}
@@ -1542,7 +1546,7 @@ function viewcont(teamId,subId,ideaGroupId){
 }
 
 
-function opinionView(teamId,subId,ideaGroupId){ 
+function opinionView(teamId,subId,ideaGroupId){
 	newbootbox.newdialog({
 		id:"opinionDialog",
 		width:800,
@@ -1555,7 +1559,7 @@ function opinionView(teamId,subId,ideaGroupId){
 	})
 }
 //办结，常态落实
-function jnbanjie(dom){ 
+function jnbanjie(dom){
 	var msg = (dom == "banjie")?"是否确认要进行文件办结操作？":"是否确认要进行文件常态落实操作？";
 	var btntype = (dom == "banjie")?'1':'2';
 	var alert1 = (dom == "banjie")?"已办结！":"文件已常态落实！";
