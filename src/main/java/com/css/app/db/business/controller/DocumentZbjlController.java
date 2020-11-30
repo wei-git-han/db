@@ -313,6 +313,10 @@ public class DocumentZbjlController {
 				if(StringUtils.isNotBlank(dlsUserId)){
 					msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, dlsUserId, appId,clientSecret, msg.getGroupName(), msg.getGroupRedirect(), "","true");
 				}
+				//局长局内待办，转办给自己发消息，用于触发角标
+				if(StringUtils.isNotBlank(loginUserId)){
+					msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, loginUserId, appId,clientSecret, msg.getGroupName(), msg.getGroupRedirect(), "","true");
+				}
 			}
 			json.put("result", "success");
 		}else {
