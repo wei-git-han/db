@@ -811,6 +811,7 @@ public class SubDocInfoController {
 	@ResponseBody
 	@RequestMapping("/submitOperation")
 	public void submitOperation(String infoId, String subId, String userName, String userId, String dbStatus) {
+		String currentUserId = CurrentUser.getUserId();
 		// 流转到下一个人并将临时反馈变为发布
 		this.submitRelation(subId, userName, userId, "2", dbStatus);
 		// 分支文件保存最新更新时间及选择状态
@@ -826,9 +827,14 @@ public class SubDocInfoController {
 		if (msg != null) {
 			String msgUrl = msg.getMsgRedirect() + "&fileId=" + infoId + "&subId=" + subId;
 			if (StringUtils.isNotBlank(userId)) {
+				logger.info("==================送审批，审批人是"+userId);
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 			}
+			logger.info("==================送审批，审批人是"+userId);
+			msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
+					msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+
 		}
 		Response.json("result", "success");
 	}
@@ -890,10 +896,12 @@ public class SubDocInfoController {
 		if (msg != null) {
 			String msgUrl = "";
 			if (StringUtils.isNotBlank(userId)) {
+				logger.info("==================批量送审批，审批人是"+userId);
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 			}
 			if(StringUtils.isNotBlank(currentUsreId)){
+				logger.info("==================批量送审批，送审人是"+userId);
 				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, currentUsreId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 			}
@@ -965,6 +973,7 @@ public class SubDocInfoController {
 		if (msg != null) {
 			String msgUrl = msg.getMsgRedirect() + "&fileId=" + infoId + "&subId=" + subId;
 			if (StringUtils.isNotBlank(userId)) {
+				logger.info("==================送审批======，审批人是"+userId);
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 			}
@@ -999,6 +1008,7 @@ public class SubDocInfoController {
 				MsgTip msg = msgService.queryObject(MSGTipDefined.DCCB_TUIHUI_MSG_TITLE);
 				if (msg != null) {
 					String msgUrl = msg.getMsgRedirect() + "&fileId=" + infoId + "&subId=" + subId;
+					logger.info("==================退回操作，退回给"+userId);
 					msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 							msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 				}
@@ -1050,6 +1060,7 @@ public class SubDocInfoController {
 		MsgTip msg = msgService.queryObject(MSGTipDefined.DCCB_TUIHUI_MSG_TITLE);
 		if (msg != null) {
 			String msgUrl = "";
+			logger.info("==================批量完成审批，审批人是"+currentUserId);
 			msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, currentUserId, appId, clientSecret,
 					msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 		}
@@ -1088,11 +1099,13 @@ public class SubDocInfoController {
 			String msgUrl = msg.getMsgRedirect() + "&fileId=" + infoId + "&subId=" + subId;
 			if (StringUtils.isNotBlank(userId)) {
 				//以下是发送消息提醒，但桌面不显示，就是为了触发角标更新。
+				logger.info("==================管理员办结，承办人是"+userId);
 				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 			}
 			if (StringUtils.isNotBlank(dlsUserId)) {
 				//以下是发送消息提醒，但桌面不显示，就是为了触发角标更新。
+				logger.info("==================管理员办结，待xxx落实中的xxxx是"+dlsUserId);
 				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, dlsUserId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 			}
@@ -1199,13 +1212,14 @@ public class SubDocInfoController {
 		if (msg != null) {
 			String msgUrl = msg.getMsgRedirect() + "&fileId=" + infoId + "&subId=" + subId;
 			if (StringUtils.isNotBlank(userId)) {
+				logger.info("===========================完成审批，送审人是"+userId);
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
-
-				//给自己发空消息，只为触发角标更新
-				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, currentUserId, appId, clientSecret,
-						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 			}
+			//给自己发空消息，只为触发角标更新
+			logger.info("=====完成审批，操作人是"+currentUserId);
+			msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, currentUserId, appId, clientSecret,
+					msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 		}
 		Response.json(json);
 	}

@@ -230,10 +230,12 @@ public class DocumentWithdrawController {
 			String msgUrl = msg.getMsgRedirect() + "&fileId=" + infoId + "&subId=" + subId;
 			if (StringUtils.isNotBlank(userId)) {
 				//给自己发空消息，只为触发角标更新
+				logger.info("局长撤回了一个文，该局长是"+userId);
 				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 
 				//给被撤回人发空消息，只为触发角标更新
+				logger.info("给被撤回人发空消息，被撤回人是"+dealUserId);
 				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, dealUserId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 			}

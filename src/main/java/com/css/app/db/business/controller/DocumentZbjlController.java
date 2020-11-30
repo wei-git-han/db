@@ -7,6 +7,8 @@ import java.util.Map;
 
 import com.css.app.db.business.entity.*;
 import com.css.app.db.business.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -43,6 +45,7 @@ import com.css.base.utils.UUIDUtils;
 @Controller
 @RequestMapping("/app/db/documentzbjl")
 public class DocumentZbjlController {
+	private final Logger logger = LoggerFactory.getLogger(DocumentZbjlController.class);
 	@Autowired
 	private DocumentZbjlService documentZbjlService;
 	@Autowired
@@ -315,6 +318,7 @@ public class DocumentZbjlController {
 				}
 				//局长局内待办，转办给自己发消息，用于触发角标
 				if(StringUtils.isNotBlank(loginUserId)){
+					logger.info("局长转办（局内待办转办和个人待办里面转办），触发自己角标，局长id是"+loginUserId);
 					msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, loginUserId, appId,clientSecret, msg.getGroupName(), msg.getGroupRedirect(), "","true");
 				}
 			}

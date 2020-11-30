@@ -37,6 +37,8 @@ public class ToDoApiController {
     @RequestMapping("/db/todo")
     public void dbNumSum() {
         int dbNumSum = 0;
+        int  grdbNum = 0;
+        int  jndbNum = 0;
         String loginUserId = CurrentUser.getUserId();
         Map<String, Object> value = new HashMap<String, Object>();
         String userMenuIds = this.getUserMenu(loginUserId);
@@ -47,16 +49,18 @@ public class ToDoApiController {
             return;
         }
         if(userMenuIds.contains("002")) {
-        	int  grdbNum= getPersonTodoCount(loginUserId);
+        	grdbNum= getPersonTodoCount(loginUserId);
     		dbNumSum = dbNumSum+grdbNum;
         }
         if(userMenuIds.contains("003")) {
-        	int  jndbNum= getUnitTodoCount(loginUserId);
+        	jndbNum= getUnitTodoCount(loginUserId);
     		dbNumSum = dbNumSum+jndbNum;
         }
        
         value.put("result", "success");
         value.put("count", dbNumSum);
+        value.put("grdbNum",grdbNum);
+        value.put("jndbNum",jndbNum);
         Response.json(value);
     }
     
