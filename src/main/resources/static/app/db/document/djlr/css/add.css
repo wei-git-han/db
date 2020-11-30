@@ -390,6 +390,7 @@ html, body {
 }
 .search{
     padding:10px 0;
+    cursor:pointer;
 }
 .search:after{
    content: "";

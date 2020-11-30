@@ -12,8 +12,8 @@ var getPdfPath = {"url":rootPath +"/fileinfo/getFormaFileUrl","dataType":"text"}
 var UserTreeUrl = {"url":"/app/base/user/allTree","dataType":"text"}; //登记人树
 var deleteSzcqUrl = {"url":"/app/db/documentszps/delete","dataType":"text"};//删除首长批示
 var getlastPeriodUrl ={"url":"/app/db/documentinfo/lastInfo","dataType":"json"}; /*查询上一条期数*/
-var tablegrid = rootPath +"/document/personList";//table最近使用的文件列表数据
-var saveFileUrl =  {"url":rootPath +"/document/saveFile","dataType":"text"};//获取当前登录人---录入人
+var tablegrid = rootPath +"/document/personList";//审批公文列表
+var saveFileUrl =  {"url":rootPath +"/document/saveFile","dataType":"text"};//审批公文列表保存提交
 var fileFrom=getUrlParam("fileFrom")||""; //文件来源
 var scanFilePath = "";//扫描件路径
 var addcqFlag="";//此变量用来标识是不是自动保存的操作，在submit中区分保存回调
@@ -629,13 +629,14 @@ var pageModule = function(){
                  url:saveFileUrl,
                  type: "POST",
                  data:{
-                      fileIds:spgwList.join(",")
+                      fileIds:spgwList.join(","),
+                      idpdf: $("#id").val()
                   },
                  success:function(data){
                      $("#spgwWait").hide();
                       if (data.result == 'success') {
                         // 刷新文件列表
-                        psLoad(data.id, '');
+                        psLoad('', data.url);
                         initfilefn();
                       }
                      $("#spgwSave").removeClass("disabledBtn");
@@ -646,15 +647,19 @@ var pageModule = function(){
         })
 		// 关闭审批公文窗口
 		$("#spgwClose").click(function(){
-		    $("#searchVal").val("")
-		    if ($("#spgwSave").hasClass("disabledBtn")) {
-                $("#spgwSave").removeClass("disabledBtn");
-		    }
-		    if ($("#spgwWait").css("display") == 'block') {
-                $("#spgwWait").hide();
-		    }
             $("#showSpgwDialog").modal('hide')
 		})
+		$("#showSpgwDialog").on("hidden.bs.modal",function(e){
+           $("#searchVal").val("")
+           if ($("#spgwSave").hasClass("disabledBtn")) {
+               $("#spgwSave").removeClass("disabledBtn");
+           }
+           if ($("#spgwWait").css("display") == 'block') {
+               $("#spgwWait").hide();
+           }
+           spgwList = []
+           initSpgwList();
+        });
 		$(".search").click(function(){
            $('#gridcont').treegrid('reload',{search:$("#searchVal").val()})
         });
@@ -915,14 +920,14 @@ function fileHtml(rowdata){
     var cpj = '',fj="",banwenlaiyuan='',countersignatureFile='',szsy='';
     if (rowdata.cpj&&rowdata.cpj.length>0) {
         $(rowdata.cpj).each(function(i,obj){
-            cpj += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.id}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
+            cpj += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.fileId}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
         })
         cpj = '<li style="height:auto;" class="close"><ul class="subUl">'+cpj+'</ul></li>';
         str += '<ul class="close ulSty"><li class="liSty"><i class="fa fa-chevron-right faSty faSty1" onclick="openCpj1(this)"></i><label><input type="checkbox" value="" style="margin:0 10px;" onclick="checkInput(this)"/>主文件</label></li>'+cpj+'</ul>';
     }
      if (rowdata.fj&&rowdata.fj.length>0) {
         $(rowdata.fj).each(function(i,obj){
-            fj += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.id}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
+            fj += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.fileId}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
         })
          fj = '<li style="height:auto;" class="close"><ul class="subUl">'+fj+'</ul></li>';
         str += '<ul class="close ulSty"><li class="liSty"><i class="fa fa-chevron-right faSty faSty1" onclick="openCpj1(this)"></i><label><input type="checkbox" value="" style="margin:0 10px;" onclick="checkInput(this)" />附件</label></li>'+fj+'</ul>';
@@ -930,21 +935,21 @@ function fileHtml(rowdata){
     }
      if (rowdata.bwly&&rowdata.bwly.length>0) {
          $(rowdata.bwly).each(function(i,obj){
-                banwenlaiyuan += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.id}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
+                banwenlaiyuan += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.fileId}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
         })
          banwenlaiyuan = '<li style="height:auto;" class="close"><ul class="subUl">'+banwenlaiyuan+'</ul></li>';
         str += '<ul class="close ulSty"><li class="liSty"><i class="fa fa-chevron-right faSty faSty1" onclick="openCpj1(this)"></i><label><input type="checkbox" value="" style="margin:0 10px;" onclick="checkInput(this)" />办文来源</label></li>'+banwenlaiyuan+'</ul>';
      }
      if (rowdata.countersignatureFile&&rowdata.countersignatureFile.length>0) {
               $(rowdata.countersignatureFile).each(function(i,obj){
-                     countersignatureFile += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.id}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
+                     countersignatureFile += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.fileId}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
              })
               countersignatureFile = '<li style="height:auto;" class="close"><ul class="subUl">'+countersignatureFile+'</ul></li>';
              str += '<ul class="close ulSty"><li class="liSty"><i class="fa fa-chevron-right faSty faSty1" onclick="openCpj1(this)"></i><label><input type="checkbox" value="" style="margin:0 10px;" onclick="checkInput(this)"/>会签单</label></li>'+countersignatureFile+'</ul>';
      }
      if (rowdata.szsy&&rowdata.szsy.length>0) {
                $(rowdata.szsy).each(function(i,obj){
-                      banwenlaiyuan += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.id}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
+                      banwenlaiyuan += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.fileId}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
               })
                szsy = '<li style="height:auto;" class="close"><ul class="subUl">'+szsy+'</ul></li>';
               str += '<ul class="close ulSty"><li class="liSty"><i class="fa fa-chevron-right faSty faSty1" onclick="openCpj1(this)"><label><input type="checkbox" value="" style="margin:0 10px;" onclick="checkInput(this)" />首长首页</label></li>'+szsy+'</ul>';
