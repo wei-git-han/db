@@ -711,6 +711,7 @@ var pageModule = function(){
                         // 刷新文件列表
                         psLoad('', data.url);
                         initfilefn();
+                        $("#showSpgwDialog").modal('hide')
                       } else {
                          newbootbox.alert('保存失败，请联系管理员！')
                       }
