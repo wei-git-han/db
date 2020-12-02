@@ -993,21 +993,27 @@ function checkInput(event){
         if (inputValue == "") {
             $(event).parent().parent().nextAll().find("input").prop("checked",true)
             $($(event).parent().parent().nextAll().find("input")).each(function(index,obj){
-                 spgwList.push(obj.defaultValue);
+                  if (spgwList.indexOf(obj.defaultValue) == -1) {
+                      spgwList.push(obj.defaultValue);
+                  }
             })
         } else {
             $(event).parent().parent().addClass("selectLi")
-            spgwList.push(inputValue);
+            if (spgwList.indexOf(inputValue) == -1) {
+                spgwList.push(inputValue);
+            }
         }
     } else {
         if (inputValue == "") {
             $(event).parent().parent().nextAll().find("input").prop("checked",false)
             $($(event).parent().parent().nextAll().find("input")).each(function(index,obj){
-                 spgwList.remove(obj.defaultValue);
+                var $index = spgwList.indexOf(obj.defaultValue)
+                 spgwList.splice($index,1);
             })
         } else {
             $(event).parent().parent().removeClass("selectLi")
-            spgwList.remove(inputValue)
+            var $index = spgwList.indexOf(inputValue)
+            spgwList.splice($index,1);
         }
     }
     console.log(spgwList);
