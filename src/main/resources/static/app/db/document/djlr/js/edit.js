@@ -1017,14 +1017,14 @@ function fileHtml(rowdata){
     var cpj = '',fj="",banwenlaiyuan='',countersignatureFile='',szsy='';
     if (rowdata.cpj&&rowdata.cpj.length>0) {
         $(rowdata.cpj).each(function(i,obj){
-            cpj += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.fileId}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
+            cpj += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.id}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
         })
         cpj = '<li style="height:auto;" class="close"><ul class="subUl">'+cpj+'</ul></li>';
         str += '<ul class="close ulSty"><li class="liSty"><i class="fa fa-chevron-right faSty faSty1" onclick="openCpj1(this)"></i><label><input type="checkbox" value="" style="margin:0 10px;" onclick="checkInput(this)"/>主文件</label></li>'+cpj+'</ul>';
     }
      if (rowdata.fj&&rowdata.fj.length>0) {
         $(rowdata.fj).each(function(i,obj){
-            fj += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.fileId}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
+            fj += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.id}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
         })
          fj = '<li style="height:auto;" class="close"><ul class="subUl">'+fj+'</ul></li>';
         str += '<ul class="close ulSty"><li class="liSty"><i class="fa fa-chevron-right faSty faSty1" onclick="openCpj1(this)"></i><label><input type="checkbox" value="" style="margin:0 10px;" onclick="checkInput(this)" />附件</label></li>'+fj+'</ul>';
@@ -1032,21 +1032,21 @@ function fileHtml(rowdata){
     }
      if (rowdata.bwly&&rowdata.bwly.length>0) {
          $(rowdata.bwly).each(function(i,obj){
-                banwenlaiyuan += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.fileId}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
+                banwenlaiyuan += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.id}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
         })
          banwenlaiyuan = '<li style="height:auto;" class="close"><ul class="subUl">'+banwenlaiyuan+'</ul></li>';
         str += '<ul class="close ulSty"><li class="liSty"><i class="fa fa-chevron-right faSty faSty1" onclick="openCpj1(this)"></i><label><input type="checkbox" value="" style="margin:0 10px;" onclick="checkInput(this)" />办文来源</label></li>'+banwenlaiyuan+'</ul>';
      }
      if (rowdata.countersignatureFile&&rowdata.countersignatureFile.length>0) {
               $(rowdata.countersignatureFile).each(function(i,obj){
-                     countersignatureFile += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.fileId}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
+                     countersignatureFile += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.id}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
              })
               countersignatureFile = '<li style="height:auto;" class="close"><ul class="subUl">'+countersignatureFile+'</ul></li>';
              str += '<ul class="close ulSty"><li class="liSty"><i class="fa fa-chevron-right faSty faSty1" onclick="openCpj1(this)"></i><label><input type="checkbox" value="" style="margin:0 10px;" onclick="checkInput(this)"/>会签单</label></li>'+countersignatureFile+'</ul>';
      }
      if (rowdata.szsy&&rowdata.szsy.length>0) {
                $(rowdata.szsy).each(function(i,obj){
-                      banwenlaiyuan += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.fileId}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
+                      banwenlaiyuan += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.id}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
               })
                szsy = '<li style="height:auto;" class="close"><ul class="subUl">'+szsy+'</ul></li>';
               str += '<ul class="close ulSty"><li class="liSty"><i class="fa fa-chevron-right faSty faSty1" onclick="openCpj1(this)"><label><input type="checkbox" value="" style="margin:0 10px;" onclick="checkInput(this)" />首长首页</label></li>'+szsy+'</ul>';
