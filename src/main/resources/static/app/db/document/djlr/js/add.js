@@ -12,11 +12,14 @@ var getPdfPath = {"url":rootPath +"/fileinfo/getFormaFileUrl","dataType":"text"}
 var UserTreeUrl = {"url":"/app/base/user/allTree","dataType":"text"}; //登记人树
 var deleteSzcqUrl = {"url":"/app/db/documentszps/delete","dataType":"text"};//删除首长批示
 var getlastPeriodUrl ={"url":"/app/db/documentinfo/lastInfo","dataType":"json"}; /*查询上一条期数*/
+var tablegrid = rootPath +"/document/personList";//审批公文列表
+var saveFileUrl =  {"url":rootPath +"/document/saveFile","dataType":"text"};//审批公文列表保存提交
 var fileFrom=getUrlParam("fileFrom")||""; //文件来源
 var scanFilePath = "";//扫描件路径
 var addcqFlag="";//此变量用来标识是不是自动保存的操作，在submit中区分保存回调
 var loginUserId = ""//登录人Id
 var editFlag = false;   //超清内容是新增还是对原有数据的编辑
+var spgwList = [];
 var pageModule = function(){
 	 /*带入录入人*/
 	var makeLoginUser = function(){
@@ -606,6 +609,100 @@ var pageModule = function(){
 				newbootbox.alert("请选中要删除的附件！"); 
 			}
 		});
+		 // 审批公文
+        $("#spgw").click(function() {
+            if($("#id").val() == "" || $("#id").val() == null || typeof($("#id").val()) == undefined){
+                newbootbox.alertInfo("请先保存要素信息再选择审批公文文件！");
+                return  false;
+            }
+            $("#showSpgwDialog").modal("show")
+        })
+		// 保存审批公文
+		$("#spgwSave").click(function(){
+            if(spgwList.length<1){
+                newbootbox.alert('请选择文件后再点击确定按钮！')
+                return
+            }
+             $("#spgwWait").show();
+             $("#spgwSave").addClass("disabledBtn");
+            $ajax({
+                 url:saveFileUrl,
+                 type: "POST",
+                 data:{
+                      fileIds:spgwList.join(","),
+                      idpdf: $("#id").val()
+                  },
+                 success:function(data){
+                     $("#spgwWait").hide();
+                      if (data.result == 'success') {
+                        // 刷新文件列表
+                        psLoad('', data.url);
+                        initfilefn();
+                        newbootbox.alert('保存成功！')
+                        $("#showSpgwDialog").modal('hide')
+                      } else {
+                         newbootbox.alert('保存失败，请联系管理员！')
+                      }
+                     $("#spgwSave").removeClass("disabledBtn");
+                 },error:function(data) {
+                    $("#spgwWait").hide();
+                 }
+            });
+        })
+		// 关闭审批公文窗口
+		$("#spgwClose").click(function(){
+            $("#showSpgwDialog").modal('hide')
+		})
+		$("#showSpgwDialog").on("hidden.bs.modal",function(e){
+           $("#searchVal").val("")
+           if ($("#spgwSave").hasClass("disabledBtn")) {
+               $("#spgwSave").removeClass("disabledBtn");
+           }
+           if ($("#spgwWait").css("display") == 'block') {
+               $("#spgwWait").hide();
+           }
+           spgwList = []
+           initSpgwList();
+        });
+		$(".search").click(function(){
+           $('#gridcont').treegrid('reload',{search:$("#searchVal").val()})
+        });
+	}
+	// 审批公文列表查询
+	var initSpgwList = function(){
+        $('#gridcont').treegrid({
+            width : '860px',
+            height : '600px',
+            rownumbers : false,
+            animate : true,
+            autoRowHeight : false,
+            pagination : true,
+            pageSize : 10,
+            pageList : [ 5, 10, 20, 30 ],
+            fitColumns : true,
+            url : tablegrid,
+            queryParams:{
+                search:$("#searchVal").val()
+             },
+            async : true,
+            idField : 'id',
+            loadingMessage : '请等待……',
+            loadMsg : '请稍等……',
+            columns:[[
+                {title:'文件名',field:'title',width:'100%',align:'left',formatter:function(value,rowdata){
+                    var html = '';
+                    var str = '';
+                    var content = `<span class="" title="${rowdata.title}">${rowdata.title}</span>`;
+                    if(rowdata.cpj.length>0 || rowdata.fj.length>0 || rowdata.bwly&&rowdata.bwly.length>0 || rowdata.countersignatureFile&&rowdata.countersignatureFile.length>0 || rowdata.szsy&&rowdata.szsy.length>0) {
+                        html = '<i class="fa fa-chevron-right faSty" onclick="openCpj(this)"></i>';
+                    }
+
+                    str+=fileHtml(rowdata)
+
+                    return html+content+str;
+                }}
+            ]]
+        });
 	}
 	
 	var initPdf = function(){
@@ -693,7 +790,6 @@ var pageModule = function(){
 			});
 		})
 
-		
 		//扫描件表单提交
 		$("#smjForm").validate({
 			submitHandler : function() {
@@ -726,6 +822,7 @@ var pageModule = function(){
 			makeLoginUser();
 			initother();
 			initPdf();
+			initSpgwList();
 		},
 		getUserData:function(message1,message2){
 			$("#psszName").val(message1);
@@ -776,4 +873,96 @@ var getCookie = function(name){
 	}else{
 		return null
 	}
+}
+function openCpj(event){
+    var $ul =$($(event).parent().find("ul"));
+        if ($ul.hasClass("close")) {
+            $(event).addClass("openUl")
+            $ul.removeClass("close");
+        } else {
+            $(event).removeClass("openUl")
+             $ul.addClass("close");
+        }
+}
+function openCpj1(event){
+    var $sub =$($(event).parent().next());
+    if ($sub.hasClass("close")) {
+        $(event).addClass("openUl")
+        $sub.removeClass("close");
+    } else {
+        $(event).removeClass("openUl")
+         $sub.addClass("close");
+    }
+}
+function checkInput(event){
+    var inputValue =  $(event).val()
+    if ($(event).prop("checked")) {
+        if (inputValue == "") {
+            $(event).parent().parent().nextAll().find("input").prop("checked",true)
+            $($(event).parent().parent().nextAll().find("input")).each(function(index,obj){
+                if (spgwList.indexOf(obj.defaultValue) == -1) {
+                 spgwList.push(obj.defaultValue);
+                }
+            })
+        } else {
+            $(event).parent().parent().addClass("selectLi")
+            if (spgwList.indexOf(inputValue) == -1) {
+                spgwList.push(inputValue);
+            }
+        }
+    } else {
+        if (inputValue == "") {
+            $(event).parent().parent().nextAll().find("input").prop("checked",false)
+            $($(event).parent().parent().nextAll().find("input")).each(function(index,obj){
+                 var $index = spgwList.indexOf(obj.defaultValue)
+                 spgwList.splice($index,1);
+            })
+        } else {
+            $(event).parent().parent().removeClass("selectLi")
+            var $index = spgwList.indexOf(inputValue)
+            spgwList.splice($index,1);
+        }
+    }
+    console.log(spgwList);
+}
+function fileHtml(rowdata){
+    var str = "";
+    var cpj = '',fj="",banwenlaiyuan='',countersignatureFile='',szsy='';
+    if (rowdata.cpj&&rowdata.cpj.length>0) {
+        $(rowdata.cpj).each(function(i,obj){
+            cpj += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.id}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
+        })
+        cpj = '<li style="height:auto;" class="close"><ul class="subUl">'+cpj+'</ul></li>';
+        str += '<ul class="close ulSty"><li class="liSty"><i class="fa fa-chevron-right faSty faSty1" onclick="openCpj1(this)"></i><label><input type="checkbox" value="" style="margin:0 10px;" onclick="checkInput(this)"/>主文件</label></li>'+cpj+'</ul>';
+    }
+     if (rowdata.fj&&rowdata.fj.length>0) {
+        $(rowdata.fj).each(function(i,obj){
+            fj += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.id}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
+        })
+         fj = '<li style="height:auto;" class="close"><ul class="subUl">'+fj+'</ul></li>';
+        str += '<ul class="close ulSty"><li class="liSty"><i class="fa fa-chevron-right faSty faSty1" onclick="openCpj1(this)"></i><label><input type="checkbox" value="" style="margin:0 10px;" onclick="checkInput(this)" />附件</label></li>'+fj+'</ul>';
+
+    }
+     if (rowdata.bwly&&rowdata.bwly.length>0) {
+         $(rowdata.bwly).each(function(i,obj){
+                banwenlaiyuan += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.id}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
+        })
+         banwenlaiyuan = '<li style="height:auto;" class="close"><ul class="subUl">'+banwenlaiyuan+'</ul></li>';
+        str += '<ul class="close ulSty"><li class="liSty"><i class="fa fa-chevron-right faSty faSty1" onclick="openCpj1(this)"></i><label><input type="checkbox" value="" style="margin:0 10px;" onclick="checkInput(this)" />办文来源</label></li>'+banwenlaiyuan+'</ul>';
+     }
+     if (rowdata.countersignatureFile&&rowdata.countersignatureFile.length>0) {
+              $(rowdata.countersignatureFile).each(function(i,obj){
+                     countersignatureFile += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.id}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
+             })
+              countersignatureFile = '<li style="height:auto;" class="close"><ul class="subUl">'+countersignatureFile+'</ul></li>';
+             str += '<ul class="close ulSty"><li class="liSty"><i class="fa fa-chevron-right faSty faSty1" onclick="openCpj1(this)"></i><label><input type="checkbox" value="" style="margin:0 10px;" onclick="checkInput(this)"/>会签单</label></li>'+countersignatureFile+'</ul>';
+     }
+     if (rowdata.szsy&&rowdata.szsy.length>0) {
+               $(rowdata.szsy).each(function(i,obj){
+                      banwenlaiyuan += `<li title="${obj.name}"><label><input type="checkbox" value="${obj.id}" class="select" style="margin:0 10px;" onclick="checkInput(this)" />${obj.name}</label></li>`
+              })
+               szsy = '<li style="height:auto;" class="close"><ul class="subUl">'+szsy+'</ul></li>';
+              str += '<ul class="close ulSty"><li class="liSty"><i class="fa fa-chevron-right faSty faSty1" onclick="openCpj1(this)"><label><input type="checkbox" value="" style="margin:0 10px;" onclick="checkInput(this)" />首长首页</label></li>'+szsy+'</ul>';
+     }
+    return str;
 }
