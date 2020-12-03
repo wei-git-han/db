@@ -57,12 +57,16 @@ var pageModule = function(){
 	//判断是否催办
 	var ifcuibanfn = function(){
 		$ajax({
-			url:latestCuiBanUrl,
+			url:cbDataUrl,
 			data:{infoId:fileId},
 			success:function(data){
 				if(data && !!data){
-					$(".blfkchangeH").attr("style","position:absolute;top:34px;left:0;bottom:0;width:100%;right:0;")
-					$("#ifcuibanContent").text(data.userName+"催办："+data.urgeContent).attr("title",data.userName+"催办："+data.urgeContent).show();
+					$(".blfkchangeH").attr("style","position:absolute;top:50px;left:0;bottom:0;width:100%;right:0;")
+					//$("#ifcuibanContent").text(data.userName+"催办："+data.urgeContent).attr("title",data.userName+"催办："+data.urgeContent).show();
+					$.each(data,function(index,item){
+					$("#ifcuibanContent").show()
+					$("#ifcuibanContent").append('<div class="overText" title="'+item.userName+"催办："+item.urgeContent+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+item.createdTime+'">'+item.userName+"催办："+item.urgeContent+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+item.createdTime+'</div>');
+				})
 				}
 			}
 		})

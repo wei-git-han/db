@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.css.app.db.config.service.RoleSetService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,9 @@ public class AdminSetController {
 	@Autowired
 	private BaseAppOrganService baseAppOrganService;	
 	@Autowired
-	private BaseAppUserService baseAppUserService;	
+	private BaseAppUserService baseAppUserService;
+	@Autowired
+	private RoleSetService roleSetService;
 
 	/**
 	 * 列表
@@ -91,6 +94,17 @@ public class AdminSetController {
 	public void getAuthor(){
 		String adminFlag = adminSetService.getAdminTypeByUserId(CurrentUser.getUserId());
 		Response.json(adminFlag);
+	}
+
+	/**
+	 * 处领导、局领导、局管理员在详情页内支持催办及填写催办功能
+	 * roleType=2,5,3显示
+	 */
+	@ResponseBody
+	@RequestMapping("/getRole")
+	public void getRole(){
+		String roleType = roleSetService.getRoleTypeByUserId(CurrentUser.getUserId());
+		Response.json(roleType);
 	}
 	
 	/**

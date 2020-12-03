@@ -36,6 +36,17 @@ public class DocumentCbjl implements Serializable {
 	//响应时间
 	private Date cbTime;
 
+	//催办类型 1:部级催办 0：局级催办
+	private String cbType;
+
+	public String getCbType() {
+		return cbType;
+	}
+
+	public void setCbType(String cbType) {
+		this.cbType = cbType;
+	}
+
 	/**
 	 * 设置：唯一标识
 	 */

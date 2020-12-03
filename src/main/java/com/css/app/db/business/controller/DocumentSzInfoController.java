@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.css.app.db.config.service.RoleSetService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,6 +59,8 @@ public class DocumentSzInfoController {
 	private  String appId;	
 	@Value("${csse.dccb.appSecret}")
 	private  String clientSecret;
+	@Autowired
+	private RoleSetService roleSetService;
 	/**
 	 * 首长左侧类型分组
 	 * [
@@ -467,11 +470,48 @@ public class DocumentSzInfoController {
 			}
 			
 			documentInfoService.update(info);
+			// 当前登录人的管理员类型(0:超级管理员 ;1：部管理员；2：局管理员；3：即是部管理员又是局管理员)
+			String adminType = adminSetService.getAdminTypeByUserId(userid);
+			//角色标识（1：首长；2：首长秘书；3：局长；4：局秘书；5：处长；6：参谋;）
+			String roleType = roleSetService.getRoleTypeByUserId(userid);
+			String type = "1";
+			if (StringUtils.equals("0", adminType) || StringUtils.equals("1", adminType)
+					|| StringUtils.equals("3", adminType)) {
+				type = "1";
+			}
+			//处领导、局领导、局管理员在详情页内支持催办及填写催办功能
+			if("2".equals(adminType) || "5".equals(roleType) || "3".equals(roleType)) {
+				type = "0";
+			}
 			//保存催办历史
-			DocumentCbjl cb=new DocumentCbjl();
-			cb.setUrgeContent(textarea);
-			cb.setInfoId(key);
-			documentCbjlService.save(cb);
+			if("1".equals(type)){
+				DocumentCbjl cbjl = documentCbjlService.queryByInfoId(key,"1");
+				if(cbjl != null){
+					cbjl.setUrgeContent(textarea);
+					documentCbjlService.update(cbjl);
+
+				}else {
+					DocumentCbjl cb= new DocumentCbjl();
+					cb.setUrgeContent(textarea);
+					cb.setInfoId(key);
+					cb.setCbType(type);
+					documentCbjlService.save(cb);
+				}
+			}else{
+				DocumentCbjl cbjl = documentCbjlService.queryByInfoId(key,"0");
+				if(cbjl != null){
+					cbjl.setUrgeContent(textarea);
+					documentCbjlService.update(cbjl);
+
+				}else {
+					DocumentCbjl cb= new DocumentCbjl();
+					cb.setUrgeContent(textarea);
+					cb.setInfoId(key);
+					cb.setCbType(type);
+					documentCbjlService.save(cb);
+				}
+			}
+
 			// 发送消息提醒
 			Map<String, Object> map=new HashMap<>();
 			map.put("infoId", key);
