@@ -936,6 +936,150 @@
 		<!-- )d GROUP by d.SUB_DEPT_ID -->
 		<!-- )shu on org.id=shu.id where org.PARENT_ID='root' -->
 	</select>
+
+	<!--根据年度获取每个状态的数量 CREATED_TIME暂为年度时间 -->
+	<select id="queryListByOrgYear1" resultType="map">
+		select
+		ID,dwname,sum(blz) blz,sum(bj) bj,sum(ctls) ctls
+		from
+		(
+		select
+		org.ID ,
+		org.NAME as dwname,
+		isnull(shu.blz, 0) as blz ,
+		isnull(shu.bj,
+		0) as bj ,
+		isnull(shu.ctls, 0) as ctls
+		from
+		BASE_APP_ORGAN org
+		left join
+		(
+		select
+		info.SUB_DEPT_ID as id ,
+		info.SUB_DEPT_NAME ,
+		(case when
+		info.DOC_STATUS ='10' then count(info.DOC_STATUS) else 0 end )+(case
+		when info.DOC_STATUS &lt;'10' and db.STATUS ='2' then
+		count(info.DOC_STATUS) else 0 end )+(case when info.DOC_STATUS='12'
+		then count(info.DOC_STATUS) else 0 end ) as bj ,
+		(case when info.DOC_STATUS='11' then count(info.DOC_STATUS) else 0 end
+		)+(case when info.DOC_STATUS &lt; '10' and db.STATUS = '3' then
+		count(info.DOC_STATUS) else 0 end )+(case when info.DOC_STATUS='13'
+		then count(info.DOC_STATUS) else 0 end ) as ctls,
+		(case when info.DOC_STATUS &lt; '10' and
+		info.FIRST_REPLY='1' and db.STATUS=1 then count(info.DOC_STATUS) else
+		0 end ) as blz
+		from
+		DB_SUB_DOC_INFO info
+		left
+		join
+		(
+		select id,
+		FIRST_ZB_TIME,STATUS,
+		CREATED_TIME from DB_DOCUMENT_INFO
+		)
+		db
+		on
+		db.id =
+		info.INFO_ID
+		left join
+		(
+		select
+		s.INFO_ID ,
+		s.USER_NAME as
+		leader_name ,
+		s.LEADER_COMMENT as
+		leader_content,
+		s.CREATED_TIME as
+		leader_time ,
+		row_number()
+		over(partition by s.info_id order by b.sort
+		asc) as dNum
+		from
+		DB_DOCUMENT_SZPS s
+		inner join DB_ROLE_SET b
+		on
+		s.USER_ID=b.USER_ID
+		order
+		by
+		b.sort asc
+		)
+		d on db.id = d.info_id
+		and
+		(
+		d.dNum
+		= 1
+		or d.dNum is null
+		)
+		where
+		1=1
+		and db.FIRST_ZB_TIME is not null
+		<!--<if test="year != null">-->
+			<!--and case when d.leader_time is not null and d.leader_time-->
+			<!--!= '' then to_char(d.leader_time) else to_char(db.CREATED_TIME) end-->
+			<!--like '%'||#{year}||'%'-->
+		<!--</if>-->
+		 <if test="startTime != null and startTime != '' and endTime ==''">
+			 and to_char(db.CREATED_TIME,'yyyy-MM-dd') &gt;= to_date(#{startTime},'yyyy-mm-dd')
+		 </if>
+		<if test="startTime != null and startTime != '' and endTime != null and endTime !=''">
+			and to_char(db.CREATED_TIME,'yyyy-MM-dd') &gt;= to_date(#{startTime},'yyyy-mm-dd') and to_char(db.CREATED_TIME,'yyyy-MM-dd') &lt;= to_date(#{endTime},'yyyy-mm-dd')
+		</if>
+		<if test="startTime == ''">
+			and case when d.leader_time is not null and d.leader_time
+			!= '' then to_char(d.leader_time) else to_char(db.CREATED_TIME) end
+			like '%'||#{year}||'%'
+		</if>
+		group by
+		info.SUB_DEPT_ID ,
+		info.SUB_DEPT_NAME,
+		info.DOC_STATUS,
+		info.FIRST_REPLY,
+		db.STATUS
+		)
+		shu on
+		org.id=shu.id
+		where
+		org.PARENT_ID='root' )
+		t group by t.id,t.dwname
+		<!-- <select id="queryListByOrgYear" resultType="map"> -->
+		<!-- select -->
+		<!-- org.ID, -->
+		<!-- org.NAME as dwname, -->
+		<!-- isnull(shu.blz,0) as blz, -->
+		<!-- isnull(shu.bj,0) as bj, -->
+		<!-- isnull(shu.ctls,0) as ctls -->
+		<!-- from BASE_APP_ORGAN org -->
+		<!-- left join -->
+		<!-- ( -->
+		<!-- select d.SUB_DEPT_ID as id,sum(blz) as blz,sum(bj) as bj,sum(ctls)
+			as ctls from ( -->
+		<!-- select dadi.SUB_DEPT_ID , -->
+		<!-- (case when ddi.STATUS='1' then count(ddi.STATUS) else 0 end ) as blz, -->
+		<!-- (case when ddi.STATUS='2' then count(ddi.STATUS) else 0 end ) as bj, -->
+		<!-- (case when ddi.STATUS='3' then count(ddi.STATUS) else 0 end ) as ctls -->
+
+		<!-- from DB_DOCUMENT_INFO ddi -->
+		<!-- left join (select SUB_DEPT_ID,SUB_DEPT_NAME,INFO_ID,CREATED_TIME,DOC_STATUS -->
+		<!-- from DB_SUB_DOC_INFO) dadi -->
+		<!-- on ddi.id=dadi.INFO_ID -->
+		<!-- left join(select s.INFO_ID,s.USER_NAME as leader_name,s.LEADER_COMMENT
+			as leader_content,s.CREATED_TIME as leader_time, -->
+		<!-- row_number() over(partition by s.info_id order by b.sort asc) as dNum
+			from DB_DOCUMENT_SZPS s inner join DB_ROLE_SET b -->
+		<!-- on s.USER_ID=b.USER_ID order by b.sort asc) d -->
+		<!-- on ddi.id = d.info_id and (d.dNum = 1 or d.dNum is null) -->
+		<!-- where 1=1 and ddi.FIRST_ZB_TIME is not null -->
+		<!-- <if test="year != null"> -->
+		<!-- and case when d.leader_time is not null and d.leader_time != '' then
+			to_char(d.leader_time) else -->
+		<!-- to_char(ddi.CREATED_TIME) end like '%'||#{year}||'%' -->
+		<!-- </if> -->
+		<!-- group by ddi.STATUS,dadi.SUB_DEPT_ID -->
+		<!-- order by ddi.STATUS asc -->
+		<!-- )d GROUP by d.SUB_DEPT_ID -->
+		<!-- )shu on org.id=shu.id where org.PARENT_ID='root' -->
+	</select>
 	<select id="queryDocumentWfk" resultType="int">
 		select
 		count(a.id)
@@ -1280,6 +1424,64 @@
 			!= null and year != ''"> and case when e.leader_time is not null and e.leader_time 
 			!= '' then to_char(e.leader_time) else to_char(a.CREATED_TIME) end like '%'||#{year}||'%' 
 			</if> ) c left join (select SUB_ID,id from DB_REPLY_EXPLAIN where SHOW_FLAG=1 
+			)d on d.sub_Id = c.id group by c.id) where cu=0 -->
+	</select>
+
+
+	<select id="queryWfkCount3" resultType="int">
+		<!-- select count(a.id) from DB_DOCUMENT_INFO a <if test="danweiid != null
+			and danweiid != ''"> inner join DB_SUB_DOC_INFO b on a.ID = b.INFO_ID and
+			b.SUB_DEPT_ID = #{danweiid} </if> where (b.DOC_STATUS=1 or b.DOC_STATUS =5)
+			<if test="year != null and year != ''"> and to_char(a.CREATED_TIME) like
+			'%'||#{year}||'%' </if> -->
+
+
+		select count(a.id) from DB_SUB_DOC_INFO a left join DB_DOCUMENT_INFO b
+		on a.INFO_ID = b.ID
+		left join(select s.INFO_ID,s.CREATED_TIME as
+		leader_time,
+		row_number() over(partition by s.info_id order by f.sort
+		asc) as dNum from DB_DOCUMENT_SZPS s inner join DB_ROLE_SET f
+		on
+		s.USER_ID=f.USER_ID order by f.sort asc) e on b.id = e.info_id and
+		(e.dNum = 1 or e.dNum is null)
+		where b.status=1 and (a.first_reply !=1
+		or a.first_reply is null)
+		<if test="organId != null and organId != ''">
+			and a.SUB_DEPT_ID = #{organId}
+		</if>
+		<!--<if test="year != null and year != ''">-->
+			<!--and case when e.leader_time is not null and e.leader_time-->
+			<!--!= '' then to_char(e.leader_time) else-->
+			<!--to_char(b.CREATED_TIME) end-->
+			<!--like '%'||#{year}||'%'-->
+		<!--</if>-->
+
+		<if test="startTime != null and startTime != '' and endTime ==''">
+			and to_char(b.CREATED_TIME,'yyyy-MM-dd') &gt;= to_date(#{startTime},'yyyy-mm-dd')
+		</if>
+		<if test="startTime != null and startTime != '' and endTime != null and endTime !=''">
+			and to_char(b.CREATED_TIME,'yyyy-MM-dd') &gt;= to_date(#{startTime},'yyyy-mm-dd') and to_char(b.CREATED_TIME,'yyyy-MM-dd') &lt;= to_date(#{endTime},'yyyy-mm-dd')
+		</if>
+		<if test="startTime == ''">
+			and case when e.leader_time is not null and e.leader_time
+			!= '' then to_char(e.leader_time) else
+			to_char(b.CREATED_TIME) end
+			like '%'||#{year}||'%'
+		</if>
+
+
+		<!--select count(cu) from ( select c.id, count(d.id) as cu from (select
+			b.id from DB_DOCUMENT_INFO a inner join DB_SUB_DOC_INFO b on a.ID = b.INFO_ID
+			left join(select s.INFO_ID,s.USER_NAME as leader_name,s.LEADER_COMMENT as
+			leader_content,s.CREATED_TIME as leader_time, row_number() over(partition
+			by s.info_id order by f.sort asc) as dNum from DB_DOCUMENT_SZPS s inner join
+			DB_ROLE_SET f on s.USER_ID=f.USER_ID order by f.sort asc) e on a.id = e.info_id
+			and (e.dNum = 1 or e.dNum is null) where 1=1 and a.status=1 <if test="danweiid
+			!= null and danweiid != ''"> and b.SUB_DEPT_ID = #{danweiid} </if> <if test="year
+			!= null and year != ''"> and case when e.leader_time is not null and e.leader_time
+			!= '' then to_char(e.leader_time) else to_char(a.CREATED_TIME) end like '%'||#{year}||'%'
+			</if> ) c left join (select SUB_ID,id from DB_REPLY_EXPLAIN where SHOW_FLAG=1
 			)d on d.sub_Id = c.id group by c.id) where cu=0 -->
 	</select>
 

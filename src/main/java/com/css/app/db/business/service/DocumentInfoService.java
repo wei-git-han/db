@@ -38,6 +38,7 @@ public interface DocumentInfoService {
 	int queryChaoShiByYear(Map<String, Object> map);
 
 	List<Map<String, Object>> queryListByOrgYear(Map<String, Object> map);
+	List<Map<String, Object>> queryListByOrgYear1(Map<String, Object> map);
 
 	List<Map<String, Object>> queryListByDicType(Map<String, Object> map);
 
@@ -74,6 +75,8 @@ public interface DocumentInfoService {
 	int queryWfkLeaderStatistics(Map<String, Object> map);
 
 	int queryDocumentWfk2(String danweiid, String year);
+
+	int queryWfkCount3(Map<String,Object> map);
 
 	List<DocumentInfo> queryNewList(Map<String, Object> map);
 	

@@ -101,6 +101,11 @@ public class DocumentInfoServiceImpl implements DocumentInfoService {
 	}
 
 	@Override
+	public List<Map<String, Object>> queryListByOrgYear1(Map<String, Object> map) {
+		return documentInfoDao.queryListByOrgYear1(map);
+	}
+
+	@Override
 	public List<Map<String, Object>> queryListByDicType(Map<String, Object> map) {
 		return documentInfoDao.queryListByDicType(map);
 	}
@@ -214,6 +219,11 @@ public class DocumentInfoServiceImpl implements DocumentInfoService {
 	@Override
 	public int queryDocumentWfk2(String danweiid, String year) {
 		return documentInfoDao.queryDocumentWfk2(danweiid, year);
+	}
+
+	@Override
+	public int queryWfkCount3(Map<String,Object> map){
+		return documentInfoDao.queryWfkCount3(map);
 	}
 
 	@Override

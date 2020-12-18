@@ -35,6 +35,8 @@ public interface DocumentInfoDao extends BaseDao<DocumentInfo> {
 	
 	List<Map<String, Object>> queryListByOrgYear(Map<String, Object> map);
 
+	List<Map<String, Object>> queryListByOrgYear1(Map<String, Object> map);
+
 	List<Map<String, Object>> queryListByDicType(Map<String, Object> map);
 
 	List<Map<String, Object>> queryListByDicStu(Map<String, Object> map);
@@ -67,6 +69,8 @@ public interface DocumentInfoDao extends BaseDao<DocumentInfo> {
 	int queryWfkLeaderStatistics(Map<String, Object> map);
 
 	int queryDocumentWfk2(@Param("danweiid") String danweiid, @Param("year") String year);
+
+	int queryWfkCount3(Map<String,Object> map);
 
 	List<DocumentInfo> queryNewList(Map<String, Object> map);
 	
