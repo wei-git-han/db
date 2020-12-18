@@ -1043,7 +1043,7 @@ public class DocumentJcdbController {
                         }
                     }
                 }
-                List<SubDocInfo> docInfoList = subDocInfoService.queryAllTime(year, orgId);
+                List<SubDocInfo> docInfoList = subDocInfoService.queryAllTime(map);
                 if (docInfoList != null && docInfoList.size() > 0) {
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -1268,7 +1268,7 @@ public class DocumentJcdbController {
         double days = 0;
         int onTimebj = 0;
         float day = 0;
-        List<SubDocInfo> docInfoList = subDocInfoService.queryAllTime(year, organId);
+        List<SubDocInfo> docInfoList = subDocInfoService.queryAllTime(map);
         if (docInfoList != null && docInfoList.size() > 0) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 

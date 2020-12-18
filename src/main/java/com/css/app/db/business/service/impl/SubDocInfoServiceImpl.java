@@ -140,7 +140,7 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 	}
 
 	@Override
-	public List<SubDocInfo> queryAllTime(String year,String orgId){
-		return subDocInfoDao.queryAllTime(year,orgId);
+	public List<SubDocInfo> queryAllTime(Map<String,Object> map){
+		return subDocInfoDao.queryAllTime(map);
 	}
 }

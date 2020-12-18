@@ -57,7 +57,7 @@ public interface SubDocInfoDao extends BaseDao<SubDocInfo> {
 	@Select("select count(*) from DB_SUB_DOC_INFO where INFO_ID = #{0}")
 	int queryTotalNum(String infoId);
 
-	@Select("select * from DB_SUB_DOC_INFO where  UPDATE_TIME is not null and UPDATE_TIME like '%'||#{0}||'%' and SUB_DEPT_ID = #{1} and DOC_STATUS = '12' order by UPDATE_TIME desc")
-	List<SubDocInfo> queryAllTime(String year,String orgId);
+	//@Select("select * from DB_SUB_DOC_INFO where  UPDATE_TIME is not null and UPDATE_TIME like '%'||#{0}||'%' and SUB_DEPT_ID = #{1} and DOC_STATUS = '12' order by UPDATE_TIME desc")
+	List<SubDocInfo> queryAllTime(Map<String,Object> map);
 	
 }
