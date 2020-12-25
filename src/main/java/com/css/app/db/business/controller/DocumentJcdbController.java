@@ -1247,7 +1247,9 @@ public class DocumentJcdbController {
                     ctls = (long) infoListAll.get(j).get("ctls");
                     sum = blz + bj + ctls + wfkCount;
                     long bjSum = bj + ctls;
-                    wcl = ((new BigDecimal((float) bjSum / sum).doubleValue()) * 100);
+                    if(sum > 0){
+                        wcl = ((new BigDecimal((float) bjSum / sum).doubleValue()) * 100);
+                    }
                     break;
                 }
             }
