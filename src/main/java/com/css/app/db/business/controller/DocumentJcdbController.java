@@ -402,6 +402,10 @@ public class DocumentJcdbController {
     private int queryWfkCount2(String danweiid, String year) {
         return documentInfoService.queryDocumentWfk2(danweiid, year);
     }
+    
+    public int queryWfkCount3(Map<String,Object> map){
+        return  documentInfoService.queryWfkCount3(map);
+    }
 
     /**
      * {
@@ -1039,7 +1043,7 @@ public class DocumentJcdbController {
                         }
                     }
                 }
-                List<SubDocInfo> docInfoList = subDocInfoService.queryAllTime(year, orgId);
+                List<SubDocInfo> docInfoList = subDocInfoService.queryAllTime(map);
                 if (docInfoList != null && docInfoList.size() > 0) {
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -1208,7 +1212,7 @@ public class DocumentJcdbController {
 
     @ResponseBody
     @RequestMapping("/count")
-    public void count(String year, String month, String organId) {
+    public void count(String year, String month, String organId,String startTime,String endTime) {
         JSONObject jo = new JSONObject();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
         Map<String, Object> map = new HashMap<>();
@@ -1226,21 +1230,26 @@ public class DocumentJcdbController {
         map.put("year", year);
         map.put("month", month);
         map.put("organId", organId);
+        map.put("startTime",startTime);
+        map.put("endTime",endTime);
         long sum = 0;
         List<Map<String, Object>> infoList = documentInfoService.queryListByOrgIdAndYear(map);
         //List<Map<String, Object>> infoListAll = documentInfoService.queryListByYear(map);
-        List<Map<String, Object>> infoListAll = documentInfoService.queryListByOrgYear(map);
+        //List<Map<String, Object>> infoListAll = documentInfoService.queryListByOrgYear(map);
+        List<Map<String, Object>> infoListAll = documentInfoService.queryListByOrgYear1(map);
         if (infoListAll != null && infoListAll.size() > 0) {
             for (int j = 0; j < infoListAll.size(); j++) {
                 String deptId = (String) infoListAll.get(j).get("ID");
                 if (organId.equals(deptId)) {
-                    wfkCount = this.queryWfkCount2(deptId, year);
+                    wfkCount = this.queryWfkCount3(map);
                     blz = (long) infoListAll.get(j).get("blz");
                     bj = (long) infoListAll.get(j).get("bj");
                     ctls = (long) infoListAll.get(j).get("ctls");
                     sum = blz + bj + ctls + wfkCount;
                     long bjSum = bj + ctls;
-                    wcl = ((new BigDecimal((float) bjSum / sum).doubleValue()) * 100);
+                    if(sum > 0){
+                        wcl = ((new BigDecimal((float) bjSum / sum).doubleValue()) * 100);
+                    }
                     break;
                 }
             }
@@ -1261,7 +1270,7 @@ public class DocumentJcdbController {
         double days = 0;
         int onTimebj = 0;
         float day = 0;
-        List<SubDocInfo> docInfoList = subDocInfoService.queryAllTime(year, organId);
+        List<SubDocInfo> docInfoList = subDocInfoService.queryAllTime(map);
         if (docInfoList != null && docInfoList.size() > 0) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 

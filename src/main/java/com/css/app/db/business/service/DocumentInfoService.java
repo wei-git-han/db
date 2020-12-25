@@ -80,4 +80,8 @@ public interface DocumentInfoService {
 	List<DocumentInfo> queryNewListSort(Map<String, Object> map);
 
 	List<Map<String, Object>> queryListByOrgIdAndYear(Map<String,Object> map);
+	
+	List<Map<String, Object>> queryListByOrgYear1(Map<String, Object> map);
+	
+	int queryWfkCount3(Map<String,Object> map);
 }
