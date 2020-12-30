@@ -45,9 +45,32 @@ public class BaseAppUser implements Serializable {
 	 * 每个人督办数量统计
 	 */
 	private int taskNum;
+	/**
+	 * 每个人的办结率
+	 */
+	private String finishRate;
+	
+	/**
+	 * 每个人督办办结平均办理天数
+	 */
+	private String finishDay;
 	
 	
 	
+	
+	
+	public String getFinishDay() {
+		return finishDay;
+	}
+	public void setFinishDay(String finishDay) {
+		this.finishDay = finishDay;
+	}
+	public String getFinishRate() {
+		return finishRate;
+	}
+	public void setFinishRate(String finishRate) {
+		this.finishRate = finishRate;
+	}
 	public int getTaskNum() {
 		return taskNum;
 	}

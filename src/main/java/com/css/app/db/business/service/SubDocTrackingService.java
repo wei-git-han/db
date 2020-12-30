@@ -1,5 +1,6 @@
 package com.css.app.db.business.service;
 
+import com.css.app.db.business.entity.SubDocInfo;
 import com.css.app.db.business.entity.SubDocTracking;
 
 import java.util.List;
@@ -36,6 +37,6 @@ public interface SubDocTrackingService {
 
 	String findDealUserName(String subId);
 	
-	int queryTaskNumByUserId(String userId,String year);
+	List<SubDocTracking> queryTaskNumByUserId(String userId,String year);
 
 }

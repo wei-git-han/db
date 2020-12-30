@@ -1,5 +1,6 @@
 package com.css.app.db.business.dao;
 
+import com.css.app.db.business.entity.SubDocInfo;
 import com.css.app.db.business.entity.SubDocTracking;
 
 import java.util.List;
@@ -24,6 +25,6 @@ public interface SubDocTrackingDao extends BaseDao<SubDocTracking> {
 	List<SubDocTracking> queryListBySubId(String subId);
 	SubDocTracking queryNewRecord(String subId);
 	String findDealUserName(String subId);
-	@Select("select count(*) from DB_SUB_DOC_TRACKING where RECEIVER_ID = #{0} and CREATED_TIME like '%'||#{1}||'%'")
-	int queryTaskNumByUserId(String userId,String year);
+	@Select("select * from DB_SUB_DOC_TRACKING where RECEIVER_ID = #{0} and CREATED_TIME like '%'||#{1}||'%' order by CREATED_TIME desc")
+	List<SubDocTracking> queryTaskNumByUserId(String userId,String year);
 }
