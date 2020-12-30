@@ -77,4 +77,9 @@ public class SubDocTrackingServiceImpl implements SubDocTrackingService {
 		return subDocTrackingDao.findDealUserName(subId);
 	}
 	
+	@Override
+	public int queryTaskNumByUserId(String userId,String year){
+		return subDocTrackingDao.queryTaskNumByUserId(userId,year);
+	}
+	
 }

@@ -1,17 +1,22 @@
 package com.css.webservice;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.activemq.filter.function.splitFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONObject;
+import com.css.addbase.apporgan.entity.BaseAppUser;
 import com.css.addbase.apporgan.service.BaseAppUserService;
 import com.css.app.db.business.entity.SubDocInfo;
 import com.css.app.db.business.service.SubDocInfoService;
+import com.css.app.db.business.service.SubDocTrackingService;
 import com.css.app.db.config.entity.AdminSet;
 import com.css.app.db.config.service.AdminSetService;
 import com.css.app.db.util.DbDocStatusDefined;
@@ -28,6 +33,8 @@ public class ToDoApiController {
     private SubDocInfoService subDocInfoService;
     @Autowired
     private BaseAppUserService baseAppUserService;
+    @Autowired
+    private SubDocTrackingService subDocTrackingService;
 
     /**
      * 督办待办数app
@@ -106,6 +113,34 @@ public class ToDoApiController {
 			menuIds=menuIds+",003";
 		}		
 		return menuIds;
+    }
+    
+    
+    /**
+     * 督办配合负一屏做年度统计
+     * @param deptId
+     * @return
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getAllTaskByDept")
+    public void getAllTaskByDept(String deptId) {
+        JSONObject jsonObject = new JSONObject();
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        String currentYear = String.valueOf(year);
+        List<BaseAppUser> appUserList = baseAppUserService.queryAllTaskByDept(deptId);
+        if (appUserList != null && appUserList.size() > 0) {
+            for (int i = 0; i < appUserList.size(); i++) {
+                BaseAppUser baseAppUser = appUserList.get(i);
+                String userId = baseAppUser.getUserId();
+                int taskNum = subDocTrackingService.queryTaskNumByUserId(userId, currentYear);
+                baseAppUser.setTaskNum(taskNum);
+            }
+        }
+        jsonObject.put("list", appUserList);
+        jsonObject.put("result","success");
+        Response.json(jsonObject);
+
     }
 
 }

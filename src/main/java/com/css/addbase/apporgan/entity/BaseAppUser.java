@@ -42,6 +42,19 @@ public class BaseAppUser implements Serializable {
 	private String telephone;
 	
 	/**
+	 * 每个人督办数量统计
+	 */
+	private int taskNum;
+	
+	
+	
+	public int getTaskNum() {
+		return taskNum;
+	}
+	public void setTaskNum(int taskNum) {
+		this.taskNum = taskNum;
+	}
+	/**
 	 * 设置：主键
 	 */
 	public void setId(String id) {

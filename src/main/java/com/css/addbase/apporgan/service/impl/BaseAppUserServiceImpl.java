@@ -132,4 +132,9 @@ public class BaseAppUserServiceImpl implements BaseAppUserService {
 		return baseAppUserDao.selectUserByNameAndUnitId(name, unitId);
 	}
 	
+	@Override
+	public List<BaseAppUser> queryAllTaskByDept(String deptId){
+		return baseAppUserDao.queryAllTaskByDept(deptId);
+	}
+	
 }

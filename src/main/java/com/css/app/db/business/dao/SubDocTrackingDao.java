@@ -5,6 +5,7 @@ import com.css.app.db.business.entity.SubDocTracking;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import com.css.base.dao.BaseDao;
 
@@ -23,4 +24,6 @@ public interface SubDocTrackingDao extends BaseDao<SubDocTracking> {
 	List<SubDocTracking> queryListBySubId(String subId);
 	SubDocTracking queryNewRecord(String subId);
 	String findDealUserName(String subId);
+	@Select("select count(*) from DB_SUB_DOC_TRACKING where RECEIVER_ID = #{0} and CREATED_TIME like '%'||#{1}||'%'")
+	int queryTaskNumByUserId(String userId,String year);
 }

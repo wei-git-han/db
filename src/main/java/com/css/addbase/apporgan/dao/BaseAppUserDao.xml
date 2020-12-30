@@ -173,6 +173,19 @@
 			#{id}
 		</foreach>
 	</delete>
+	
+	<select id="queryAllTaskByDept" resultType="com.css.addbase.apporgan.entity.BaseAppUser">
+		select * from BASE_APP_USER where
+        ORGANID in
+        (
+                select
+                        ID
+                from
+                        BASE_APP_ORGAN start
+                with ID         = #{orgId}
+                    and ISDELETE=0 connect by prior ID = PARENT_ID
+        )
+	</select>
 
 
 </mapper>
