@@ -1,6 +1,7 @@
 package com.css.webservice;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -162,10 +163,15 @@ public class ToDoApiController {
                     		}
                     	}
                     }
-                    bjPassenger  = ((new BigDecimal((float) bjNum / totalNum).doubleValue())* 100);
-                    String bjl = String.valueOf(bjPassenger);
+                	DecimalFormat decimalFormat = new DecimalFormat("#.0000");
+                	float bjPassengers  = (float) bjNum /(float)totalNum;
+                	String format = decimalFormat.format(bjPassengers);
+                	Float parseFloat = Float.parseFloat(format);
+                	//bjPassenger  = ((new BigDecimal((float) bjNum /(float) totalNum).doubleValue()));
+                    //String bjl = String.valueOf(bjPassenger);
                     baseAppUser.setTaskNum(totalNum);
-                    baseAppUser.setFinishRate(bjl.substring(0,bjl.indexOf(".")+2));
+                    baseAppUser.setFinishRate(parseFloat.toString());
+                    
                     Date lastTime = list.get(0).getCreatedTime();
                     Date firstTime = list.get(totalNum - 1).getCreatedTime();
                     long millisecond = lastTime.getTime() - firstTime.getTime();
