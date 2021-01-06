@@ -157,10 +157,13 @@ public class ToDoApiController {
                     		SubDocTracking subDocTracking = list.get(j);
                     		String subId = subDocTracking.getSubId();
                     		SubDocInfo subDocInfo = subDocInfoService.queryObject(subId);
-                    		int status = subDocInfo.getDocStatus();
-                    		if(status > 9) {//大于等于9是办结
-                    			bjNum +=1;
+                    		if(subDocInfo != null) {
+                    			int status = subDocInfo.getDocStatus();
+                        		if(status > 9) {//大于等于9是办结
+                        			bjNum +=1;
+                        		}
                     		}
+                    		
                     	}
                     }
                 	DecimalFormat decimalFormat = new DecimalFormat("#.0000");
