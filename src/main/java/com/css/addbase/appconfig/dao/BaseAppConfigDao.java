@@ -30,6 +30,9 @@ public interface BaseAppConfigDao extends BaseDao<BaseAppConfig> {
 
 	@Select("select * from BASE_APP_ORGAN where PARENT_ID = 'root'")
 	List<BaseAppOrgan> queryAllDept();
+
+	@Select("select value from BASE_APP_CONFIG where type = 'web_socket_jiaobiao'")
+	List<String> queryAllJuzhang();
 	
 	
 }

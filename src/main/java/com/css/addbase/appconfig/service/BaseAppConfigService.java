@@ -30,4 +30,6 @@ public interface BaseAppConfigService {
 	String objectValue(String type);
 
 	List<BaseAppOrgan> queryAllDept();
+
+	List<String> queryAllJuzhang();
 }

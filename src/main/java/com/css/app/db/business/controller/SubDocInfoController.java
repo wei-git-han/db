@@ -107,6 +107,9 @@ public class SubDocInfoController {
 	@Autowired
 	private AdminSetService adminSetService;
 
+	@Autowired
+	private RedisUtil redisUtil;
+
 	/**
 	 * 局内待办列表
 	 */
@@ -822,6 +825,7 @@ public class SubDocInfoController {
 			subDocInfo.setUpdateTime(new Date());
 			subDocInfoService.update(subDocInfo);
 		}
+		redisUtil.setString(userId+"_dbcount","true");
 		// 发送消息提醒
 		MsgTip msg = msgService.queryObject(MSGTipDefined.DCCB_SONGSHEN_MSG_TITLE);
 		if (msg != null) {

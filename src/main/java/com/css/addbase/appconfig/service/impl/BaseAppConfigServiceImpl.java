@@ -67,4 +67,10 @@ public class BaseAppConfigServiceImpl implements BaseAppConfigService {
 		return baseAppConfigDao.queryAllDept();
 	}
 
+
+	@Override
+	public List<String> queryAllJuzhang(){
+		return baseAppConfigDao.queryAllJuzhang();
+	}
+
 }
