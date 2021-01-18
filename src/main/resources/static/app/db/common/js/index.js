@@ -195,6 +195,7 @@ function setRedPoint(data){
 		$(".jndb_num").hide();
 		$('.jndb_num').text("");
 	}
+	gettop2().__set_todo_count__(data.numAll);
 	refrashPage()
 }
 
