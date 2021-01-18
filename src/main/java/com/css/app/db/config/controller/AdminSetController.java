@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,6 +170,17 @@ public class AdminSetController {
 		String[] idArry = ids.split(",");
 		adminSetService.deleteBatch(idArry);
 		Response.json("result","success");
+	}
+
+
+	@ResponseBody
+	@RequestMapping(value = "/getUserId")
+	public void getUserId(){
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("userId",CurrentUser.getUserId());
+		jsonObject.put("result","success");
+		Response.json(jsonObject);
+
 	}
 	
 }
