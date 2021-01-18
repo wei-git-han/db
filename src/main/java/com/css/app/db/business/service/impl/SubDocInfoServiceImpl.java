@@ -15,6 +15,7 @@ import com.css.app.db.util.DbDocStatusDefined;
 import com.css.base.utils.CurrentUser;
 import com.css.base.utils.Response;
 import com.css.base.utils.StringUtils;
+import com.css.websocket.WebSocketHandle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +50,9 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 
 	@Autowired
 	private RedisUtil redisUtil;
+
+	@Autowired
+	private WebSocketHandle webSocketHandle;
 	
 	@Override
 	public SubDocInfo queryObject(String id){
@@ -176,14 +180,14 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 	}
 
 	@Override
-	public JSONObject sendMsgByWebSocket(String userId){
+	public void sendMsgByWebSocket(String userId,int menuType,Boolean isSerf){
 		JSONObject jsonObject = new JSONObject();
 		//List<String> appConfigList = baseAppConfigService.queryAllJuzhang();
 		//if(appConfigList != null && appConfigList.size() > 0){
 			//for(int i = 0;i<appConfigList.size();i++){
 				//String userId = appConfigList.get(i);
 				System.out.println("dddd");
-				String value = redisUtil.getString(userId+"_dbcount");
+				//String value = redisUtil.getString(userId+"_dbcount");
 				//当value等于true的时候才会触发websocket
 				//if("true".equals(value)){
 					//触发websocket
@@ -195,13 +199,21 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 					jsonObject.put("getUnitTodoCount",getUnitTodoCount);
 				//}
 				//恢复成默认
-				redisUtil.setString(userId+"_dbcount","false");
+				//redisUtil.setString(userId+"_dbcount","false");
 
 			//}
+		int numAll = 0;
+		if(menuType == 4){
+			numAll = getPersonTodoCount;
+		}else if(menuType == 5){
+			numAll = getUnitTodoCount;
+		}
 
 		//}
 
-		return jsonObject;
+		webSocketHandle.addSendMap(userId,4,false,String.valueOf(numAll));
+
+		//return jsonObject;
 	}
 
 	public int dbNumSum(String loginUserId) {

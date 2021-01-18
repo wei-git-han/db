@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.css.websocket.WebSocketHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,6 +110,9 @@ public class SubDocInfoController {
 
 	@Autowired
 	private RedisUtil redisUtil;
+
+	@Autowired
+	private WebSocketHandle webSocketHandle;
 
 	/**
 	 * 局内待办列表
@@ -840,11 +844,13 @@ public class SubDocInfoController {
 					msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 
 		}
-		JSONObject jsonObject = subDocInfoService.sendMsgByWebSocket(userId);
-		int dbNumSum = (int) jsonObject.get("dbNumSum");//个人待办总数
-		int getPersonTodoCount = (int)jsonObject.get("getPersonTodoCount");//个人待办菜单
-		int getUnitTodoCount = (int)jsonObject.get("getUnitTodoCount");//局内待办菜单
-
+		//webSocket触发角标更新
+//		JSONObject jsonObject = subDocInfoService.sendMsgByWebSocket(userId,4,false);
+//		int dbNumSum = (int) jsonObject.get("dbNumSum");//个人待办总数
+//		String getPersonTodoCount = (String)jsonObject.get("getPersonTodoCount");//个人待办菜单
+//		String getUnitTodoCount = (String)jsonObject.get("getUnitTodoCount");//局内待办菜单
+//		webSocketHandle.addSendMap(userId,4,false,getPersonTodoCount);
+		subDocInfoService.sendMsgByWebSocket(userId,4,false);
 
 		Response.json("result", "success");
 	}
