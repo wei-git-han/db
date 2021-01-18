@@ -9,9 +9,7 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ServerEndpoint("/webSocket/{userId}")
@@ -24,7 +22,7 @@ public class ProductWebSocket {
     private static int onlineCount = 0;
 
     //concurrent包的线程安全Set，用来存放每个客户端对应的MyWebSocket对象。若要实现服务端与单一客户端通信的话，可以使用Map来存放，其中Key可以为用户id
-    private static ConcurrentHashMap<String, List<ProductWebSocket>> webSocketSet = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<String, ProductWebSocket> webSocketSet = new ConcurrentHashMap<>();
 
     //与某个客户端的连接会话，需要通过它来给客户端发送数据
     private Session session;
@@ -59,15 +57,7 @@ public class ProductWebSocket {
     public void onOpen(@PathParam(value = "userId") String param, Session session) {
         this.userId = param;//接收到发送消息的人员编号
         this.session = session;
-        List<ProductWebSocket> productWebSockets = webSocketSet.get(userId);
-        if(null == productWebSockets){
-            ArrayList<ProductWebSocket> objects = new ArrayList<>();
-            objects.add(this);
-            webSocketSet.put(param, objects);//加入线程安全map中
-        }else{
-            List<ProductWebSocket> productWebSockets1 = webSocketSet.get(param);
-            productWebSockets1.add(this);
-        }
+        webSocketSet.put(param + session.getId(), this);//加入线程安全map中
         addOnlineCount();           //在线数加1
         this.pushLog("用户id：" + param + "加入连接！当前在线人数为" + getOnlineCount());
     }
@@ -76,12 +66,10 @@ public class ProductWebSocket {
      * 连接关闭调用的方法
      */
     @OnClose
-    public void onClose() {
-        if (!userId.equals("")) {
-            webSocketSet.remove(userId);  //根据用户id从ma中删除
-            subOnlineCount();           //在线数减1
-            this.pushLog("用户id：" + userId + "关闭连接！当前在线人数为" + getOnlineCount());
-        }
+    public void onClose(@PathParam(value = "userId") String param, Session session) {
+        webSocketSet.remove(param+session.getId());  //根据用户id从ma中删除
+        subOnlineCount();           //在线数减1
+        this.pushLog("用户id：" + userId + "关闭连接！当前在线人数为" + getOnlineCount());
     }
 
     /**
@@ -97,7 +85,7 @@ public class ProductWebSocket {
         //发送的信息
         String sendMessage = message.split(",")[0];
         //给指定的人发消息
-        sendToUser(sendUserId, sendMessage);
+        sendToUser(sendUserId+session.getId(), sendMessage);
         this.pushLog("来自客户端的消息:" + message);
     }
 
@@ -107,19 +95,12 @@ public class ProductWebSocket {
      * @param message
      */
     public void sendToUser(String sendUserId, String message) {
-        try {
-            if (webSocketSet.get(sendUserId) != null) {
-                List<ProductWebSocket> productWebSockets = webSocketSet.get(sendUserId);
-                for (ProductWebSocket socket: productWebSockets) {
-                    socket.sendMessage(userId + "发送消息，消息内容为--->>" + message);
+            for (String userIdKey:webSocketSet.keySet()) {
+                if(userIdKey.contains(sendUserId)) {
+                    webSocketSet.get(userIdKey).sendMessage(userId + "发送消息，消息内容为--->>" + message);
                     this.pushLog(userId + "发送消息，消息内容为--->>" + message);
                 }
-            } else {
-                this.pushLog("消息接受人:" + sendUserId + "已经离线！");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -128,18 +109,11 @@ public class ProductWebSocket {
      * @param message
      */
     public void systemSendToUser(String sendUserId, String message) {
-        try {
-            if (webSocketSet.get(sendUserId) != null) {
-                List<ProductWebSocket> productWebSockets = webSocketSet.get(sendUserId);
-                for (ProductWebSocket socket: productWebSockets) {
-                    socket.sendMessage(sendUserId+"发送消息，消息内容为--->>" + message);
-                    this.pushLog(sendUserId+"发送消息，消息内容为--->>" + message);
-                }
-            } else {
-                this.pushLog("消息接受人:" + sendUserId + "已经离线！");
+        for (String userIdKey: webSocketSet.keySet()) {
+            if(userIdKey.contains(sendUserId)) {
+                webSocketSet.get(userIdKey).sendMessage(sendUserId + "发送消息，消息内容为--->>" + message);
+                this.pushLog(sendUserId + "发送消息，消息内容为--->>" + message);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -150,21 +124,11 @@ public class ProductWebSocket {
      */
     public void sendAll(String message) {
         String sendMessage = message.split(",")[0];
-        //遍历HashMap
-        for (String key : webSocketSet.keySet()) {
-            try {
-                //判断接收用户是否是当前发消息的用户
-                if (!userId.equals(key)) {
-                    List<ProductWebSocket> productWebSockets = webSocketSet.get(key);
-                    for (ProductWebSocket socket: productWebSockets) {
-                        socket.sendMessage("用户:" + userId + "发来消息：" + " <br/> " + sendMessage);
-                        this.pushLog("用户:" + userId + "发来消息：" + " <br/> " + sendMessage);
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        for (String userIdKey: webSocketSet.keySet()) {
+            webSocketSet.get(userIdKey).sendMessage("用户:" + userId + "发来消息：" + " <br/> " + sendMessage);
+            this.pushLog("用户:" + userId + "发来消息：" + " <br/> " + sendMessage);
         }
+
     }
 
 
@@ -175,8 +139,8 @@ public class ProductWebSocket {
      * @param error
      */
     @OnError
-    public void onError(Session session, Throwable error) {
-        this.pushLog("发生错误，控制台已打印，错误信息："+error.getMessage());
+    public void onError(@PathParam(value = "userId") String param, Session session, Throwable error) {
+        this.pushLog("发生错误，控制台已打印，错误信息："+error.getMessage()+"用户id:"+param);
         error.printStackTrace();
     }
 
@@ -186,9 +150,13 @@ public class ProductWebSocket {
      * @param message
      * @throws IOException
      */
-    public void sendMessage(String message) throws IOException {
+    public void sendMessage(String message){
         //发送
-        this.session.getBasicRemote().sendText(message);
+        try {
+            this.session.getBasicRemote().sendText(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         this.pushLog("发送消息："+message);
     }
 
