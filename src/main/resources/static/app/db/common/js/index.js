@@ -28,7 +28,7 @@ var pageModule = function(){
 						}
 						lis +='</a></li>';
 					});
-					
+
 					$('#menulist').html(lis);  //追加到页面
 //					$(".menuli li").eq(0).addClass("active");
 					$(".menuli li").click(function(){
@@ -49,9 +49,10 @@ var pageModule = function(){
 		//加载页面处理程序
 		initControl:function(){
 			initMenuList();
+			getUserId();
 		}
 	};
-	
+
 }();
 
 var showModal = function(obj){
@@ -114,4 +115,195 @@ function blfkfn(){
 //loading弹出框
 function lodaingControl(status){
 	$("#qjDialog").modal(status)
+}
+var lockReconnect = false;// 避免重复链接
+var wsObj = null;// websocket
+var tW = null; // 重连定时器
+var hasMesssage = true;
+var reloadRedPoint = true; // 刷新未关闭
+var timeLoadMs = 5; // 加载时间
+var timeLoadTime = null;
+var messageUserId = ''
+function initWebSocket() {
+	if(!messageUserId){
+		setTimeout(function () {
+			initWebSocket()
+		},2000)
+		return
+	}
+//    alert(location.host)
+	wsObj = new WebSocket(`ws://${location.host}/webSocket/${messageUserId}`);
+
+	wsObj.onopen = function (e) {
+		console.log('建立链接成功')
+		console.log(e)
+		heartCheck.start()
+	}
+	wsObj.onerror = function (e) {
+		console.log('链接出现异常');
+		console.log(e)
+		reconnectWebsocket()
+	}
+	wsObj.onclose = function (e) {
+		console.log('链接关闭');
+		console.log(e)
+		reconnectWebsocket()
+	}
+	wsObj.onmessage = function (e) {
+		console.log('收到新的消息');
+		console.log(e.data);
+		changNumData = {
+			bureau:false,
+			unit:false,
+			feedback:false
+		}
+		heartCheck.start()
+		if(e.data.indexOf('checkOnline')>-1){
+			return;
+		}
+		var strData = e.data.split('--->>')[1];
+		var jsonMessage = eval("("+strData+")");
+		if(jsonMessage.data.bureau){ // 刷新办件
+			refrashPageName = 'bureau';
+			if(!jsonMessage.data.bureauIsSerf){
+				changNumData.bureau = true
+			}
+		}else if(jsonMessage.data.feedback){ // 刷新阅件
+			refrashPageName = 'feedback';
+			if(!jsonMessage.data.feedbackIsSerf){
+				changNumData.feedback = true
+			}
+		}else if(jsonMessage.data.unit){// 刷新公文
+			refrashPageName= 'unit';
+			if(!jsonMessage.data.unitIsSerf){
+				changNumData.unit = true
+			}
+		}
+		setRedPoint(jsonMessage);
+	}
+}
+var refrashPageName = null
+// 设置角标
+var changNumData = {
+	bureau:false,
+	unit:false,
+	feedback:false
+}
+function setRedPoint(data){
+// 我的公文 审批公文 公文流转
+	if(data.waitCount>0&&data.waitCount!=null){
+		if(refrashPageName=='feedback'){
+			$(".blfk_num").show();
+//				$('.blfk_num').text(data.blfkNum);
+			$('.blfk_num').text("");
+		}
+		if(refrashPageName=='unit'){
+			$(".grdb_num").show();
+//				$('.blfk_num').text(data.blfkNum);
+			$('.grdb_num').text(data.waitCount);
+		}
+		if(refrashPageName=='bureau'){
+			$(".jndb_num").show();
+			$('.jndb_num').text(data.waitCount);
+		}
+	}
+	refrashPage();
+	changToNum()
+}
+
+// 是否是需要刷新的页面
+function isReloadHtml(){
+	var htmlUrl = window.top.iframe1.location.href;
+	if((htmlUrl.indexOf('app/db/document/grdb/html/grdb.html')>-1&&(refrashPageName=='unit'&&changNumData.unit))||
+		(htmlUrl.indexOf('app/db/document/blfk/html/blfk.html')>-1&&(refrashPageName=='feedback'&&changNumData.feedback))||
+		(htmlUrl.indexOf('app/db/document/jndb/html/jndb.html')>-1&&(refrashPageName=='bureau'&&changNumData.bureau))){
+		return true
+	}else{
+		return false
+	}
+}
+function getUserId() {
+	$.ajax({
+		url:'/app/db/adminset/getUserId',
+		success:function(data){
+			messageUserId = data.userId
+			initWebSocket()
+		}
+	})
+}
+//刷新角标
+function refrashPage(){
+	if(isReloadHtml()&&reloadRedPoint){
+		$('#timeLoading').html(timeLoadMs)
+		clearInterval(timeLoadTime);
+		$(".refreshTip").show();
+		timeLoadTime = setInterval(function () {
+			if(!reloadRedPoint){ // 在提示刷新流程中，点击了关闭
+				clearInterval(timeLoadTime);
+				timeLoadMs = 5;
+				$(".refreshTip").hide()
+				return
+			}
+			if(timeLoadMs<=0){
+				clearInterval(timeLoadTime);
+				timeLoadMs = 5;
+				$(".refreshTip").hide();
+				if(gettop2.iframe1){
+					gettop2.iframe1.refreshgrid()
+				}else{
+					gettop2.refreshgrid()
+				}
+			}else{
+				timeLoadMs--;
+				$('#timeLoading').html(timeLoadMs)
+			}
+		},1000)
+	}else{
+		clearInterval(timeLoadTime);
+		timeLoadMs = 5;
+		$('#timeLoading').html(timeLoadMs)
+		$(".refreshTip").hide();
+	}
+}
+// 初始化websocket
+// initWebSocket()
+// initWebSocket()
+function reconnectWebsocket() {
+	if(lockReconnect){
+		return;
+	}
+	lockReconnect = true;
+	tW && clearTimeout(tW);
+	tW = setTimeout(function(){
+		initWebSocket();
+		lockReconnect = false
+	},4000)
+}
+// 心跳检测机制
+var heartCheck = {
+	timeout: 600000, // 等待时间
+	timeoutObj: null, //  发送时间
+	serverTimeOutObj: null,
+	start: function () {
+		console.log('心跳检测开始！');
+		var selfW = this;
+		this.timeoutObj && clearTimeout(this.timeoutObj); // 清空定时器
+		this.serverTimeOutObj && clearTimeout(this.serverTimeOutObj);//清空定时器
+		hasMesssage = true
+		this.timeoutObj = setTimeout(function(){ // 发送心跳检测
+			wsObj.send(`checkOnline,${messageUserId}`);
+			hasMesssage = false;
+			this.serverTimeOutObj = setTimeout(function () { // 无反应后10s,关闭websocket 进行重连
+				if(!hasMesssage){
+					wsObj.close()
+				}
+			},selfW.timeout)
+		},this.timeout)
+	}
+}
+
+function resetRoad() {
+	clearInterval(timeLoadTime);
+	timeLoadMs = 5;
+	$(".refreshTip").hide();
 }
