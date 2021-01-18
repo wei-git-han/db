@@ -49,6 +49,7 @@ var pageModule = function(){
 		//加载页面处理程序
 		initControl:function(){
 			initMenuList();
+			getUserId();
 		}
 	};
 
@@ -208,6 +209,15 @@ function isReloadHtml(){
 		return false
 	}
 }
+function getUserId() {
+	$.ajax({
+		url:'/app/db/adminset/getUserId',
+		success:function(data){
+			messageUserId = data.userId
+			initWebSocket()
+		}
+	})
+}
 //刷新角标
 function refrashPage(){
 	if(isReloadHtml()&&reloadRedPoint){
@@ -244,7 +254,7 @@ function refrashPage(){
 }
 // 初始化websocket
 // initWebSocket()
-initWebSocket()
+// initWebSocket()
 function reconnectWebsocket() {
 	if(lockReconnect){
 		return;
