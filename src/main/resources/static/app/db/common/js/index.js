@@ -213,7 +213,7 @@ function setRedPoint(data){
 
 // 是否是需要刷新的页面
 function isReloadHtml(){
-	var htmlUrl = window.top.iframe1.location.href;
+	var htmlUrl = gettop2().iframe1.location.href;
 	if((htmlUrl.indexOf('app/db/document/grdb/html/grdb.html')>-1&&(refrashPageName=='unit'&&changNumData.unit))||
 		(htmlUrl.indexOf('app/db/document/blfk/html/blfk.html')>-1&&(refrashPageName=='feedback'&&changNumData.feedback))||
 		(htmlUrl.indexOf('app/db/document/jndb/html/jndb.html')>-1&&(refrashPageName=='bureau'&&changNumData.bureau))){
