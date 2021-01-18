@@ -151,63 +151,72 @@ function initWebSocket() {
 	}
 	wsObj.onmessage = function (e) {
 		console.log('收到新的消息');
-		console.log(e.data)
+		console.log(e.data);
+		changNumData = {
+			bureau:false,
+			unit:false,
+			feedback:false
+		}
 		heartCheck.start()
 		if(e.data.indexOf('checkOnline')>-1){
 			return;
 		}
 		var strData = e.data.split('--->>')[1];
 		var jsonMessage = eval("("+strData+")");
-		if(jsonMessage.data.blfk&&jsonMessage.data.blfkIsSerf == false){ // 刷新办件
-			refrashPageName = 'blfk'
-		}else if(jsonMessage.data.jndb && jsonMessage.data.jndbIsSerf == false){ // 刷新阅件
-			refrashPageName = 'jndb'
-		}else if(jsonMessage.data.grdb && jsonMessage.data.grdbIsSerf==false){// 刷新公文
-			refrashPageName= 'grdb'
+		if(jsonMessage.data.bureau){ // 刷新办件
+			refrashPageName = 'bureau';
+			if(!jsonMessage.data.bureauIsSerf){
+				changNumData.bureau = true
+			}
+		}else if(jsonMessage.data.feedback){ // 刷新阅件
+			refrashPageName = 'feedback';
+			if(!jsonMessage.data.feedbackIsSerf){
+				changNumData.feedback = true
+			}
+		}else if(jsonMessage.data.unit){// 刷新公文
+			refrashPageName= 'unit';
+			if(!jsonMessage.data.unitIsSerf){
+				changNumData.unit = true
+			}
 		}
-
 		setRedPoint(jsonMessage);
-
 	}
 }
 var refrashPageName = null
 // 设置角标
+var changNumData = {
+	bureau:false,
+	unit:false,
+	feedback:false
+}
 function setRedPoint(data){
 // 我的公文 审批公文 公文流转
-	if(data.blfkNum > 0 && data.blfkNum != null && data.total != "" && typeof(data.blfkNum) != undefined){
-		$(".blfk_num").show();
+	if(data.waitCount>0&&data.waitCount!=null){
+		if(refrashPageName=='feedback'){
+			$(".blfk_num").show();
 //				$('.blfk_num').text(data.blfkNum);
-		$('.blfk_num').text("");
-	}else{
-		$(".blfk_num").hide();
-		$('.blfk_num').text("");
-	}
-	if(data.grdbNum > 0 && data.grdbNum != null && data.grdbNum != "" && typeof(data.grdbNum) != undefined){
-		$(".grdb_num").show();
-		$('.grdb_num').text(data.grdbNum);
-	}else{
-		$(".grdb_num").hide();
-		$('.grdb_num').text("");
-	}
-	if(data.jndbNum > 0 && data.jndbNum != null && data.jndbNum != "" && typeof(data.jndbNum) != undefined){
-		$(".jndb_num").show();
-		$('.jndb_num').text(data.jndbNum);
-	}else{
-		$(".jndb_num").hide();
-		$('.jndb_num').text("");
+			$('.blfk_num').text("");
+		}
+		if(refrashPageName=='unit'){
+			$(".grdb_num").show();
+//				$('.blfk_num').text(data.blfkNum);
+			$('.grdb_num').text(data.waitCount);
+		}
+		if(refrashPageName=='bureau'){
+			$(".jndb_num").show();
+			$('.jndb_num').text(data.waitCount);
+		}
 	}
 	refrashPage();
-	if(navigator.userAgent.indexOf('OfficeBrowser')>=0){
-		gettop2().__set_todo_count__(data.count);
-	}
+	changToNum()
 }
 
 // 是否是需要刷新的页面
 function isReloadHtml(){
 	var htmlUrl = window.top.iframe1.location.href;
-	if((htmlUrl.indexOf('app/db/document/grdb/html/grdb.html')>-1&&refrashPageName=='grdb')||
-		(htmlUrl.indexOf('app/db/document/blfk/html/blfk.html')>-1&&refrashPageName=='blfk')||
-		(htmlUrl.indexOf('app/db/document/jndb/html/jndb.html')>-1&&refrashPageName=='jndb')){
+	if((htmlUrl.indexOf('app/db/document/grdb/html/grdb.html')>-1&&(refrashPageName=='unit'&&changNumData.unit))||
+		(htmlUrl.indexOf('app/db/document/blfk/html/blfk.html')>-1&&(refrashPageName=='feedback'&&changNumData.feedback))||
+		(htmlUrl.indexOf('app/db/document/jndb/html/jndb.html')>-1&&(refrashPageName=='bureau'&&changNumData.bureau))){
 		return true
 	}else{
 		return false
