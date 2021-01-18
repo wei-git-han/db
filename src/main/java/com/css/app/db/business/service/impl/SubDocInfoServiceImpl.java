@@ -1,9 +1,13 @@
 package com.css.app.db.business.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.css.addbase.appconfig.entity.BaseAppConfig;
 import com.css.addbase.appconfig.service.BaseAppConfigService;
 import com.css.addbase.apporgan.entity.BaseAppOrgan;
 import com.css.addbase.apporgan.service.BaseAppUserService;
+import com.css.addbase.apporgmapped.entity.BaseAppOrgMapped;
+import com.css.addbase.apporgmapped.service.BaseAppOrgMappedService;
+import com.css.addbase.constant.AppConstant;
 import com.css.app.db.business.controller.RedisUtil;
 import com.css.app.db.config.entity.AdminSet;
 import com.css.app.db.config.service.AdminSetService;
@@ -22,6 +26,7 @@ import java.util.Map;
 import com.css.app.db.business.dao.SubDocInfoDao;
 import com.css.app.db.business.entity.SubDocInfo;
 import com.css.app.db.business.service.SubDocInfoService;
+import org.springframework.util.LinkedMultiValueMap;
 
 import javax.sound.sampled.Line;
 
@@ -33,6 +38,9 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 
 	@Autowired
 	private BaseAppConfigService baseAppConfigService;
+
+	@Autowired
+	private BaseAppOrgMappedService baseAppOrgMappedService;
 
 	@Autowired
 	private AdminSetService adminSetService;
@@ -168,24 +176,32 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 	}
 
 	@Override
-	public void sendMsgByWebSocket(){
-		List<String> appConfigList = baseAppConfigService.queryAllJuzhang();
-		if(appConfigList != null && appConfigList.size() > 0){
-			for(int i = 0;i<appConfigList.size();i++){
-				String userId = appConfigList.get(i);
+	public JSONObject sendMsgByWebSocket(String userId){
+		JSONObject jsonObject = new JSONObject();
+		//List<String> appConfigList = baseAppConfigService.queryAllJuzhang();
+		//if(appConfigList != null && appConfigList.size() > 0){
+			//for(int i = 0;i<appConfigList.size();i++){
+				//String userId = appConfigList.get(i);
 				System.out.println("dddd");
 				String value = redisUtil.getString(userId+"_dbcount");
 				//当value等于true的时候才会触发websocket
-				if("true".equals(value)){
+				//if("true".equals(value)){
 					//触发websocket
-					int dbNumSum = dbNumSum(userId);//个人待办数
-				}
+					int dbNumSum = dbNumSum(userId);//个人待办总数
+					int getPersonTodoCount = this.getPersonTodoCount(userId);//个人待办菜单
+					int getUnitTodoCount = this.getUnitTodoCount(userId);//局内待办菜单
+					jsonObject.put("dbNumSum",dbNumSum);
+					jsonObject.put("getPersonTodoCount",getPersonTodoCount);
+					jsonObject.put("getUnitTodoCount",getUnitTodoCount);
+				//}
 				//恢复成默认
 				redisUtil.setString(userId+"_dbcount","false");
 
-			}
+			//}
 
-		}
+		//}
+
+		return jsonObject;
 	}
 
 	public int dbNumSum(String loginUserId) {

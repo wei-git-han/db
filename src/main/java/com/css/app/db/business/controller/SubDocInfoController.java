@@ -835,11 +835,17 @@ public class SubDocInfoController {
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 			}
-			logger.info("==================送审批，承办人是"+userId);
+			logger.info("==================送审批，承办人是"+currentUserId);
 			msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, currentUserId, appId, clientSecret,
 					msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 
 		}
+		JSONObject jsonObject = subDocInfoService.sendMsgByWebSocket(userId);
+		int dbNumSum = (int) jsonObject.get("dbNumSum");//个人待办总数
+		int getPersonTodoCount = (int)jsonObject.get("getPersonTodoCount");//个人待办菜单
+		int getUnitTodoCount = (int)jsonObject.get("getUnitTodoCount");//局内待办菜单
+
+
 		Response.json("result", "success");
 	}
 

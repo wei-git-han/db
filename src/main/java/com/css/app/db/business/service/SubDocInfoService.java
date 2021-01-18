@@ -1,5 +1,6 @@
 package com.css.app.db.business.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.css.addbase.appconfig.entity.BaseAppConfig;
 import com.css.app.db.business.entity.SubDocInfo;
 
@@ -62,5 +63,5 @@ public interface SubDocInfoService {
 
 	List<SubDocInfo> queryAllTime(Map<String,Object> map);
 
-	void sendMsgByWebSocket();
+	JSONObject sendMsgByWebSocket(String userId);
 }
