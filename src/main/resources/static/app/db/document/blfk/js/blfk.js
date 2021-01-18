@@ -955,7 +955,7 @@ function refreshgrid(){
 	var documentStatus= $("input[name='documentStatus']:checked").val();
 	window.top.memory.radio = documentStatus;
 	window.top.memory.search = search;
-	leftMenufn()
+	pageModule.leftMenufn()
 	removeInputData(["title","leaderId","leaderName","startDate","endDate","period","status"]);
 }
 
