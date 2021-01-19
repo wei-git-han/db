@@ -289,7 +289,7 @@ function reconnectWebsocket() {
 }
 // 心跳检测机制
 var heartCheck = {
-	timeout: 600000, // 等待时间
+	timeout: 80000, // 等待时间
 	timeoutObj: null, //  发送时间
 	serverTimeOutObj: null,
 	start: function () {
