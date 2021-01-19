@@ -153,19 +153,28 @@ function initWebSocket() {
 		console.log('收到新的消息');
 		console.log(e.data);
 		heartCheck.start()
-		if(e.data.indexOf('checkOnline')>-1){
-			return;
+		var str2 = e.data.split('--->>')[1];
+		if(str2.indexOf('checkOnline')>-1){
+			var str3 = str2.split('checkOnline,')[1];
+			if(!str3){
+				return
+			}else{
+				isAllNum = 0;// 收到刷新角标后，重置为0，重新计次
+				var jsonMessage = eval("("+str3+")");
+				setRedPoint(jsonMessage);
+			}
+		}else{
+			isAllNum = 0;// 收到刷新角标后，重置为0，重新计次
+			var jsonMessage = eval("("+str2+")");
+			if(jsonMessage.data.bureau&&!jsonMessage.data.bureauIsSerf){ // 刷新办件
+				refrashPageName='bureau'
+			}else if(jsonMessage.data.feedback&&!jsonMessage.data.feedbackIsSerf){ // 刷新阅件
+				refrashPageName='feedback'
+			}else if(jsonMessage.data.unit&&!jsonMessage.data.unitIsSerf){// 刷新公文
+				refrashPageName= 'unit'
+			}
+			setRedPoint(jsonMessage.count);
 		}
-		var strData = e.data.split('--->>')[1];
-		var jsonMessage = eval("("+strData+")");
-		if(jsonMessage.data.bureau&&!jsonMessage.data.bureauIsSerf){ // 刷新办件
-			refrashPageName='bureau'
-		}else if(jsonMessage.data.feedback&&!jsonMessage.data.feedbackIsSerf){ // 刷新阅件
-			refrashPageName='feedback'
-		}else if(jsonMessage.data.unit&&!jsonMessage.data.unitIsSerf){// 刷新公文
-			refrashPageName= 'unit'
-		}
-		setRedPoint(jsonMessage.count);
 	}
 }
 var refrashPageName = null
@@ -189,7 +198,7 @@ function setRedPoint(data){
 	}
 	if(data.blfkNum>0&&$('.blfk_num').length>0&&$('.blfk_num').is(':hidden')){
 		changNumData.feedback = true
-	}else if(!$('.blfk_num').is(':hidden')){
+	}else if(data.blfkNum==0&&!$('.blfk_num').is(':hidden')){
 		changNumData.feedback = true
 	}
 
@@ -287,9 +296,10 @@ function reconnectWebsocket() {
 		lockReconnect = false
 	},4000)
 }
+var isAllNum = 0; // 心跳验证次数，每收到消息累加一次，收到6次，则清空为0
 // 心跳检测机制
 var heartCheck = {
-	timeout: 80000, // 等待时间
+	timeout: 5000, // 等待时间
 	timeoutObj: null, //  发送时间
 	serverTimeOutObj: null,
 	start: function () {
@@ -299,7 +309,11 @@ var heartCheck = {
 		this.serverTimeOutObj && clearTimeout(this.serverTimeOutObj);//清空定时器
 		hasMesssage = true
 		this.timeoutObj = setTimeout(function(){ // 发送心跳检测
-			wsObj.send(`checkOnline,${messageUserId}`);
+			isAllNum++;
+			if(isAllNum == 6){
+				isAllNum = 0
+			}
+			wsObj.send(`checkOnline,${messageUserId},${isAllNum==0?true:false}`);
 			hasMesssage = false;
 			this.serverTimeOutObj = setTimeout(function () { // 无反应后10s,关闭websocket 进行重连
 				if(!hasMesssage){
