@@ -1,6 +1,7 @@
 package com.css.websocket;
 
 import com.alibaba.fastjson.JSONObject;
+import com.css.app.db.business.service.SubDocInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,14 +26,14 @@ public class WebSocketHandle {
      * @param menuType 0公文、1阅件、2阅知、3办件
      * @param isSerf 是否是当前人
      */
-    public void addSendMap(String userId,int menuType,Boolean isSerf,String waitCount){
+    public void addSendMap(String userId,int menuType,Boolean isSerf){
         if(null == userDataMap.get(userId)){
             SendPojo sendPojo = new SendPojo();
-            sendPojo.setSendPojo(userId,menuType,isSerf,waitCount);
+            sendPojo.setSendPojo(userId,menuType,isSerf);
             userDataMap.put(userId,sendPojo);
         }else{
             SendPojo sendPojo = userDataMap.get(userId);
-            sendPojo.setSendPojo(userId,menuType,isSerf,waitCount);
+            sendPojo.setSendPojo(userId,menuType,isSerf);
         }
     }
 
@@ -64,14 +65,18 @@ public class WebSocketHandle {
         }).start();
     }
 
+    @Autowired
+    private SubDocInfoService subDocInfoService;
     /**
      * 获取待办数并发送
      * @param userId
      */
     public void sendMessageByUserId(String userId){
         SendPojo sendPojo = userDataMap.get(userId);
+        int count = subDocInfoService.sendMsgByWebSocket(userId);
         JSONObject json = new JSONObject();
         json.put("data",sendPojo);
+        json.put("count",count);
         productWebSocket.sendToUser(userId, JSONObject.toJSONString(json));
         userDataMap.remove(userId);
     }

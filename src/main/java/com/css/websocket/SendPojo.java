@@ -16,9 +16,8 @@ public class SendPojo {
 
     private String waitCount;
 
-    public void setSendPojo(String userId,int menuType,Boolean isSerf,String count) {
+    public void setSendPojo(String userId,int menuType,Boolean isSerf) {
         this.userId = userId;
-        this.waitCount = count;
         switch (menuType){
             case 4:
                 this.unit = true;

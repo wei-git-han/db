@@ -180,7 +180,7 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 	}
 
 	@Override
-	public void sendMsgByWebSocket(String userId,int menuType,Boolean isSerf){
+	public int sendMsgByWebSocket(String userId){
 		JSONObject jsonObject = new JSONObject();
 		//List<String> appConfigList = baseAppConfigService.queryAllJuzhang();
 		//if(appConfigList != null && appConfigList.size() > 0){
@@ -208,10 +208,9 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 		}else if(menuType == 5){
 			numAll = getUnitTodoCount;
 		}
-
 		//}
-
-		webSocketHandle.addSendMap(userId,menuType,isSerf,String.valueOf(numAll));
+        return numAll;
+//		webSocketHandle.addSendMap(userId,menuType,isSerf,String.valueOf(numAll));
 
 		//return jsonObject;
 	}
