@@ -850,7 +850,8 @@ public class SubDocInfoController {
 //		String getPersonTodoCount = (String)jsonObject.get("getPersonTodoCount");//个人待办菜单
 //		String getUnitTodoCount = (String)jsonObject.get("getUnitTodoCount");//局内待办菜单
 //		webSocketHandle.addSendMap(userId,4,false,getPersonTodoCount);
-		subDocInfoService.sendMsgByWebSocket(userId,4,false);
+		//subDocInfoService.sendMsgByWebSocket(userId,4,false);
+		webSocketHandle.addSendMap(userId,4,false);
 
 		Response.json("result", "success");
 	}
@@ -992,7 +993,8 @@ public class SubDocInfoController {
 				logger.info("==================送审批======，审批人是"+userId);
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
-				subDocInfoService.sendMsgByWebSocket(userId,4,false);
+				//subDocInfoService.sendMsgByWebSocket(userId,4,false);
+				webSocketHandle.addSendMap(userId,4,false);
 			}
 		}
 	}
@@ -1028,7 +1030,8 @@ public class SubDocInfoController {
 					logger.info("==================退回操作，退回给"+userId);
 					msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 							msg.getGroupName(), msg.getGroupRedirect(), "", "true");
-					subDocInfoService.sendMsgByWebSocket(userId,4,false);
+					//subDocInfoService.sendMsgByWebSocket(userId,4,false);
+					webSocketHandle.addSendMap(userId,4,false);
 				}
 				json.put("result", "success");
 			} else {
@@ -1233,7 +1236,8 @@ public class SubDocInfoController {
 				logger.info("===========================完成审批，送审人是"+userId);
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
-				subDocInfoService.sendMsgByWebSocket(userId,4,false);
+				//subDocInfoService.sendMsgByWebSocket(userId,4,false);
+				webSocketHandle.addSendMap(userId,4,false);
 			}
 			//给自己发空消息，只为触发角标更新
 			logger.info("=====完成审批，操作人是"+currentUserId);

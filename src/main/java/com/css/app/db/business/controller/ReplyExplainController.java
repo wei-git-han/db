@@ -11,6 +11,7 @@ import com.css.app.db.business.entity.*;
 import com.css.app.db.business.service.*;
 import com.css.app.db.config.service.AdminSetService;
 import com.css.app.db.config.service.RoleSetService;
+import com.css.websocket.WebSocketHandle;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,6 +62,9 @@ public class ReplyExplainController {
 
 	@Autowired
 	private BaseAppConfigService baseAppConfigService;
+
+	@Autowired
+	private WebSocketHandle webSocketHandle;
 	/**
 	 * 获取某个分支局反馈
 	 * @param infoId 主文件id
@@ -611,7 +615,8 @@ public class ReplyExplainController {
 			if(appConfigList != null && appConfigList.size() > 0){
 				for(int j = 0;j<appConfigList.size();j++){
 					String userId = appConfigList.get(j);
-					subDocInfoService.sendMsgByWebSocket(userId,6,false);
+					//subDocInfoService.sendMsgByWebSocket(userId,6,false);
+					webSocketHandle.addSendMap(userId,6,false);
 				}
 			}
 			json.put("result", "success");
