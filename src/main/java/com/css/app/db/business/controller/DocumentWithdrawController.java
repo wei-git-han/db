@@ -9,6 +9,7 @@ import com.css.addbase.msg.MsgTipUtil;
 import com.css.addbase.msg.entity.MsgTip;
 import com.css.addbase.msg.service.MsgTipService;
 import com.css.app.db.config.service.AdminSetService;
+import com.css.websocket.WebSocketHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,8 @@ public class DocumentWithdrawController {
 
 	@Autowired
 	private AdminSetService adminSetService;
+	@Autowired
+	private WebSocketHandle webSocketHandle;
 
 	/**
 	 * 在局内待办菜单内增加局管理员超级撤回功能
@@ -242,7 +245,8 @@ public class DocumentWithdrawController {
 				logger.info("给被撤回人发空消息，被撤回人是"+dealUserId);
 				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, dealUserId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
-				subDocInfoService.sendMsgByWebSocket(dealUserId,4,false);
+				//subDocInfoService.sendMsgByWebSocket(dealUserId,4,false);
+				webSocketHandle.addSendMap(userId,4,false);
 			}
 		}
 		return json;
@@ -408,10 +412,12 @@ public class DocumentWithdrawController {
 				//给被撤回人发空消息，只为触发角标更新
 				msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, dealUserId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
-				subDocInfoService.sendMsgByWebSocket(dealUserId,4,false);
+				//subDocInfoService.sendMsgByWebSocket(dealUserId,4,false);
+				webSocketHandle.addSendMap(userId,4,false);
 				List<String> userIds = adminSetService.queryUserIdByOrgId(deptId);
 				for (String juJserId : userIds) {
-					subDocInfoService.sendMsgByWebSocket(juJserId,5,false);
+					//subDocInfoService.sendMsgByWebSocket(juJserId,5,false);
+					webSocketHandle.addSendMap(userId,5,false);
 				}
 
 			}

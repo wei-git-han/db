@@ -9,8 +9,11 @@ import com.css.addbase.apporgmapped.entity.BaseAppOrgMapped;
 import com.css.addbase.apporgmapped.service.BaseAppOrgMappedService;
 import com.css.addbase.constant.AppConstant;
 import com.css.app.db.business.controller.RedisUtil;
+import com.css.app.db.business.service.DocumentInfoService;
 import com.css.app.db.config.entity.AdminSet;
+import com.css.app.db.config.entity.DocumentDic;
 import com.css.app.db.config.service.AdminSetService;
+import com.css.app.db.util.DbDefined;
 import com.css.app.db.util.DbDocStatusDefined;
 import com.css.base.utils.CurrentUser;
 import com.css.base.utils.Response;
@@ -53,6 +56,9 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 
 	@Autowired
 	private WebSocketHandle webSocketHandle;
+
+	@Autowired
+	private DocumentInfoService documentInfoService;
 	
 	@Override
 	public SubDocInfo queryObject(String id){
@@ -180,7 +186,12 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 	}
 
 	@Override
-	public int sendMsgByWebSocket(String userId){
+	public JSONObject sendMsgByWebSocket(String userId){
+		Map<String, Object> map = new HashMap<>();
+		map.put("docType", DbDefined.DOCUMENT_TYPE);
+		map.put("userId", userId);
+		String loginOrgId = baseAppUserService.getBareauByUserId(userId);
+		map.put("orgId", loginOrgId);
 		JSONObject jsonObject = new JSONObject();
 		//List<String> appConfigList = baseAppConfigService.queryAllJuzhang();
 		//if(appConfigList != null && appConfigList.size() > 0){
@@ -194,22 +205,27 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 					int dbNumSum = dbNumSum(userId);//个人待办总数
 					int getPersonTodoCount = this.getPersonTodoCount(userId);//个人待办菜单
 					int getUnitTodoCount = this.getUnitTodoCount(userId);//局内待办菜单
-					jsonObject.put("dbNumSum",dbNumSum);
+					int blfkNum = 0;
+					List<DocumentDic> dicByType = documentInfoService.queryDicByType(map);
+					for (DocumentDic dic : dicByType) {
+						blfkNum += dic.getHasUpdateNum();
+					}
+					//jsonObject.put("dbNumSum",dbNumSum);
 					jsonObject.put("getPersonTodoCount",getPersonTodoCount);
 					jsonObject.put("getUnitTodoCount",getUnitTodoCount);
+					jsonObject.put("blfkNum",blfkNum);
 				//}
 				//恢复成默认
 				//redisUtil.setString(userId+"_dbcount","false");
 
 			//}
-		int numAll = 0;
-		if(menuType == 4){
-			numAll = getPersonTodoCount;
-		}else if(menuType == 5){
-			numAll = getUnitTodoCount;
-		}
+//		if(menuType == 4){
+//			numAll = getPersonTodoCount;
+//		}else if(menuType == 5){
+//			numAll = getUnitTodoCount;
+//		}
 		//}
-        return numAll;
+        return jsonObject;
 //		webSocketHandle.addSendMap(userId,menuType,isSerf,String.valueOf(numAll));
 
 		//return jsonObject;

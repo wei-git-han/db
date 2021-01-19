@@ -63,5 +63,5 @@ public interface SubDocInfoService {
 
 	List<SubDocInfo> queryAllTime(Map<String,Object> map);
 
-	int sendMsgByWebSocket(String userId);
+	JSONObject sendMsgByWebSocket(String userId);
 }
