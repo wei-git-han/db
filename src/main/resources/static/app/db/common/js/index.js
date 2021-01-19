@@ -299,7 +299,7 @@ function reconnectWebsocket() {
 var isAllNum = 0; // 心跳验证次数，每收到消息累加一次，收到6次，则清空为0
 // 心跳检测机制
 var heartCheck = {
-	timeout: 5000, // 等待时间
+	timeout: 50000, // 等待时间
 	timeoutObj: null, //  发送时间
 	serverTimeOutObj: null,
 	start: function () {
