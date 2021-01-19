@@ -21,15 +21,15 @@ public class SendPojo {
         switch (menuType){
             case 4:
                 this.unit = true;
-                this.unitIsSerf = isSerf;
+                this.unitIsSerf = this.unitIsSerf && isSerf;
                 break;
             case 5:
                 this.bureau = true;
-                this.bureauIsSerf = isSerf;
+                this.bureauIsSerf = this.bureauIsSerf && isSerf;
                 break;
             case 6:
                 this.feedback = true;
-                this.feedbackIsSerf = isSerf;
+                this.feedbackIsSerf = this.feedbackIsSerf && isSerf;
                 break;
         }
     }
