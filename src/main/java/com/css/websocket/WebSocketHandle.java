@@ -73,10 +73,9 @@ public class WebSocketHandle {
      */
     public void sendMessageByUserId(String userId){
         SendPojo sendPojo = userDataMap.get(userId);
-        int count = subDocInfoService.sendMsgByWebSocket(userId);
         JSONObject json = new JSONObject();
         json.put("data",sendPojo);
-        json.put("count",count);
+        json.put("count",subDocInfoService.sendMsgByWebSocket(userId));
         productWebSocket.sendToUser(userId, JSONObject.toJSONString(json));
         userDataMap.remove(userId);
     }
