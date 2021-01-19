@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.css.app.db.business.service.SubDocInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.PostConstruct;
@@ -11,12 +12,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Repository
+@Service
 public class WebSocketHandle {
 
 
     @Autowired
     private ProductWebSocket productWebSocket;
+
+    @Autowired
+    private SubDocInfoService subDocInfoService;
 
     private static Map<String,SendPojo> userDataMap = new ConcurrentHashMap<>();
 
@@ -65,8 +69,6 @@ public class WebSocketHandle {
         }).start();
     }
 
-    @Autowired
-    private SubDocInfoService subDocInfoService;
     /**
      * 获取待办数并发送
      * @param userId
@@ -79,4 +81,24 @@ public class WebSocketHandle {
         productWebSocket.sendToUser(userId, JSONObject.toJSONString(json));
         userDataMap.remove(userId);
     }
+
+    /**
+     * 定时推送 5分钟
+     * @param userId
+     * @return
+     */
+    public String pushWaitCount(String userId){
+        JSONObject waitCount = (JSONObject) this.getWaitCount(userId);
+        return JSONObject.toJSONString(waitCount);
+    }
+
+    /**
+     * 查询待办数
+     * @param userId
+     * @return
+     */
+    public Object getWaitCount(String userId){
+        return subDocInfoService.sendMsgByWebSocket(userId);
+    }
+
 }

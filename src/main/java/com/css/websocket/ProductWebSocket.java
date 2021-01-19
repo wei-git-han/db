@@ -2,6 +2,7 @@ package com.css.websocket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -29,6 +30,12 @@ public class ProductWebSocket {
 
     //当前发消息的人员编号
     private String userId = "";
+
+    private static ApplicationContext applicationContext;
+    //解决spring实例化websocket，只注入一次对象
+    public static void setApplicationContext(ApplicationContext applicationContext){
+        ProductWebSocket.applicationContext = applicationContext;
+    }
 
     /**
      * 线程安全的统计在线人数
@@ -84,6 +91,13 @@ public class ProductWebSocket {
         String sendUserId = message.split(",")[1];
         //发送的信息
         String sendMessage = message.split(",")[0];
+        //定时5分钟发送待办数
+        String isSend = message.split(",")[2];
+        if("true".equals(isSend)){
+            WebSocketHandle bean = applicationContext.getBean(WebSocketHandle.class);
+            String waitCount = bean.pushWaitCount(sendUserId);
+            sendMessage += ","+waitCount;
+        }
         //给指定的人发消息
         sendToUser(sendUserId+session.getId(), sendMessage);
         this.pushLog("来自客户端的消息:" + message);
