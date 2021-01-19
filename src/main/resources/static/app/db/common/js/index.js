@@ -152,34 +152,20 @@ function initWebSocket() {
 	wsObj.onmessage = function (e) {
 		console.log('收到新的消息');
 		console.log(e.data);
-		changNumData = {
-			bureau:false,
-			unit:false,
-			feedback:false
-		}
 		heartCheck.start()
 		if(e.data.indexOf('checkOnline')>-1){
 			return;
 		}
 		var strData = e.data.split('--->>')[1];
 		var jsonMessage = eval("("+strData+")");
-		if(jsonMessage.data.bureau){ // 刷新办件
-			refrashPageName = 'bureau';
-			if(!jsonMessage.data.bureauIsSerf){
-				changNumData.bureau = true
-			}
-		}else if(jsonMessage.data.feedback){ // 刷新阅件
-			refrashPageName = 'feedback';
-			if(!jsonMessage.data.feedbackIsSerf){
-				changNumData.feedback = true
-			}
-		}else if(jsonMessage.data.unit){// 刷新公文
-			refrashPageName= 'unit';
-			if(!jsonMessage.data.unitIsSerf){
-				changNumData.unit = true
-			}
+		if(jsonMessage.data.bureau&&!jsonMessage.data.bureauIsSerf){ // 刷新办件
+			refrashPageName='bureau'
+		}else if(jsonMessage.data.feedback&&!jsonMessage.data.feedbackIsSerf){ // 刷新阅件
+			refrashPageName='feedback'
+		}else if(jsonMessage.data.unit&&!jsonMessage.data.unitIsSerf){// 刷新公文
+			refrashPageName= 'unit'
 		}
-		setRedPoint(jsonMessage.data);
+		setRedPoint(jsonMessage.count);
 	}
 }
 var refrashPageName = null
@@ -190,22 +176,44 @@ var changNumData = {
 	feedback:false
 }
 function setRedPoint(data){
-// 我的公文 审批公文 公文流转
-	if(data.waitCount>0&&data.waitCount!=null){
-		if(refrashPageName=='feedback'){
-			$(".blfk_num").show();
+	changNumData = {
+		bureau:false,
+		unit:false,
+		feedback:false
+	}
+	if(($(".grdb_num").length>0&&$(".grdb_num").text()!=data.getPersonTodoCount)){
+		changNumData.bureau = true
+	}
+	if($(".jndb_num").length>0&&$(".jndb_num").text()!=data.getUnitTodoCount){
+		changNumData.unit = true
+	}
+	if(data.blfkNum>0&&$('.blfk_num').length>0&&$('.blfk_num').is(':hidden')){
+		changNumData.feedback = true
+	}else if(!$('.blfk_num').is(':hidden')){
+		changNumData.feedback = true
+	}
+
+	if(data.getUnitTodoCount > 0 && data.getUnitTodoCount != null && data.getUnitTodoCount != "" && typeof(data.getUnitTodoCount) != undefined){
+		$(".jndb_num").show();
+		$('.jndb_num').text(data.getUnitTodoCount);
+	}else{
+		$(".jndb_num").hide();
+		$('.jndb_num').text("");
+	}
+	if(data.getPersonTodoCount > 0 && data.getPersonTodoCount != null && data.getPersonTodoCount != "" && typeof(data.getPersonTodoCount) != undefined){
+		$(".grdb_num").show();
+		$('.grdb_num').text(data.getPersonTodoCount);
+	}else{
+		$(".grdb_num").hide();
+		$('.grdb_num').text("");
+	}
+	if(data.blfkNum > 0 && data.blfkNum != null && data.total != "" && typeof(data.blfkNum) != undefined){
+		$(".blfk_num").show();
 //				$('.blfk_num').text(data.blfkNum);
-			$('.blfk_num').text("");
-		}
-		if(refrashPageName=='unit'){
-			$(".grdb_num").show();
-//				$('.blfk_num').text(data.blfkNum);
-			$('.grdb_num').text(data.waitCount);
-		}
-		if(refrashPageName=='bureau'){
-			$(".jndb_num").show();
-			$('.jndb_num').text(data.waitCount);
-		}
+		$('.blfk_num').text("");
+	}else{
+		$(".blfk_num").hide();
+		$('.blfk_num').text("");
 	}
 	refrashPage();
 	changToNum()
@@ -214,9 +222,9 @@ function setRedPoint(data){
 // 是否是需要刷新的页面
 function isReloadHtml(){
 	var htmlUrl = gettop2().iframe1.location.href;
-	if((htmlUrl.indexOf('app/db/document/grdb/html/grdb.html')>-1&&(refrashPageName=='unit'&&changNumData.unit))||
-		(htmlUrl.indexOf('app/db/document/blfk/html/blfk.html')>-1&&(refrashPageName=='feedback'&&changNumData.feedback))||
-		(htmlUrl.indexOf('app/db/document/jndb/html/jndb.html')>-1&&(refrashPageName=='bureau'&&changNumData.bureau))){
+	if((htmlUrl.indexOf('app/db/document/grdb/html/grdb.html')>-1&&(refrashPageName=='unit'||changNumData.unit))||
+		(htmlUrl.indexOf('app/db/document/blfk/html/blfk.html')>-1&&(refrashPageName=='feedback'||changNumData.feedback))||
+		(htmlUrl.indexOf('app/db/document/jndb/html/jndb.html')>-1&&(refrashPageName=='bureau'||changNumData.bureau))){
 		return true
 	}else{
 		return false
@@ -281,7 +289,7 @@ function reconnectWebsocket() {
 }
 // 心跳检测机制
 var heartCheck = {
-	timeout: 600000, // 等待时间
+	timeout: 80000, // 等待时间
 	timeoutObj: null, //  发送时间
 	serverTimeOutObj: null,
 	start: function () {
