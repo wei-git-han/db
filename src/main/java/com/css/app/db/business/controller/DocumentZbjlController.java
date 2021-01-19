@@ -178,7 +178,7 @@ public class DocumentZbjlController {
 							for (String userId : userIds) {
 								msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId,clientSecret, msg.getGroupName(), msg.getGroupRedirect(), "","true");
 								//subDocInfoService.sendMsgByWebSocket(userId,5,false);
-								webSocketHandle.addSendMap(userId,4,false);
+								webSocketHandle.addSendMap(userId,5,false);
 							}
 						}
 					}
