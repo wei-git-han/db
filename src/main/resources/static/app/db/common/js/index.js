@@ -225,7 +225,9 @@ function setRedPoint(data){
 		$('.blfk_num').text("");
 	}
 	refrashPage();
-	changToNum()
+	if(navigator.userAgent.indexOf('OfficeBrowser')>=0){
+		gettop2().__set_todo_count__(parseInt(data.getPersonTodoCount)+(data.getUnitTodoCount));
+	}
 }
 
 // 是否是需要刷新的页面
