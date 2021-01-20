@@ -154,6 +154,7 @@ public class ProductWebSocket {
      */
     @OnError
     public void onError(@PathParam(value = "userId") String param, Session session, Throwable error) {
+        webSocketSet.remove(param+session.getId());
         this.pushLog("发生错误，控制台已打印，错误信息："+error.getMessage()+"用户id:"+param);
         error.printStackTrace();
     }
