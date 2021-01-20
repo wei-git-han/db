@@ -137,6 +137,7 @@ function initWebSocket() {
 	wsObj.onopen = function (e) {
 		console.log('建立链接成功')
 		console.log(e)
+		wsObj.send(`checkOnline,${messageUserId},true`);
 		heartCheck.start()
 	}
 	wsObj.onerror = function (e) {
