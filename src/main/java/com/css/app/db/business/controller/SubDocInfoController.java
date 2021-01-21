@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.css.websocket.WebSocketHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,6 +107,12 @@ public class SubDocInfoController {
 	private String clientSecret;
 	@Autowired
 	private AdminSetService adminSetService;
+
+	@Autowired
+	private RedisUtil redisUtil;
+
+	@Autowired
+	private WebSocketHandle webSocketHandle;
 
 	/**
 	 * 局内待办列表
@@ -822,6 +829,7 @@ public class SubDocInfoController {
 			subDocInfo.setUpdateTime(new Date());
 			subDocInfoService.update(subDocInfo);
 		}
+		redisUtil.setString(userId+"_dbcount","true");
 		// 发送消息提醒
 		MsgTip msg = msgService.queryObject(MSGTipDefined.DCCB_SONGSHEN_MSG_TITLE);
 		if (msg != null) {
@@ -831,11 +839,20 @@ public class SubDocInfoController {
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 			}
-			logger.info("==================送审批，审批人是"+userId);
-			msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
+			logger.info("==================送审批，承办人是"+currentUserId);
+			msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, currentUserId, appId, clientSecret,
 					msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 
 		}
+		//webSocket触发角标更新
+//		JSONObject jsonObject = subDocInfoService.sendMsgByWebSocket(userId,4,false);
+//		int dbNumSum = (int) jsonObject.get("dbNumSum");//个人待办总数
+//		String getPersonTodoCount = (String)jsonObject.get("getPersonTodoCount");//个人待办菜单
+//		String getUnitTodoCount = (String)jsonObject.get("getUnitTodoCount");//局内待办菜单
+//		webSocketHandle.addSendMap(userId,4,false,getPersonTodoCount);
+		//subDocInfoService.sendMsgByWebSocket(userId,4,false);
+		webSocketHandle.addSendMap(userId,4,false);
+
 		Response.json("result", "success");
 	}
 
@@ -976,6 +993,8 @@ public class SubDocInfoController {
 				logger.info("==================送审批======，审批人是"+userId);
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+				//subDocInfoService.sendMsgByWebSocket(userId,4,false);
+				webSocketHandle.addSendMap(userId,4,false);
 			}
 		}
 	}
@@ -1011,6 +1030,8 @@ public class SubDocInfoController {
 					logger.info("==================退回操作，退回给"+userId);
 					msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 							msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+					//subDocInfoService.sendMsgByWebSocket(userId,4,false);
+					webSocketHandle.addSendMap(userId,4,false);
 				}
 				json.put("result", "success");
 			} else {
@@ -1215,6 +1236,8 @@ public class SubDocInfoController {
 				logger.info("===========================完成审批，送审人是"+userId);
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+				//subDocInfoService.sendMsgByWebSocket(userId,4,false);
+				webSocketHandle.addSendMap(userId,4,false);
 			}
 			//给自己发空消息，只为触发角标更新
 			logger.info("=====完成审批，操作人是"+currentUserId);

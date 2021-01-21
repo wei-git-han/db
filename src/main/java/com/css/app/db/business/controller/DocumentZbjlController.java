@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.css.app.db.business.entity.*;
 import com.css.app.db.business.service.*;
+import com.css.websocket.WebSocketHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,8 @@ public class DocumentZbjlController {
 	private  String clientSecret;
 	@Autowired
 	private DocXbInfoService docXbInfoService;
+	@Autowired
+	private WebSocketHandle webSocketHandle;
 	
 	/**
 	 * 转办记录
@@ -174,6 +177,8 @@ public class DocumentZbjlController {
 							String msgUrl = msg.getMsgRedirect()+"&fileId="+infoId+"&subId="+subInfo.getId();
 							for (String userId : userIds) {
 								msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId,clientSecret, msg.getGroupName(), msg.getGroupRedirect(), "","true");
+								//subDocInfoService.sendMsgByWebSocket(userId,5,false);
+								webSocketHandle.addSendMap(userId,5,false);
 							}
 						}
 					}
@@ -308,6 +313,8 @@ public class DocumentZbjlController {
 				String msgUrl = msg.getMsgRedirect()+"&fileId="+infoId+"&subId="+subId;
 				if(StringUtils.isNotBlank(userId)){
 					msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId,clientSecret, msg.getGroupName(), msg.getGroupRedirect(), "","true");
+					//subDocInfoService.sendMsgByWebSocket(userId,4,false);
+					webSocketHandle.addSendMap(userId,4,false);
 				}
 				//针对于局管理员对办理中和待落实的文件进行转办时（文件当前人离职了），给文件的当前人发送消息提醒，用于触发角标更新
 				if(StringUtils.isNotBlank(cbuserId)){

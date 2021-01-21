@@ -913,6 +913,9 @@ var pageModule = function(){
 		initgrid4:function(){
 			initgrid4();
 			numsListfn();
+		},
+		leftMenufn:function () {
+			leftMenufn()
 		}
 	};
 }();
@@ -952,7 +955,7 @@ function refreshgrid(){
 	var documentStatus= $("input[name='documentStatus']:checked").val();
 	window.top.memory.radio = documentStatus;
 	window.top.memory.search = search;
-
+	pageModule.leftMenufn()
 	removeInputData(["title","leaderId","leaderName","startDate","endDate","period","status"]);
 }
 
