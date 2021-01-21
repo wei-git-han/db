@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.css.addbase.appconfig.service.BaseAppConfigService;
 import com.css.websocket.WebSocketHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,6 +114,9 @@ public class SubDocInfoController {
 
 	@Autowired
 	private WebSocketHandle webSocketHandle;
+
+	@Autowired
+	private BaseAppConfigService baseAppConfigService;
 
 	/**
 	 * 局内待办列表
@@ -1243,6 +1247,15 @@ public class SubDocInfoController {
 			logger.info("=====完成审批，操作人是"+currentUserId);
 			msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, currentUserId, appId, clientSecret,
 					msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+		}
+		//审批完成之后，刷新局长的办理反馈菜单
+		List<String> appConfigList = baseAppConfigService.queryAllJuzhang();
+		if(appConfigList != null && appConfigList.size() > 0){
+			for(int j = 0;j<appConfigList.size();j++){
+				String currentUser = appConfigList.get(j);
+				//subDocInfoService.sendMsgByWebSocket(userId,6,false);
+				webSocketHandle.addSendMap(currentUser,6,false);
+			}
 		}
 		Response.json(json);
 	}
