@@ -81,15 +81,17 @@ public class WebSocketHandle {
                         public void run() {
                             try {
                                 sendMessageByUserId(next);
+                                userDataMap.remove(next);
+                                logger.info("服务端，移除已处理任务");
                             }catch (Exception e){
                                 e.printStackTrace();
                                 logger.info("服务端，发送消息失败，错误信息为："+e.getStackTrace());
+
                             }
                         }
                     });
                     logger.info("服务端，监听发送成功");
-                    userDataMap.remove(next);
-                    logger.info("服务端，移除已处理任务");
+
                 }
             }
             try {
