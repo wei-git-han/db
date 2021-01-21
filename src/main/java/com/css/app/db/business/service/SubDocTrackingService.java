@@ -33,6 +33,8 @@ public interface SubDocTrackingService {
 
 	List<SubDocTracking> queryListBySubId(String subId);
 
+	List<SubDocTracking> queryAllListBySubId(String subId);
+
 	SubDocTracking queryNewRecord(String subId);
 
 	String findDealUserName(String subId);
