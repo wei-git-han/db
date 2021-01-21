@@ -137,6 +137,7 @@ function initWebSocket() {
 	wsObj.onopen = function (e) {
 		console.log('建立链接成功')
 		console.log(e)
+		wsObj.send(`checkOnline,${messageUserId},true`);
 		heartCheck.start()
 	}
 	wsObj.onerror = function (e) {
@@ -166,11 +167,11 @@ function initWebSocket() {
 		}else{
 			isAllNum = 0;// 收到刷新角标后，重置为0，重新计次
 			var jsonMessage = eval("("+str2+")");
-			if(jsonMessage.data.bureau&&!jsonMessage.data.bureauIsSerf){ // 刷新办件
+			if(jsonMessage.data.bureau&&!jsonMessage.data.bureauIsSerf){ // 刷新局内
 				refrashPageName='bureau'
-			}else if(jsonMessage.data.feedback&&!jsonMessage.data.feedbackIsSerf){ // 刷新阅件
+			}else if(jsonMessage.data.feedback&&!jsonMessage.data.feedbackIsSerf){ // 刷新办理反馈
 				refrashPageName='feedback'
-			}else if(jsonMessage.data.unit&&!jsonMessage.data.unitIsSerf){// 刷新公文
+			}else if(jsonMessage.data.unit&&!jsonMessage.data.unitIsSerf){// 刷新个人
 				refrashPageName= 'unit'
 			}
 			setRedPoint(jsonMessage.count);
@@ -191,10 +192,10 @@ function setRedPoint(data){
 		feedback:false
 	}
 	if(($(".grdb_num").length>0&&$(".grdb_num").text()!=data.getPersonTodoCount)){
-		changNumData.bureau = true
+		changNumData.unit = true
 	}
 	if($(".jndb_num").length>0&&$(".jndb_num").text()!=data.getUnitTodoCount){
-		changNumData.unit = true
+		changNumData.bureau = true
 	}
 	if(data.blfkNum>0&&$('.blfk_num').length>0&&$('.blfk_num').is(':hidden')){
 		changNumData.feedback = true
