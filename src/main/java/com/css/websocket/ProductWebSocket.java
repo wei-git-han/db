@@ -99,7 +99,12 @@ public class ProductWebSocket {
             sendMessage += ","+waitCount;
         }
         //给指定的人发消息
-        sendToUser(sendUserId+session.getId(), sendMessage);
+        try {
+            sendToUser(sendUserId+session.getId(), sendMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.pushLog("来自客户端的消息，发生错误，信息为:" + e.getStackTrace());
+        }
         this.pushLog("来自客户端的消息:" + message);
     }
 
@@ -108,7 +113,7 @@ public class ProductWebSocket {
      *
      * @param message
      */
-    public void sendToUser(String sendUserId, String message) {
+    public void sendToUser (String sendUserId, String message) throws Exception{
             for (String userIdKey:webSocketSet.keySet()) {
                 if(userIdKey.contains(sendUserId)) {
                     webSocketSet.get(userIdKey).sendMessage(userId + "发送消息，消息内容为--->>" + message);
@@ -122,7 +127,7 @@ public class ProductWebSocket {
      *
      * @param message
      */
-    public void systemSendToUser(String sendUserId, String message) {
+    public void systemSendToUser(String sendUserId, String message)  throws Exception{
         for (String userIdKey: webSocketSet.keySet()) {
             if(userIdKey.contains(sendUserId)) {
                 webSocketSet.get(userIdKey).sendMessage(sendUserId + "发送消息，消息内容为--->>" + message);
@@ -136,7 +141,7 @@ public class ProductWebSocket {
      *
      * @param message
      */
-    public void sendAll(String message) {
+    public void sendAll(String message) throws Exception{
         String sendMessage = message.split(",")[0];
         for (String userIdKey: webSocketSet.keySet()) {
             webSocketSet.get(userIdKey).sendMessage("用户:" + userId + "发来消息：" + " <br/> " + sendMessage);
@@ -165,13 +170,9 @@ public class ProductWebSocket {
      * @param message
      * @throws IOException
      */
-    public void sendMessage(String message){
+    public void sendMessage (String message)throws  Exception{
         //发送
-        try {
-            this.session.getBasicRemote().sendText(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.session.getBasicRemote().sendText(message);
         this.pushLog("发送消息："+message);
     }
 
