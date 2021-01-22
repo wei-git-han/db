@@ -414,6 +414,7 @@ public class DocumentWithdrawController {
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 				//subDocInfoService.sendMsgByWebSocket(dealUserId,4,false);
 				webSocketHandle.addSendMap(userId,4,false);
+				webSocketHandle.addSendMap(dealUserId,5,false);
 				List<String> userIds = adminSetService.queryUserIdByOrgId(deptId);
 				for (String juJserId : userIds) {
 					//subDocInfoService.sendMsgByWebSocket(juJserId,5,false);
