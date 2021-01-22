@@ -319,9 +319,11 @@ public class DocumentZbjlController {
 				//针对于局管理员对办理中和待落实的文件进行转办时（文件当前人离职了），给文件的当前人发送消息提醒，用于触发角标更新
 				if(StringUtils.isNotBlank(cbuserId)){
 					msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, cbuserId, appId,clientSecret, msg.getGroupName(), msg.getGroupRedirect(), "","true");
+					webSocketHandle.addSendMap(userId,4,false);
 				}
 				if(StringUtils.isNotBlank(dlsUserId)){
 					msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, dlsUserId, appId,clientSecret, msg.getGroupName(), msg.getGroupRedirect(), "","true");
+					webSocketHandle.addSendMap(userId,4,false);
 				}
 				//局长局内待办，转办给自己发消息，用于触发角标
 				if(StringUtils.isNotBlank(loginUserId)){

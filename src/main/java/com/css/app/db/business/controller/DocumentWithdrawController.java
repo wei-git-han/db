@@ -247,6 +247,7 @@ public class DocumentWithdrawController {
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 				//subDocInfoService.sendMsgByWebSocket(dealUserId,4,false);
 				webSocketHandle.addSendMap(userId,4,false);
+				webSocketHandle.addSendMap(dealUserId,4,false);
 			}
 		}
 		return json;
