@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.css.app.db.business.dao.SubDocTrackingDao;
+import com.css.websocket.WebSocketHandle;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +102,8 @@ public class DocumentInfoController {
 	private BaseAppConfigService baseAppConfigService;
 	@Autowired
 	private BaseAppOrganService baseAppOrganService;
+	@Autowired
+	private WebSocketHandle webSocketHandle;
 
 	/**
 	 * 文件上传保存
@@ -923,6 +927,35 @@ public class DocumentInfoController {
 	@ResponseBody
 	@RequestMapping("/cheHuiOperation")
 	public void cheHuiOperation(String id) {
+		List<SubDocInfo> docInfoList = subDocInfoService.queryAllSubByInfoId(id);
+		if(docInfoList != null && docInfoList.size() > 0) {
+			for (int i = 0; i < docInfoList.size(); i++) {
+				SubDocInfo subDocInfo = docInfoList.get(i);
+				String subId = subDocInfo.getId();//分支id
+				String deptId = subDocInfo.getSubDeptId();
+				//获取局管理员id
+				List<String> userIds = adminSetService.queryUserIdByOrgId(deptId);
+				if (userIds != null && userIds.size() > 0) {
+					for (int j = 0; j < userIds.size(); j++) {
+						String userId = userIds.get(j);
+						webSocketHandle.addSendMap(userId, 5, false);//刷新局内待办列表
+					}
+				}
+				//根据流转记录，删除该文流经的所有人的菜单
+				List<SubDocTracking> subDocTrackingList = subDocTrackingService.queryAllListBySubId(subId);
+				if (subDocTrackingList != null && subDocTrackingList.size() > 0) {
+					for (int m = 0; m < subDocTrackingList.size(); m++) {
+						SubDocTracking subDocTracking = subDocTrackingList.get(m);
+						String receiveId = subDocTracking.getReceiverId();
+						webSocketHandle.addSendMap(receiveId, 4, false);
+						webSocketHandle.addSendMap(receiveId, 5, false);
+						webSocketHandle.addSendMap(receiveId, 6, false);
+
+					}
+				}
+			}
+		}
+
 		documentInfoService.deleteByCheHui(id);
 		Response.json("result", "success");
 	}

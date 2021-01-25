@@ -186,49 +186,27 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 	}
 
 	@Override
-	public JSONObject sendMsgByWebSocket(String userId){
+	public JSONObject sendMsgByWebSocket(String userId) {
 		Map<String, Object> map = new HashMap<>();
 		map.put("docType", DbDefined.DOCUMENT_TYPE);
 		map.put("userId", userId);
 		String loginOrgId = baseAppUserService.getBareauByUserId(userId);
 		map.put("orgId", loginOrgId);
 		JSONObject jsonObject = new JSONObject();
-		//List<String> appConfigList = baseAppConfigService.queryAllJuzhang();
-		//if(appConfigList != null && appConfigList.size() > 0){
-			//for(int i = 0;i<appConfigList.size();i++){
-				//String userId = appConfigList.get(i);
-				System.out.println("dddd");
-				//String value = redisUtil.getString(userId+"_dbcount");
-				//当value等于true的时候才会触发websocket
-				//if("true".equals(value)){
-					//触发websocket
-					int dbNumSum = dbNumSum(userId);//个人待办总数
-					int getPersonTodoCount = this.getPersonTodoCount(userId);//个人待办菜单
-					int getUnitTodoCount = this.getUnitTodoCount(userId);//局内待办菜单
-					int blfkNum = 0;
-					List<DocumentDic> dicByType = documentInfoService.queryDicByType(map);
-					for (DocumentDic dic : dicByType) {
-						blfkNum += dic.getHasUpdateNum();
-					}
-					//jsonObject.put("dbNumSum",dbNumSum);
-					jsonObject.put("getPersonTodoCount",getPersonTodoCount);
-					jsonObject.put("getUnitTodoCount",getUnitTodoCount);
-					jsonObject.put("blfkNum",blfkNum);
-				//}
-				//恢复成默认
-				//redisUtil.setString(userId+"_dbcount","false");
-
-			//}
-//		if(menuType == 4){
-//			numAll = getPersonTodoCount;
-//		}else if(menuType == 5){
-//			numAll = getUnitTodoCount;
-//		}
-		//}
-        return jsonObject;
-//		webSocketHandle.addSendMap(userId,menuType,isSerf,String.valueOf(numAll));
-
-		//return jsonObject;
+		//触发websocket
+		int dbNumSum = dbNumSum(userId);//个人待办总数
+		int getPersonTodoCount = this.getPersonTodoCount(userId);//个人待办菜单
+		int getUnitTodoCount = this.getUnitTodoCount(userId);//局内待办菜单
+		int blfkNum = 0;
+		List<DocumentDic> dicByType = documentInfoService.queryDicByType(map);
+		for (DocumentDic dic : dicByType) {
+			blfkNum += dic.getHasUpdateNum();
+		}
+		//jsonObject.put("dbNumSum",dbNumSum);
+		jsonObject.put("getPersonTodoCount", getPersonTodoCount);
+		jsonObject.put("getUnitTodoCount", getUnitTodoCount);
+		jsonObject.put("blfkNum", blfkNum);
+		return jsonObject;
 	}
 
 	public int dbNumSum(String loginUserId) {
