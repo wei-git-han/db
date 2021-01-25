@@ -153,7 +153,7 @@ function initWebSocket() {
 	wsObj.onmessage = function (e) {
 		console.log('收到新的消息');
 		console.log(e.data);
-		heartCheck.start()
+		heartCheck.start();
 		var str2 = e.data.split('--->>')[1];
 		if(str2.indexOf('checkOnline')>-1){
 			var str3 = str2.split('checkOnline,')[1];
@@ -254,6 +254,7 @@ function getUserId() {
 //刷新角标
 function refrashPage(){
 	if(isReloadHtml()&&reloadRedPoint){
+		refrashPageName = null
 		$('#timeLoading').html(timeLoadMs)
 		clearInterval(timeLoadTime);
 		$(".refreshTip").show();
