@@ -920,6 +920,7 @@ public class SubDocInfoController {
 				logger.info("==================批量送审批，审批人是"+userId);
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+				webSocketHandle.addSendMap(userId,4,false);
 			}
 			if(StringUtils.isNotBlank(currentUsreId)){
 				logger.info("==================批量送审批，送审人是"+userId);
