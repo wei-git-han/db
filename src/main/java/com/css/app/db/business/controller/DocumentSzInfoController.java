@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.css.websocket.WebSocketHandle;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,6 +59,9 @@ public class DocumentSzInfoController {
 	private  String appId;	
 	@Value("${csse.dccb.appSecret}")
 	private  String clientSecret;
+	@Autowired
+	private WebSocketHandle webSocketHandle;
+
 	/**
 	 * 首长左侧类型分组
 	 * [
@@ -484,6 +488,7 @@ public class DocumentSzInfoController {
 						if (msg != null) {
 							String msgUrl = msg.getMsgRedirect()+"&fileId="+key+"&subId="+subDocInfo.getId();
 							msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId,clientSecret, msg.getGroupName(), msg.getGroupRedirect(), "","true");
+							webSocketHandle.addSendMap(userId,4,false);
 						}
 					}
 				}
