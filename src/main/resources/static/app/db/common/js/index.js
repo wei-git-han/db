@@ -247,7 +247,9 @@ function getUserId() {
 		url:'/app/db/adminset/getUserId',
 		success:function(data){
 			messageUserId = data.userId
-			initWebSocket()
+			if(data.flag){
+				initWebSocket()
+			}
 		}
 	})
 }
