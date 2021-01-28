@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
+import com.css.addbase.appconfig.entity.BaseAppConfig;
+import com.css.addbase.appconfig.service.BaseAppConfigService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +45,10 @@ public class AdminSetController {
 	@Autowired
 	private BaseAppOrganService baseAppOrganService;	
 	@Autowired
-	private BaseAppUserService baseAppUserService;	
+	private BaseAppUserService baseAppUserService;
+
+	@Autowired
+	private BaseAppConfigService baseAppConfigService;
 
 	/**
 	 * 列表
@@ -177,7 +182,14 @@ public class AdminSetController {
 	@RequestMapping(value = "/getUserId")
 	public void getUserId(){
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("userId",CurrentUser.getUserId());
+		String userId = CurrentUser.getUserId();
+		BaseAppConfig baseAppConfig = baseAppConfigService.queryByUserId(userId);
+		if(baseAppConfig != null){
+			jsonObject.put("flag",true);
+		}else{
+			jsonObject.put("flag",false);
+		}
+		jsonObject.put("userId",userId);
 		jsonObject.put("result","success");
 		Response.json(jsonObject);
 

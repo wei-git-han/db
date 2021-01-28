@@ -33,6 +33,9 @@ public interface BaseAppConfigDao extends BaseDao<BaseAppConfig> {
 
 	@Select("select value from BASE_APP_CONFIG where type = 'web_socket_jiaobiao'")
 	List<String> queryAllJuzhang();
+
+	@Select("select * from BASE_APP_CONFIG where type = 'web_socket_jiaobiao' and value = #{0}")
+	BaseAppConfig queryByUserId(String userId);
 	
 	
 }

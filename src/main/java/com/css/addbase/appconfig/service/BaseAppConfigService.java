@@ -32,4 +32,6 @@ public interface BaseAppConfigService {
 	List<BaseAppOrgan> queryAllDept();
 
 	List<String> queryAllJuzhang();
+
+	BaseAppConfig queryByUserId(String userId);
 }
