@@ -418,8 +418,9 @@ var pageModule = function(){
 			    	window.location.href = "/app/db/document/djlr/html/djlr.html?fileFrom=djlr";
 			    }
 			});*/
-			returnSave=true;
-	    	$("#commentForm").submit();
+			/*returnSave=true;
+	    	$("#commentForm").submit();*/
+			window.location.href = "/app/db/document/djlr/html/djlr.html?fileFrom=djlr";
 		});
 		
 		
