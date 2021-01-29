@@ -190,8 +190,9 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 		Map<String, Object> map = new HashMap<>();
 		map.put("docType", DbDefined.DOCUMENT_TYPE);
 		map.put("userId", userId);
+		map.put("loginUserId", userId);
 		String loginOrgId = baseAppUserService.getBareauByUserId(userId);
-		map.put("orgId", loginOrgId);
+		//map.put("orgId", loginOrgId);
 		JSONObject jsonObject = new JSONObject();
 		//触发websocket
 		int dbNumSum = dbNumSum(userId);//个人待办总数

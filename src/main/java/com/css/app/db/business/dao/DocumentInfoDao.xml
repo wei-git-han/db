@@ -532,7 +532,7 @@
 		select dic.*,nvl(s.num,0) hasUpdateNum from DB_DOCUMENT_DIC dic
 		left
 		join(select DOC_TYPE_ID, count(1) as num
-		from "DB_DOCUMENT_INFO" t
+		from DB_DOCUMENT_INFO t
 		<if test="orgId != null and orgId != '' ">
 			left join DB_SUB_DOC_INFO a on t.ID=a.INFO_ID
 		</if>
