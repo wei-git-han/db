@@ -168,17 +168,19 @@ function initWebSocket() {
 			isAllNum = 0;// 收到刷新角标后，重置为0，重新计次
 			var jsonMessage = eval("("+str2+")");
 			if(jsonMessage.data.bureau&&!jsonMessage.data.bureauIsSerf){ // 刷新局内
-				refrashPageName='bureau'
-			}else if(jsonMessage.data.feedback&&!jsonMessage.data.feedbackIsSerf){ // 刷新办理反馈
-				refrashPageName='feedback'
-			}else if(jsonMessage.data.unit&&!jsonMessage.data.unitIsSerf){// 刷新个人
-				refrashPageName= 'unit'
+				refrashPageName+='bureau,'
+			}
+			if(jsonMessage.data.feedback&&!jsonMessage.data.feedbackIsSerf){ // 刷新办理反馈
+				refrashPageName+='feedback,'
+			}
+			if(jsonMessage.data.unit&&!jsonMessage.data.unitIsSerf){// 刷新个人
+				refrashPageName+= 'unit,'
 			}
 			setRedPoint(jsonMessage.count);
 		}
 	}
 }
-var refrashPageName = null
+var refrashPageName = ''
 // 设置角标
 var changNumData = {
 	bureau:false,
@@ -234,9 +236,9 @@ function setRedPoint(data){
 // 是否是需要刷新的页面
 function isReloadHtml(){
 	var htmlUrl = gettop2().iframe1.location.href;
-	if((htmlUrl.indexOf('app/db/document/grdb/html/grdb.html')>-1&&(refrashPageName=='unit'||changNumData.unit))||
-		(htmlUrl.indexOf('app/db/document/blfk/html/blfk.html')>-1&&(refrashPageName=='feedback'||changNumData.feedback))||
-		(htmlUrl.indexOf('app/db/document/jndb/html/jndb.html')>-1&&(refrashPageName=='bureau'||changNumData.bureau))){
+	if((htmlUrl.indexOf('app/db/document/grdb/html/grdb.html')>-1&&(refrashPageName.indexOf('unit')>-1||changNumData.unit))||
+		(htmlUrl.indexOf('app/db/document/blfk/html/blfk.html')>-1&&(refrashPageName.indexOf('feedback')>-1||changNumData.feedback))||
+		(htmlUrl.indexOf('app/db/document/jndb/html/jndb.html')>-1&&(refrashPageName.indexOf('bureau')>-1||changNumData.bureau))){
 		return true
 	}else{
 		return false
@@ -256,7 +258,7 @@ function getUserId() {
 //刷新角标
 function refrashPage(){
 	if(isReloadHtml()&&reloadRedPoint){
-		refrashPageName = null
+		refrashPageName = ''
 		$('#timeLoading').html(timeLoadMs)
 		clearInterval(timeLoadTime);
 		$(".refreshTip").show();
