@@ -284,6 +284,7 @@ function refrashPage(){
 			}
 		},1000)
 	}else{
+        refrashPageName = ''
 		clearInterval(timeLoadTime);
 		timeLoadMs = 5;
 		$('#timeLoading').html(timeLoadMs)
