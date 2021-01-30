@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.css.app.db.business.dao.SubDocInfoDao;
 import com.css.app.db.business.entity.SubDocInfo;
@@ -187,7 +188,7 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 
 	@Override
 	public JSONObject sendMsgByWebSocket(String userId) {
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new ConcurrentHashMap<>();
 		map.put("docType", DbDefined.DOCUMENT_TYPE);
 		map.put("userId", userId);
 		map.put("loginUserId", userId);
@@ -215,7 +216,7 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 		int  grdbNum = 0;
 		int  jndbNum = 0;
 		//String loginUserId = CurrentUser.getUserId();
-		Map<String, Object> value = new HashMap<String, Object>();
+		Map<String, Object> value = new ConcurrentHashMap<>();
 		String userMenuIds = this.getUserMenu(loginUserId);
 		if(StringUtils.isBlank(userMenuIds)) {
 			value.put("result", "success");
@@ -242,7 +243,7 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 	// 个人待办数
 	private int getPersonTodoCount(String loginUserId) {
 		int grdbNum = 0;
-		Map<String, Object> personalMap = new HashMap<>();
+		Map<String, Object> personalMap = new ConcurrentHashMap<>();
 		if (StringUtils.isNotBlank(loginUserId)) {
 			personalMap.put("loginUserId", loginUserId);
 		}
@@ -256,7 +257,7 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 	// 局内待办数
 	private int getUnitTodoCount(String loginUserId) {
 		int jndbNum = 0;
-		Map<String, Object> jumap = new HashMap<>();
+		Map<String, Object> jumap = new ConcurrentHashMap<>();
 		String orgId = baseAppUserService.getBareauByUserId(loginUserId);
 		if (StringUtils.isNotBlank(orgId)) {
 			jumap.put("orgId", orgId);
@@ -272,7 +273,7 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 
 	private String getUserMenu(String loginUserId){
 		String menuIds = "002";
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new ConcurrentHashMap<>();
 		map.put("adminType", "2");
 		map.put("userId", loginUserId);
 		List<AdminSet> list = adminSetService.queryList(map);
