@@ -204,7 +204,7 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 		for (DocumentDic dic : dicByType) {
 			blfkNum += dic.getHasUpdateNum();
 		}
-		//jsonObject.put("dbNumSum",dbNumSum);
+		jsonObject.put("dbNumSum",dbNumSum);
 		jsonObject.put("getPersonTodoCount", getPersonTodoCount);
 		jsonObject.put("getUnitTodoCount", getUnitTodoCount);
 		jsonObject.put("blfkNum", blfkNum);

@@ -229,7 +229,7 @@ function setRedPoint(data){
 	}
 	refrashPage();
 	if(navigator.userAgent.indexOf('OfficeBrowser')>=0){
-		gettop2().__set_todo_count__(parseInt(data.getPersonTodoCount)+(data.getUnitTodoCount));
+		gettop2().__set_todo_count__(data.dbNumSum);
 	}
 }
 
