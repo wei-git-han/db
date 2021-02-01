@@ -407,9 +407,9 @@ public class DocumentJcdbController {
         return  documentInfoService.queryWfkCount3(map);
     }
 
-    public int queryWfkCount3(Map<String,Object> map){
-        return  documentInfoService.queryWfkCount3(map);
-    }
+//    public int queryWfkCount3(Map<String,Object> map){
+//        return  documentInfoService.queryWfkCount3(map);
+//    }
 
     /**
      * {

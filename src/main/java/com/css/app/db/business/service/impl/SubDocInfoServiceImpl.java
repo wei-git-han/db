@@ -65,27 +65,27 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 	public SubDocInfo queryObject(String id){
 		return subDocInfoDao.queryObject(id);
 	}
-	
+
 	@Override
 	public List<SubDocInfo> queryList(Map<String, Object> map){
 		return subDocInfoDao.queryList(map);
 	}
-	
+
 	@Override
 	public void save(SubDocInfo dbSubDocInfo){
 		subDocInfoDao.save(dbSubDocInfo);
 	}
-	
+
 	@Override
 	public void update(SubDocInfo dbSubDocInfo){
 		subDocInfoDao.update(dbSubDocInfo);
 	}
-	
+
 	@Override
 	public void delete(String id){
 		subDocInfoDao.delete(id);
 	}
-	
+
 	@Override
 	public void deleteBatch(String[] ids){
 		subDocInfoDao.deleteBatch(ids);
@@ -114,7 +114,7 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 	@Override
 	public List<String> queryAllSubDeptIds(String infoId) {
 		return subDocInfoDao.queryAllSubDeptIds(infoId);
-				
+
 	}
 
 	@Override
@@ -140,7 +140,7 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 	@Override
 	public void updateSubDocInfoById(SubDocInfo subDocInfo) {
 		subDocInfoDao.updateSubDocInfoById(subDocInfo);
-		
+
 	}
 
 	@Override
@@ -271,17 +271,15 @@ public class SubDocInfoServiceImpl implements SubDocInfoService {
 		return jndbNum;
 	}
 
-	private String getUserMenu(String loginUserId){
+	private String getUserMenu(String loginUserId) {
 		String menuIds = "002";
 		Map<String, Object> map = new ConcurrentHashMap<>();
 		map.put("adminType", "2");
 		map.put("userId", loginUserId);
 		List<AdminSet> list = adminSetService.queryList(map);
-		if(!list.isEmpty()) {
-			menuIds=menuIds+",003";
+		if (!list.isEmpty()) {
+			menuIds = menuIds + ",003";
 		}
 		return menuIds;
-	public List<SubDocInfo> queryAllTime(Map<String,Object> map){
-		return subDocInfoDao.queryAllTime(map);
 	}
 }
