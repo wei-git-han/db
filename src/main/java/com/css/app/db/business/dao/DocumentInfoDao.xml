@@ -937,8 +937,8 @@
 		<!-- )shu on org.id=shu.id where org.PARENT_ID='root' -->
 	</select>
 
-	<!--根据年度获取每个状态的数量 CREATED_TIME暂为年度时间 -->
-	<select id="queryListByOrgYear1" resultType="map">
+	<!--根据年度获取每个状态的数量 CREATED_TIME暂为年度时间，，，暂不用 -->
+	<select id="queryListByOrgYear2" resultType="map">
 		select
 		ID,dwname,sum(blz) blz,sum(bj) bj,sum(ctls) ctls
 		from
@@ -1428,7 +1428,7 @@
 	</select>
 
 
-	<select id="queryWfkCount3" resultType="int">
+	<select id="queryWfkCount4" resultType="int">
 		<!-- select count(a.id) from DB_DOCUMENT_INFO a <if test="danweiid != null
 			and danweiid != ''"> inner join DB_SUB_DOC_INFO b on a.ID = b.INFO_ID and
 			b.SUB_DEPT_ID = #{danweiid} </if> where (b.DOC_STATUS=1 or b.DOC_STATUS =5)
