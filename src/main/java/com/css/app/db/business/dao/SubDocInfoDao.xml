@@ -327,6 +327,23 @@
 	</select>
 
 	
+	<select id="queryAllTime" resultType="com.css.app.db.business.entity.SubDocInfo">
+		select * from DB_SUB_DOC_INFO where  UPDATE_TIME is not null
+		<if test="orgId != null and orgId !=''">
+			and SUB_DEPT_ID = #{orgId}
+		</if>
+		<if test="startTime != null and startTime != '' and endTime ==''">
+			and to_char(UPDATE_TIME,'yyyy-MM-dd') &gt;= to_date(#{startTime},'yyyy-mm-dd')
+		</if>
+		<if test="startTime != null and startTime != '' and endTime != null and endTime !=''">
+			and to_char(UPDATE_TIME,'yyyy-MM-dd') &gt;= to_date(#{startTime},'yyyy-mm-dd') and to_char(UPDATE_TIME,'yyyy-MM-dd') &lt;= to_date(#{endTime},'yyyy-mm-dd')
+		</if>
+		<if test="startTime == ''">
+			and UPDATE_TIME like '%'||#{0}||'%'
+		</if>
+		and DOC_STATUS = '12' order by UPDATE_TIME desc
+	</select>
+	
 
 	
 

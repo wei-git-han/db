@@ -346,11 +346,11 @@ p.tiaoj{
 	background: #3268AA;
 }
 /*闂佽法鍠愰弸濠氬箯妞嬪寒锟藉懐绱欓柆宥嗘櫢闁绘瑢妲呴崜銊╁箯閻戣姤鏅搁柡鍌樺�栫�氬綊鏌ㄩ悢鍛婄伄闁归鏌夐獮鎰版偋閻斿吋鏅搁柡鍌樺�栫�氬綊鏌ㄩ悢鍛婄伄闁归鍏橀弫鎾绘嚇濮樼偓瀚�*/
-[class^="fa-"]:not(.fa-stack), 
-[class^="glyphicon-"], 
-[class^="icon-"], 
-[class*=" fa-"]:not(.fa-stack), 
-[class*=" glyphicon-"], 
+[class^="fa-"]:not(.fa-stack),
+[class^="glyphicon-"],
+[class^="icon-"],
+[class*=" fa-"]:not(.fa-stack),
+[class*=" glyphicon-"],
 [class*=" icon-"]{
 	font-size: 16px;
 }
@@ -677,11 +677,11 @@ p.tiaoj{
 	padding:0px;
 	font-size:20px;
 }
-.table [class^="fa-"]:not(.fa-stack), 
-.table [class^="glyphicon-"], 
-.table [class^="icon-"], 
-.table [class*=" fa-"]:not(.fa-stack), 
-.table [class*=" glyphicon-"], 
+.table [class^="fa-"]:not(.fa-stack),
+.table [class^="glyphicon-"],
+.table [class^="icon-"],
+.table [class*=" fa-"]:not(.fa-stack),
+.table [class*=" glyphicon-"],
 .table [class*=" icon-"]{
 	font-size:16px;
 }
@@ -773,17 +773,17 @@ p.tiaoj{
 	background-color:#5498EB;
 }
 /*OFD闁瑰灚鎸哥槐鎴﹀籍閸撲焦鐣遍梺顒夊枤閸嶇敻宕ｅ澶樻疮*/
-.suwellCover{ 
+.suwellCover{
 	background: #FBFBFB;
 	background-image: url("../images/loading_gif.gif");
 	background-repeat:no-repeat;
 	background-position:center;
-	position: absolute; 
-	left: 0px; 
-	top: 0px; 
-	width:100%; 
-	height: 100%; 
-	z-index: 10000; 
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width:100%;
+	height: 100%;
+	z-index: 10000;
 }
 .suwellinit{
 	width:100%;
@@ -1039,4 +1039,8 @@ table{
 .btn-primary{
     background-color: #6699FF!important;
     border-color: #6699FF!important;
+}
+
+.cjDialog.dragDialog + .modal-backdrop {
+	height: 0;
 }

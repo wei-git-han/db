@@ -23,7 +23,7 @@ var css={
 					var len=txt.length;
 					$this.val(txt).blur();
 				});
-				
+
 				var cancel=setInterval(function(){
 					var $cke=$('#cke_'+id);
 					if($cke.size()>0){
@@ -52,7 +52,7 @@ var css={
 			}else{
 				return '';
 			}
-			
+
 		},
 		cut:function(selector){
 			val=$(selector).val();
@@ -91,7 +91,7 @@ jQuery(document).ready(function() {
 //    Demo.init(); // init demo features
 //    initcomonother();
 //    initinclude();
-    
+
     var pagedate = new Date();
 	var month = pagedate.getMonth()+1;
 	if(month<10){
@@ -116,11 +116,11 @@ jQuery(document).ready(function() {
 	if(mm<10){
 		mm = "0"+mm;
 	}
-	
+
 	$(".datesfm").val(year+"-"+month+"-"+day+" "+hh+":"+mm);
-	
-});  
- 
+
+});
+
 
 /*start设置bootstrap滚动条自适应浏览器高度*/
 var c2 = {};
@@ -166,9 +166,9 @@ function setformdata(data){
 			//alert(data[key])
 		}
 	}
-	
+
 }
-    
+
 /*	var elementarry = ["username","email","phone","password1","password2","ifduty","role"];
 	返回表单值{username:"username",...}
 	var paramdata = getformdata(elementarry);
@@ -258,14 +258,14 @@ function initselect_DOC(id,arry,checkedId){
 		$.each(arry,function(i){
 			if(arry[i].id == checkedId){
 				html+='<option value='+arry[i].id+' selected="true">'+arry[i].dictionaryValue+'</option>';
-			}else{				
+			}else{
 				html+='<option value='+arry[i].id+' >'+arry[i].dictionaryValue+'</option>';
 			}
 		});
 	}
 	$("#"+id).append(html);
 }
-	
+
 function $ajax(obj){
 	var urlobj = obj.url;
 	if(urlobj==null||typeof(urlobj)=="undefined"){
@@ -322,7 +322,7 @@ function $ajax(obj){
 		error : error
 	});
 }
-	
+
 function getUrlParam(name){
 	var reg=new RegExp("(^|&)"+name+"=([^&]*)(&|$)");
 	var r=window.location.search.substr(1).match(reg);
@@ -337,7 +337,7 @@ function getUrlParam2(name){
 	if(r!=null)return decodeURI(r[2]);
 	return null;
 }
-	
+
 function initinclude(){
 	var include = $("[include]");
 	if(include!=null&&typeof(include)!="undefined"){
@@ -437,7 +437,7 @@ function createSelecttree(obj){
 			}
 			return false;
 		})
-		
+
 		//增加判断，当点击展开和收起加减号时不隐藏树。
 		$("body").click(function(e){
 			if($(e.target).hasClass("jstree-ocl")){
@@ -445,7 +445,7 @@ function createSelecttree(obj){
 			}
 			$("."+obj.target+"tree1").slideUp(50);
 		})
-		
+
 		if(!obj.data){
 			$ajax({
 				url:obj.url,
@@ -457,16 +457,16 @@ function createSelecttree(obj){
 		}else{
 			initdata(obj.data);
 		}
-		
+
 	}
-	
+
 	var initdata = function(data){
 		$("#"+obj.target+"tree2").jstree({
 		    "plugins": ["wholerow", "types"],
 		    "core": {
 		    "themes" : {
 		        "responsive": false
-		    },    
+		    },
 		    "data": data,
 		    },
 		    "types" : {
@@ -492,7 +492,7 @@ function createSelecttree(obj){
 		    obj.selectnode(e,data);
 		});
 	}
-	
+
 	create();
 }
 
@@ -514,7 +514,7 @@ function createcheckboxtree(obj){
 		if(obj.readonly!=false){
 			$("#"+obj.target)[0].readOnly=true;
 		}
-		
+
 		var width = obj.width;
 		if(width==null||typeof(width)=="undefined"){
 			width = "";
@@ -531,7 +531,7 @@ function createcheckboxtree(obj){
 			'	</div>'+
     		'</div>'
 		);
-	
+
 		$("#"+obj.target).click(function(){
 			var objClass = obj.target+"tree1";
 			$(".trees").each(function(){
@@ -546,7 +546,7 @@ function createcheckboxtree(obj){
 			}
 			return false;
 		})
-		
+
 		//增加判断，当点击展开和收起加减号时不隐藏树。
 		$("body").click(function(e){
 			if($(e.target).hasClass("jstree-ocl")){
@@ -560,7 +560,7 @@ function createcheckboxtree(obj){
 			}
 			$("."+objClass).slideUp(50);
 		})
-		
+
 		if(!obj.data){
 			$ajax({
 				url:obj.url,
@@ -573,14 +573,14 @@ function createcheckboxtree(obj){
 			initdata(obj.data);
 		}
 	}
-	
+
 	var initdata = function(data){
 		$("#"+obj.target+"tree2").jstree({
 		    "plugins": ["wholerow", "types","checkbox"],
 		    "core": {
 		    "themes" : {
 		        "responsive": false
-		    },    
+		    },
 		    "data": data,
 		    },
 		    "types" : {
@@ -598,7 +598,7 @@ function createcheckboxtree(obj){
 		$("#"+obj.target+"tree2").on("ready.jstree", function(e,o) {
 			obj.success(data,$("#"+obj.target+"tree2"));
 		});
-		
+
 		$("#"+obj.target+"tree2").on("select_node.jstree", function(e,data) {
 			var id = $("#" + data.selected).attr("id");
 			var nodes2 = $("#"+obj.target+"tree2").jstree("get_bottom_checked",true);
@@ -615,7 +615,7 @@ function createcheckboxtree(obj){
 				obj.selectnode(e,data,treessname,treessid);
 			};
 		});
-		
+
 		$("#"+obj.target+"tree2").on("deselect_node.jstree", function(e,data) {
 			var id = $("#" + data.selected).attr("id");
 			var nodes2 = $("#"+obj.target+"tree2").jstree("get_bottom_checked",true);
@@ -628,8 +628,8 @@ function createcheckboxtree(obj){
 		    obj.deselectnode(e,data,treessname,treessid);
 		});
 	}
-	
-	
+
+
 	create();
 }
 
@@ -656,7 +656,7 @@ function createUserTree(obj){
 			border:"none"
 		});
 		$("#"+obj.target)[0].readOnly=true;
-		
+
 		var width = obj.width;
 		if(width==null||typeof(width)=="undefined"){
 			width = "";
@@ -667,13 +667,13 @@ function createUserTree(obj){
 		if(data==null||typeof(data)=="undefined"){
 			data = {};
 		}
-		$("#"+obj.target).parent().append( 
+		$("#"+obj.target).parent().append(
 			'<div class="'+obj.target+'tree1 trees"  style="max-height:300px;overflow:auto;display:none;background:#ffffff;border:1px solid #cccccc;'+width+';padding:10px;position:absolute;z-index: 100;">'+
     		'	<div id="'+obj.target+'tree2" class="tree-demo">'+
 			'	</div>'+
     		'</div>'
 		);
-		
+
 		$("#"+obj.target).click(function(){
 			var objClass = obj.target+"tree1";
 			$(".trees").each(function(){
@@ -688,11 +688,11 @@ function createUserTree(obj){
 			}
 			return false;
 		})
-		
+
 		//增加判断，当点击展开和收起加减号时不隐藏树。
 		$("body").click(function(e){
 			if($(e.target).hasClass("jstree-ocl")){
-				
+
 				return;
 			};
 			var objClass = obj.target+"tree1";
@@ -703,8 +703,8 @@ function createUserTree(obj){
 			}
 			$("."+objClass).slideUp(50);
 		})
-		
-		
+
+
 		if(!obj.data){
 			$ajax({
 				url:obj.url,
@@ -717,19 +717,19 @@ function createUserTree(obj){
 			initdata(obj.data);
 		}
 	}
-	
+
 	var initdata = function(data){
 		var plugins = obj.plugins;
 		if(plugins==null||typeof(plugins)=="undefined"){
 			plugins = "";
 		}
-		
+
 		$("#"+obj.target+"tree2").jstree({
 		    "plugins": ["wholerow", "types",plugins],
 		    "core": {
 		    "themes" : {
 		        "responsive": false
-		    },    
+		    },
 		    "data": data,
 		    },
 		    "types" : {
@@ -786,7 +786,7 @@ function createUserTree(obj){
 		    obj.selectnode(e,data,treessname,treessid);
 		});
 	}
-	
+
 	create();
 }
 
@@ -813,7 +813,7 @@ function createGwzltree(obj){
 			border:"none"
 		});
 		$("#"+obj.target)[0].readOnly=true;
-		
+
 		var width = obj.width;
 		if(width==null||typeof(width)=="undefined"){
 			width = "";
@@ -864,13 +864,13 @@ function createGwzltree(obj){
 			url:obj.url,
 			async:false,
 			success:function(data){
-				
+
 				$("#"+obj.target+"tree2").jstree({
 				    "plugins": ["wholerow", "types"],
 				    "core": {
 				    "themes" : {
 				        "responsive": false
-				    },    
+				    },
 				    "data": data,
 				    },
 				    "types" : {
@@ -904,10 +904,10 @@ function createGwzltree(obj){
 					//$("#"+obj.target).val($("#"+obj.target+"tree2").find("#"+id+">a").eq(0).text());
 				    obj.selectnode(e,data);
 				});
-				
+
 			}
 		})
-		
+
 	}
 	create();
 }
@@ -933,7 +933,7 @@ function getWebEquipmentOS(){
 	} else {
 		return 'no_init';
 	}
-	
+
 }
 
 var path = "/gwgl/";
@@ -947,7 +947,7 @@ var newbootbox = {
 	            label: "确定",
 	            className: "btn-primary",
 	            callback: function() {
-					obj.callback1();	
+					obj.callback1();
 	            }
 	          },
 	          danger: {
@@ -973,7 +973,7 @@ var newbootbox = {
 	            label: "确定",
 	            className: "btn-primary",
 	            callback: function() {
-					obj.callback1();	
+					obj.callback1();
 	            }
 	          },
 	          danger: {
@@ -998,7 +998,7 @@ var newbootbox = {
 	            label: "保存",
 	            className: "btn-primary",
 	            callback: function() {
-					obj.callback1();	
+					obj.callback1();
 	            }
 	          },
 	          danger1: {
@@ -1157,7 +1157,14 @@ var newbootbox = {
 			'</div>'
 		);
 		gettop2().showModal(obj.id);
-	}, 
+		if(classed){
+			if(classed.indexOf('dragDialog')>-1){
+				setTimeout(function () {
+					gettop2().DragEl(gettop2().document)
+				},500)
+			}
+		}
+	},
 	newdialogClose:function(obj){
 		gettop2().hideModal(obj);
 	},
@@ -1251,24 +1258,24 @@ function createTablist(obj){
 					function(){
 						$(".newtab-ul1>li").removeClass("active");
 						$(o).parent().parent().addClass("active");
-						
+
 						$(o).parent().find("li").removeClass("liactive");
 						$(o).addClass("liactive");
-						
+
 						var text = $(o).text();
 						$(o).parents("li").eq(0).find("font").text(text);
 					}
 			);
 			return false;
 		});
-		
+
 		$(".newtab-ul1>li .o1").unbind("click");
 		$(".newtab-ul1>li .o1").live("click",function(){
 			delfn1();
 			return false;
 		});
 	}
-	
+
 	var initdata = function(data){
 		target = obj.target;
 		$("#"+target).html("");
@@ -1362,15 +1369,15 @@ function createTablist(obj){
 				);
 		}
 	}
-	
+
 	this.addfn = function(str){
 		$("."+obj.target+"-"+str).attr("o","0");
-		
+
 		$(".newtab-ul1>li").removeClass("active");
 		$("."+obj.target+"-"+str).addClass("active");
-		
+
 		$("."+obj.target+"-"+str).parent().find("li").removeClass("liactive");
-		
+
 		if(str=="cpj"){
 			$("."+obj.target+"-"+str+">a font").html('[新增主文件]&nbsp;&nbsp;<i class="fa fa-trash-o o1"></i>')
 		}else if(str=="fj"){
@@ -1388,12 +1395,12 @@ function createTablist(obj){
 	this.selectfn = function(str){
 		var o = $('.newtab-ul1 ul>li[data='+str+']');
 		$(".newtab-ul1>li").removeClass("active");
-		
+
 		o.parent().parent().addClass("active");
-		
+
 		o.parent().find("li").removeClass("liactive");
 		o.addClass("liactive");
-		
+
 		var text = o.text();
 		o.parents("li").eq(0).find("font").text(text);
 	}
@@ -1413,17 +1420,17 @@ function createTitlecontent(obj){
 		var html = obj.html;
 		var afterfn = obj.afterfn;
 		var position = obj.position;
-		
+
 		target.click(function(){
 			if($('#titlecontent').length==0){
-				
+
 				var x =$(this).offset().left;
 				var y = $(this).offset().top;
-				
+
 				var o = $('<div id="titlecontent" style="padding-top:10px;position:relative;padding-bottom:10px;"></div>');
-				
+
 				var p = {position:"absolute"};
-				
+
 				if(position(this)=="top"){
 					var h = $("body").height();
 					p.left = x+"px";
@@ -1439,9 +1446,9 @@ function createTitlecontent(obj){
 					o.append('<div style="position:absolute;top:0;border-bottom:10px solid #ccc;border-left:10px solid transparent;border-right:10px solid transparent;width:10px;"></div>')
 				}
 				o.css(p);
-				
+
 				o.append(html(this));
-				
+
 				$("body").append(o);
 				$('#titlecontent').unbind("click");
 				$('#titlecontent').click(function(){
@@ -1457,7 +1464,7 @@ function createTitlecontent(obj){
 			$('#titlecontent').remove();
 		})
 	}
-	
+
 	create();
 }
 var changToNumUrl = {"url":"/api/db/todo"};
@@ -1466,7 +1473,7 @@ function changToNum(){
 		$ajax({
 			url:changToNumUrl,
 			success:function(data){
-			if(navigator.userAgent.indexOf('OfficeBrowser')>=0){	
+			if(navigator.userAgent.indexOf('OfficeBrowser')>=0){
 				gettop2().__set_todo_count__(data.count);
 			   }
 			}
@@ -1543,9 +1550,9 @@ var openloading = function(newval,total){
 
 // 表格创建功能
 jQuery.fn.extend({
-	
+
 	creatTable: function(obj) {
-		
+
 		var sortcolumns = obj.sortcolumns;
 		var columns = obj.columns;
 		var pobj = obj.pobj;
@@ -1560,12 +1567,12 @@ jQuery.fn.extend({
 				this.number = sortcolumns[field];
 			});
 		});
-		
+
 		columns[0].sort(function(o1,o2){return o1.number-o2.number;});
 		obj.onResizeColumn = function(a1,a2){initdgfn();};
-		
-		
-		
+
+
+
 		var o1 = null;
 		var target = $(this).attr("id");
 		var pcont = obj.pcont;
@@ -1596,7 +1603,7 @@ var initcheckgroup = function(pobj){
 			var n1 = columns.length;
 			if(n1>1){
 				if(!!pobj.loadfn){
-					
+
 					var object = {};
 					$.each(columns,function(i,item){
 						object[item.field] = item;
@@ -1619,11 +1626,11 @@ var initcheckgroup = function(pobj){
 					}
 					object.auto = data.auto;
 					pobj.loadfn(columns,object,sobj);
-					
+
 				}
 			};
 			$(".checkcont").html("");
-			
+
 			var auto = data.auto;
 			$(".checkcont").append(
 				`
@@ -1646,9 +1653,9 @@ var initcheckgroup = function(pobj){
 					</div>
 				`
 			);
-			
-			
-			
+
+
+
 			$(".checkcont").append(
 				`
 					<div class="checkgroup columns" style="border-bottom:none;">
@@ -1682,14 +1689,14 @@ var initcheckgroup = function(pobj){
 					`
 				);
 			});
-			
-			
+
+
 			$(".columns").sortable({
 				items:"label",
 				cursor:"move",
 				opacity:0.5,
 				stop:function(event,ui){
-					
+
 					var object = {};
 					$(".columns input").each(function(){
 						var item = {};
@@ -1717,7 +1724,7 @@ var initcheckgroup = function(pobj){
 					}else{
 						object.auto = false;
 					}
-					
+
 					var sobj = {};
 					$(".columns input").each(function(i){
 						sobj[this.value] = i;
@@ -1726,10 +1733,10 @@ var initcheckgroup = function(pobj){
 						sobj['index'] = -1;
 					}
 					pobj.loadfn(columns,object,sobj);
-					
+
 				}
 			});
-			
+
 			getdatafn = function(){
 				var object = {};
 				var array = [];
@@ -1751,11 +1758,11 @@ var initcheckgroup = function(pobj){
 				if(auto == 0){auto = true;
 				}else{auto = false;}
 				object.auto = auto;
-				
+
 				return object;
 			}
 			var beforobject = JSON.stringify(getdatafn());
-			
+
 			$(".columns input").unbind("click");
 			$(".columns input").click(function(){
 				var field = this.value;
@@ -1765,7 +1772,7 @@ var initcheckgroup = function(pobj){
 					$(pobj.target).datagrid('showColumn', field);
 				}
 			})
-			
+
 			$(".auto input").unbind("click");
 			$(".auto input").click(function(){
 				var object = {};
@@ -1796,7 +1803,7 @@ var initcheckgroup = function(pobj){
 				}else{
 					object.auto = false;
 				}
-				
+
 				var sobj = {};
 				$(".columns input").each(function(i){
 					sobj[this.value] = i;
@@ -1806,15 +1813,15 @@ var initcheckgroup = function(pobj){
 				}
 				pobj.loadfn(columns,object,sobj);
 			})
-			
+
 			initdgfn = function(){
-				
+
 				var object = getdatafn();
-				
+
 				if(beforobject==object){
 					return;
 				}
-				
+
 				var data2 = pobj.data2
 				if(typeof(data2)=="undefined"||data2==null||$.trim(data2)==""){
 					data2={};
@@ -1832,19 +1839,19 @@ var initcheckgroup = function(pobj){
 					data:data2,
 					success:function(data){
 						if(data.result=="success"){
-							
+
 							var columns = object.columns;
 							$.each(columns,function(){
 								var field = this.field;
 								var width = this.width;
 								$(".columns input[value="+field+"]").attr("data1",width);
-								
+
 							})
-							
+
 						}
 					}
 				});
-				
+
 			};
 		}
 	})
@@ -1894,7 +1901,7 @@ jQuery.fn.extend({ //成员函数
 						'	<a id="'+o.id+'" class="delfj">删除</a>'+
 						'</div>'
 					);
-					
+
 				}else if(view=="view2"){
 					$(".filelist[name="+targetid+"]").append(
 						'<div style="display:inline-block;'+cssStyle+';position:relative;float:left;margin-right:20px;margin-bottom:10px;" id="filecont_'+targetid+'_'+o.code+'" class="fileview_'+targetid+'" data="'+o.code+'">'+
@@ -1904,7 +1911,7 @@ jQuery.fn.extend({ //成员函数
 						'	</div>'+
 						'</div>'
 					);
-					
+
 				}
 				$("#"+o.code).click(function(){
 					$(this).parent().remove();
@@ -1950,7 +1957,7 @@ jQuery.fn.extend({ //成员函数
 					return;
 				}
 				if(view=="view1"){
-					
+
 					$("#filecont_"+targetid+"_"+filen).append(
 						'	<i class="fa fa-file-o" style="margin-right:3px;"></i><font class="filename">'+filename+'</font>'+
 						'	<a id="close_'+targetid+'_'+filen+'">删除</a>'
@@ -1972,7 +1979,7 @@ jQuery.fn.extend({ //成员函数
 						$('.filemessage[name='+targetid+']').show();
 						return;
 					}
-					
+
 					var file = this.files[0];
 					var reader = new FileReader();
 					reader.onload = function(re){
@@ -1985,13 +1992,13 @@ jQuery.fn.extend({ //成员函数
 						deletefilekey.push($(".fileview_"+targetid).attr("data"));
 						$(".fileview_"+targetid).remove();
 					};
-					
+
 					for(var i=0;i<filen;i++){
 						if(i!=(filen-1)){
 							$("#filecont_"+targetid+"_"+(i+1)).remove();
 						}
 					}
-					
+
 				}
 				if(view=="view2"){
 					$("#filecont_"+targetid+"_"+filen).css("display","inline-block");
@@ -2029,4 +2036,76 @@ var hideModal = function(obj){
 var theme = getUrlParam('theme')||'';
 if(theme =='black'){
 	$('body').addClass('body-black');
+}
+function DragEl(el) {
+	var dragDom = el.querySelector('.dragDialog')
+	var dialogHeaderEl = dragDom.querySelector(' .dragDialog .modal-header')
+	dialogHeaderEl.style.cssText += ';cursor:move;'
+	dragDom.style.cssText += ';'
+
+	// 获取原有属性 ie dom元素.currentStyle 火狐谷歌 window.getComputedStyle(dom元素, null);
+	var getStyle = (function() {
+		if (window.document.currentStyle) {
+			return (dom, attr) => dom.currentStyle[attr]
+		} else {
+			return (dom, attr) => getComputedStyle(dom, false)[attr]
+		}
+	})()
+
+	dialogHeaderEl.onmousedown = (e) => {
+		// 鼠标按下，计算当前元素距离可视区的距离
+		var disX = e.clientX - dialogHeaderEl.offsetLeft
+		var disY = e.clientY - dialogHeaderEl.offsetTop
+
+		var dragDomWidth = dragDom.offsetWidth
+		var dragDomHeight = dragDom.offsetHeight
+
+		var screenWidth = document.body.clientWidth
+		var screenHeight = document.body.clientHeight
+
+		var minDragDomLeft = dragDom.offsetLeft
+		var maxDragDomLeft = screenWidth - dragDom.offsetLeft - dragDomWidth
+
+		var minDragDomTop = dragDom.offsetTop
+		var maxDragDomTop = screenHeight - dragDom.offsetTop - dragDomHeight
+
+		// 获取到的值带px 正则匹配替换
+		var styL = getStyle(dragDom, 'left')
+		var styT = getStyle(dragDom, 'top')
+
+		if (styL.includes('%')) {
+			styL = +document.body.clientWidth * (+styL.replace(/\%/g, '') / 100)
+			styT = +document.body.clientHeight * (+styT.replace(/\%/g, '') / 100)
+		} else {
+			styL = +styL.replace(/\px/g, '')
+			styT = +styT.replace(/\px/g, '')
+		}
+
+		document.onmousemove = function(e) {
+			// 通过事件委托，计算移动的距离
+			var left = e.clientX - disX
+			var top = e.clientY - disY
+
+			// 边界处理
+			if (-(left) > minDragDomLeft) {
+				left = -minDragDomLeft
+			} else if (left > maxDragDomLeft) {
+				left = maxDragDomLeft
+			}
+
+			if (-(top) > minDragDomTop) {
+				top = -minDragDomTop
+			} else if (top > maxDragDomTop) {
+				top = maxDragDomTop
+			}
+
+			// 移动当前元素
+			dragDom.style.cssText += `;left:${left + styL}px;top:${top + styT}px;`
+		}
+
+		document.onmouseup = function(e) {
+			document.onmousemove = null
+			document.onmouseup = null
+		}
+	}
 }

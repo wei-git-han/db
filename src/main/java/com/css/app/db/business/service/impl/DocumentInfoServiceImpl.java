@@ -250,4 +250,14 @@ public class DocumentInfoServiceImpl implements DocumentInfoService {
 	public List<Map<String, Object>> queryListByOrgIdAndYear(Map<String,Object> map){
 		return documentInfoDao.queryListByOrgIdAndYear(map);
 	}
+	
+	@Override
+	public List<Map<String, Object>> queryListByOrgYear1(Map<String, Object> map) {
+		return documentInfoDao.queryListByOrgYear1(map);
+	}
+	
+	@Override
+	public int queryWfkCount3(Map<String,Object> map){
+		return documentInfoDao.queryWfkCount3(map);
+	}
 }

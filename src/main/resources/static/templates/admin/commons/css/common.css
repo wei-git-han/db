@@ -11,12 +11,12 @@ html,body{
     font-weight: 400;
     color: #ffffff;
 }
-.table_portlet .has-success .help-block, 
-.table_portlet .has-success .help-inline, 
-.table_portlet .has-success .control-label, 
-.table_portlet .has-success .radio, 
-.table_portlet .has-success .checkbox, 
-.table_portlet .has-success .radio-inline, 
+.table_portlet .has-success .help-block,
+.table_portlet .has-success .help-inline,
+.table_portlet .has-success .control-label,
+.table_portlet .has-success .radio,
+.table_portlet .has-success .checkbox,
+.table_portlet .has-success .radio-inline,
 .table_portlet .has-success .checkbox-inline {
     color: #6ac3b8;
 }
@@ -115,7 +115,7 @@ table-striped>tbody>tr:nth-of-type(odd) {
 	line-height: 1.42857143;
 	vertical-align: top;
    }
-   
+
 
 .modal-header {
     background-color: #6699FF;
@@ -192,4 +192,3 @@ table-striped>tbody>tr:nth-of-type(odd) {
 .divInline {
     position: relative;
 }
-

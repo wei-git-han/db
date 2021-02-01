@@ -51,7 +51,7 @@ var pageModule = function(){
 				success:function(data){
 					newbootbox.newdialogClose("plspDialog");
 					if(data.result=="success"){
-						newbootbox.alert("公文均已送审批！").done(function(){
+						newbootbox.alert("提交成功！").done(function(){
 
                             // $ajax({
 	    					// 	url:pushTodo,

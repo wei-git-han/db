@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.css.addbase.appconfig.service.BaseAppConfigService;
 import com.css.addbase.apporgan.service.BaseAppUserService;
 import com.css.app.db.business.entity.*;
 import com.css.app.db.business.service.*;
 import com.css.app.db.config.service.AdminSetService;
 import com.css.app.db.config.service.RoleSetService;
+import com.css.websocket.WebSocketHandle;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -57,6 +59,12 @@ public class ReplyExplainController {
 	private DocumentReadService documentReadService;
 	@Autowired
 	private RoleSetService roleSetService;
+
+	@Autowired
+	private BaseAppConfigService baseAppConfigService;
+
+	@Autowired
+	private WebSocketHandle webSocketHandle;
 	/**
 	 * 获取某个分支局反馈
 	 * @param infoId 主文件id
@@ -602,6 +610,15 @@ public class ReplyExplainController {
 			documentInfoService.update(info);
 			// 清理除首长外的本文件已读
 			documentReadService.deleteByInfoId(infoId);
+			//更新完意见之后，刷新局长的办理反馈菜单
+			List<String> appConfigList = baseAppConfigService.queryAllJuzhang();
+			if(appConfigList != null && appConfigList.size() > 0){
+				for(int j = 0;j<appConfigList.size();j++){
+					String userId = appConfigList.get(j);
+					//subDocInfoService.sendMsgByWebSocket(userId,6,false);
+					webSocketHandle.addSendMap(userId,6,false);
+				}
+			}
 			json.put("result", "success");
 		}else {
 			json.put("result", "fail");

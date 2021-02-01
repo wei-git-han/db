@@ -92,6 +92,8 @@ public interface BaseAppUserDao extends BaseDao<BaseAppUser> {
 	 * @Version v1.0
 	 */
 	List<BaseAppUser> selectUserByNameAndUnitId(String name,String unitId);
+	
+	List<BaseAppUser> queryAllTaskByDept(String deptId);
 
 	
 }

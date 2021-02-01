@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.css.app.db.config.service.RoleSetService;
+import com.alibaba.fastjson.JSONObject;
+import com.css.addbase.appconfig.entity.BaseAppConfig;
+import com.css.addbase.appconfig.service.BaseAppConfigService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +49,9 @@ public class AdminSetController {
 	private BaseAppUserService baseAppUserService;
 	@Autowired
 	private RoleSetService roleSetService;
+
+	@Autowired
+	private BaseAppConfigService baseAppConfigService;
 
 	/**
 	 * 列表
@@ -106,7 +112,7 @@ public class AdminSetController {
 		String roleType = roleSetService.getRoleTypeByUserId(CurrentUser.getUserId());
 		Response.json(roleType);
 	}
-	
+
 	/**
 	 * 信息
 	 */
@@ -184,5 +190,23 @@ public class AdminSetController {
 		adminSetService.deleteBatch(idArry);
 		Response.json("result","success");
 	}
-	
+
+
+	@ResponseBody
+	@RequestMapping(value = "/getUserId")
+	public void getUserId(){
+		JSONObject jsonObject = new JSONObject();
+		String userId = CurrentUser.getUserId();
+		BaseAppConfig baseAppConfig = baseAppConfigService.queryByUserId(userId);
+		if(baseAppConfig != null){
+			jsonObject.put("flag",true);
+		}else{
+			jsonObject.put("flag",false);
+		}
+		jsonObject.put("userId",userId);
+		jsonObject.put("result","success");
+		Response.json(jsonObject);
+
+	}
+
 }

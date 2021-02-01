@@ -161,6 +161,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	public JdkRegexpMethodPointcut getJdkRegexpMethodPointcut(){
 		JdkRegexpMethodPointcut jrmp=new JdkRegexpMethodPointcut();
 		jrmp.setPatterns("com.css.*");
+		jrmp.setExcludedPattern("com.css.websocket.*");
 		return jrmp;
 	}
 	@Bean

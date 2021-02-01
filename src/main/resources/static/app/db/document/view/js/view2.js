@@ -1500,7 +1500,7 @@ function editfn(id,el,checkStatus){
 	    				height:600,
 	    				header:true,
 	    				title:"编辑",
-	    				classed:"cjDialog",
+	    				classed:"cjDialog dragDialog",
 	    				url:"/app/db/document/view/html/editDialog.html?fileId="+fileId+"&subId="+subId+"&teamId="+id+"&fromMsg="+fromMsg+"&checkStatus="+checkStatus
 	    			})
 	    		}

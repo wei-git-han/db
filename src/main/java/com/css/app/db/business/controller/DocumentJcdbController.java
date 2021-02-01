@@ -402,6 +402,10 @@ public class DocumentJcdbController {
     private int queryWfkCount2(String danweiid, String year) {
         return documentInfoService.queryDocumentWfk2(danweiid, year);
     }
+    
+    public int queryWfkCount3(Map<String,Object> map){
+        return  documentInfoService.queryWfkCount3(map);
+    }
 
     public int queryWfkCount3(Map<String,Object> map){
         return  documentInfoService.queryWfkCount3(map);

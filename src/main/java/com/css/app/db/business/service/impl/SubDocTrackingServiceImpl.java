@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.css.app.db.business.dao.SubDocTrackingDao;
+import com.css.app.db.business.entity.SubDocInfo;
 import com.css.app.db.business.entity.SubDocTracking;
 import com.css.app.db.business.service.SubDocTrackingService;
 import com.css.base.utils.UUIDUtils;
@@ -67,6 +68,11 @@ public class SubDocTrackingServiceImpl implements SubDocTrackingService {
 	}
 
 	@Override
+	public List<SubDocTracking> queryAllListBySubId(String subId) {
+		return subDocTrackingDao.queryAllListBySubId(subId);
+	}
+
+	@Override
 	public SubDocTracking queryNewRecord(String subId) {
 		// TODO Auto-generated method stub
 		return subDocTrackingDao.queryNewRecord(subId);
@@ -75,6 +81,11 @@ public class SubDocTrackingServiceImpl implements SubDocTrackingService {
 	@Override
 	public String findDealUserName(String subId){
 		return subDocTrackingDao.findDealUserName(subId);
+	}
+	
+	@Override
+	public List<SubDocTracking> queryTaskNumByUserId(String userId,String year){
+		return subDocTrackingDao.queryTaskNumByUserId(userId,year);
 	}
 	
 }

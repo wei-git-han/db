@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.css.addbase.appconfig.service.BaseAppConfigService;
+import com.css.websocket.WebSocketHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,6 +108,15 @@ public class SubDocInfoController {
 	private String clientSecret;
 	@Autowired
 	private AdminSetService adminSetService;
+
+	@Autowired
+	private RedisUtil redisUtil;
+
+	@Autowired
+	private WebSocketHandle webSocketHandle;
+
+	@Autowired
+	private BaseAppConfigService baseAppConfigService;
 
 	/**
 	 * 局内待办列表
@@ -822,6 +833,7 @@ public class SubDocInfoController {
 			subDocInfo.setUpdateTime(new Date());
 			subDocInfoService.update(subDocInfo);
 		}
+		//redisUtil.setString(userId+"_dbcount","true");+
 		// 发送消息提醒
 		MsgTip msg = msgService.queryObject(MSGTipDefined.DCCB_SONGSHEN_MSG_TITLE);
 		if (msg != null) {
@@ -831,11 +843,20 @@ public class SubDocInfoController {
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 			}
-			logger.info("==================送审批，审批人是"+userId);
-			msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
+			logger.info("==================送审批，承办人是"+currentUserId);
+			msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, currentUserId, appId, clientSecret,
 					msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 
 		}
+		//webSocket触发角标更新
+//		JSONObject jsonObject = subDocInfoService.sendMsgByWebSocket(userId,4,false);
+//		int dbNumSum = (int) jsonObject.get("dbNumSum");//个人待办总数
+//		String getPersonTodoCount = (String)jsonObject.get("getPersonTodoCount");//个人待办菜单
+//		String getUnitTodoCount = (String)jsonObject.get("getUnitTodoCount");//局内待办菜单
+//		webSocketHandle.addSendMap(userId,4,false,getPersonTodoCount);
+		//subDocInfoService.sendMsgByWebSocket(userId,4,false);
+		webSocketHandle.addSendMap(userId,4,false);
+
 		Response.json("result", "success");
 	}
 
@@ -899,6 +920,7 @@ public class SubDocInfoController {
 				logger.info("==================批量送审批，审批人是"+userId);
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+				webSocketHandle.addSendMap(userId,4,false);
 			}
 			if(StringUtils.isNotBlank(currentUsreId)){
 				logger.info("==================批量送审批，送审人是"+userId);
@@ -976,6 +998,8 @@ public class SubDocInfoController {
 				logger.info("==================送审批======，审批人是"+userId);
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+				//subDocInfoService.sendMsgByWebSocket(userId,4,false);
+				webSocketHandle.addSendMap(userId,4,false);
 			}
 		}
 	}
@@ -1011,6 +1035,8 @@ public class SubDocInfoController {
 					logger.info("==================退回操作，退回给"+userId);
 					msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 							msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+					//subDocInfoService.sendMsgByWebSocket(userId,4,false);
+					webSocketHandle.addSendMap(userId,4,false);
 				}
 				json.put("result", "success");
 			} else {
@@ -1035,10 +1061,16 @@ public class SubDocInfoController {
 	public void batchFinishOperation(String subIds, String content) {
 		JSONObject json = new JSONObject();
 		String currUserId = CurrentUser.getUserId();
+		String userId = "";
+		String infoId = "";
 		for (String subId : subIds.split(",")) {
 			try {
 				if (StringUtils.isNotBlank(subId)) {
 					SubDocInfo subDocInfo = subDocInfoService.queryObject(subId);
+					if(subDocInfo != null){
+						userId = subDocInfo.getUndertaker();
+						infoId = subDocInfo.getInfoId();
+					}
 					// 查詢局內文流转记录最新一笔-判断当前文是否需要本人审批，否则拒绝掉
 					SubDocTracking subDocTracking = subDocTrackingService.queryLatestRecord(subId);
 					if (StringUtils.equals(currUserId, subDocTracking.getReceiverId())) {
@@ -1051,19 +1083,43 @@ public class SubDocInfoController {
 					logger.info("批量审批完成，记录审批意见：subId：{}", subId);
 					continue;
 				}
+				//批量审批，给承办人发消息，刷个人待办
+				MsgTip msg = msgService.queryObject(MSGTipDefined.DCCB_SHENPIWANCHENG_MSG_TITLE);
+				if (msg != null) {
+					String msgUrl = msg.getMsgRedirect() + "&fileId=" + infoId + "&subId=" + subId;
+					if (StringUtils.isNotBlank(userId)) {
+						logger.info("===========================完成审批，送审人是"+userId);
+						msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
+								msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+						//subDocInfoService.sendMsgByWebSocket(userId,4,false);
+						webSocketHandle.addSendMap(userId,4,false);
+					}
+				}
+
 			} catch (Exception e) {
 				logger.info("批量审批完成，记录审批意见：subId：{}，处理异常，异常简述：{}", subId, e);
 				continue;
 			}
 		}
 		String currentUserId = CurrentUser.getUserId();
-		MsgTip msg = msgService.queryObject(MSGTipDefined.DCCB_TUIHUI_MSG_TITLE);
+		MsgTip msg = msgService.queryObject(MSGTipDefined.DCCB_SHENPIWANCHENG_MSG_TITLE);
 		if (msg != null) {
 			String msgUrl = "";
 			logger.info("==================批量完成审批，审批人是"+currentUserId);
 			msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, currentUserId, appId, clientSecret,
 					msg.getGroupName(), msg.getGroupRedirect(), "", "true");
 		}
+
+		//刷新局长的办理反馈菜单
+		List<String> appConfigList = baseAppConfigService.queryAllJuzhang();
+		if(appConfigList != null && appConfigList.size() > 0){
+			for(int j = 0;j<appConfigList.size();j++){
+				String currentUser = appConfigList.get(j);
+				//subDocInfoService.sendMsgByWebSocket(userId,6,false);
+				webSocketHandle.addSendMap(currentUser,6,false);
+			}
+		}
+
 		Response.json(json);
 	}
 
@@ -1215,11 +1271,22 @@ public class SubDocInfoController {
 				logger.info("===========================完成审批，送审人是"+userId);
 				msgUtil.sendMsg(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, userId, appId, clientSecret,
 						msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+				//subDocInfoService.sendMsgByWebSocket(userId,4,false);
+				webSocketHandle.addSendMap(userId,4,false);
 			}
 			//给自己发空消息，只为触发角标更新
 			logger.info("=====完成审批，操作人是"+currentUserId);
 			msgUtil.sendMsgUnvisible(msg.getMsgTitle(), msg.getMsgContent(), msgUrl, currentUserId, appId, clientSecret,
 					msg.getGroupName(), msg.getGroupRedirect(), "", "true");
+		}
+		//审批完成之后，刷新局长的办理反馈菜单
+		List<String> appConfigList = baseAppConfigService.queryAllJuzhang();
+		if(appConfigList != null && appConfigList.size() > 0){
+			for(int j = 0;j<appConfigList.size();j++){
+				String currentUser = appConfigList.get(j);
+				//subDocInfoService.sendMsgByWebSocket(userId,6,false);
+				webSocketHandle.addSendMap(currentUser,6,false);
+			}
 		}
 		Response.json(json);
 	}
